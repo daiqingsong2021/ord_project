@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.SysMessageRecvMapper">
+
+
+    <resultMap id="msgRecvMap" type="com.wisdom.acm.sys.vo.SysMessageRecvVo">
+        <result column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <result column="title" property="title"/>
+        <result column="send_time" property="sendTime"/>
+        <association property="sendUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="user_id" property="id" />
+            <result column="user_name" property="name"/>
+        </association>
+        <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="type" property="id" />
+        </association>
+        <association property="source" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="source" property="id" />
+            <result column="source_name" property="name"/>
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+        <association property="collect" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="collect" property="id" />
+            <result column="collect_name" property="name"/>
+        </association>
+        <association property="realStatus" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="real_status" property="id" />
+            <result column="real_status_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <insert id="addMessageRecvForActivi" parameterType="com.wisdom.acm.sys.po.SysMessageRecvPo">
+		INSERT INTO
+		wsd_sys_message(ID,TITLE,CONTENT_,SEND_USER,SEND_TIME,TYPE,CLAIM_DEAL_TYPE,CLAIM_DEAL_TIME,PARENT_ID,OPT_TYPE,DEL,SOURCE,COLLECT)
+		VALUES(
+		#{id},#{title},#{content},#{sendUser},#{sendTime},#{type},#{claimDealType},#{claimDealTime},#{parentId},#{optType},#{del},#{source},#{collect}
+		)
+	</insert>
+
+    <select id="selectMsgRecvList" resultMap="msgRecvMap">
+        select s.id,s.message_id,e.title,e.send_time,e.type,e.claim_deal_type,
+                s.real_status,(case s.real_status when 0 then '未读' when 1 then '已读' else '空' end) as real_status_name,
+                u.id as user_id,u.actu_name as user_name,
+                e.source,(case e.source when 0 then '用户' when 1 then '系统' else '其他' end) as source_name,
+                s.collect,(case s.collect when 0 then '否' else '是' end) as collect_name
+        from wsd_sys_message_user s
+        left join wsd_sys_message e ON s.message_id = e.id
+        left join wsd_sys_user u on u.id = e.send_user
+        where 1=1
+        and s.del = 0
+        and s.recv_user = #{userId}
+        <if test="title !=null and title !='' ">
+            and e.title like "%"#{title}"%"
+        </if>
+        <!-- group by s.collect,s.recv_time-->
+        order by s.collect desc,s.recv_time desc
+    </select>
+
+    <resultMap id="msgSendMap" type="com.wisdom.acm.sys.vo.SysMessageSendVo">
+        <result column="id" property="id"/>
+        <result column="title" property="title"/>
+        <!--<result column="message_user_id" property="messageUserId"/>-->
+        <result column="send_time" property="sendTime"/>
+        <!--<association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">-->
+            <!--<result column="user_id" property="id" />-->
+            <!--<result column="user_name" property="name"/>-->
+        <!--</association>-->
+        <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="type" property="id" />
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+        <association property="collect" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="collect" property="id" />
+            <result column="collect_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <!-- 发件箱列表 -->
+    <select id="selectMsgSendList" resultMap="msgSendMap">
+        select distinct(e.id),e.title,e.send_time,e.type,e.claim_deal_type,e.collect,
+        (case e.collect when 0 then '否' else '是' end) as collect_name
+        from wsd_sys_message e
+        left join wsd_sys_message_user s on s.message_id = e.id
+        where 1=1
+        and e.del = 0
+        and e.send_user = #{userId}
+        <if test="title !=null and title !='' ">
+            and e.title like "%"#{title}"%"
+        </if>
+        order by e.sort_num desc
+    </select>
+
+    <resultMap id="msgCollectMap" type="com.wisdom.acm.sys.vo.SysMessageCollectVo">
+        <result column="id" property="id"/>
+        <result column="sid" property="sid"/>
+        <result column="title" property="title"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="message_user_id" property="messageUserId"/>
+        <association property="sendUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="suser_id" property="id" />
+            <result column="suser_name" property="name"/>
+        </association>
+        <association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="ruser_id" property="id" />
+            <result column="ruser_name" property="name"/>
+        </association>
+        <association property="source" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="source" property="id" />
+            <result column="source_name" property="name"/>
+        </association>
+        <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="type" property="id" />
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+        <association property="collect" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="collect" property="id" />
+            <result column="collect_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectMsgCollectList" resultMap="msgCollectMap">
+          select e.id,s.id as sid,e.title,e.send_time,e.type,e.claim_deal_type,e.collect,e.source,
+                (case e.collect when 0 then '否' else '是' end) as collect_name,
+                (case e.source when 0 then '用户' when 1 then '系统' else '其他' end) as source_name,
+                u2.id as suser_id,u2.actu_name as suser_name
+          from wsd_sys_message e
+          left join wsd_sys_message_user s on s.message_id = e.id and s.recv_user = #{userId}
+          left join wsd_sys_user u2 on u2.id = e.send_user
+          where 1=1
+          and ((e.del=0 and e.collect = 1 and e.send_user = #{userId}) or (s.del=0 and s.collect = 1 and s.recv_user = #{userId}))
+          <if test="title !=null and title !='' ">
+              and e.title like "%"#{title}"%"
+          </if>
+        order by e.sort_num desc
+    </select>
+
+    <resultMap id="msgDeletedMap" type="com.wisdom.acm.sys.vo.SysMessageDeletedVo">
+        <result column="id" property="id"/>
+        <result column="sid" property="sid"/>
+        <result column="title" property="title"/>
+        <result column="send_time" property="sendTime"/>
+        <association property="sendUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="suser_id" property="id" />
+            <result column="suser_name" property="name"/>
+        </association>
+        <association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="ruser_id" property="id" />
+            <result column="ruser_name" property="name"/>
+        </association>
+        <association property="source" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="source" property="id" />
+            <result column="source_name" property="name"/>
+        </association>
+        <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="type" property="id" />
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+    </resultMap>
+
+    <select id="selectMsgDeletedList" resultMap="msgDeletedMap">
+        select e.id,s.id as sid,e.title,e.send_time,e.type,e.claim_deal_type,e.source,
+              (case e.source when 0 then '用户' when 1 then '系统' else '其他' end) as source_name,
+              u2.id as suser_id,u2.actu_name as suser_name
+        from wsd_sys_message e
+        left join wsd_sys_message_user s on s.message_id = e.id and s.recv_user = #{userId}
+        left join wsd_sys_user u2 on u2.id = e.send_user
+        where 1=1
+        and ((e.del = 1 and e.send_user = #{userId}) or (s.del = 1 and s.recv_user = #{userId}))
+        <if test="title !=null and title !='' ">
+            and e.title like "%"#{title}"%"
+        </if>
+        order by e.sort_num
+    </select>
+
+    <resultMap id="msgViewMap" type="com.wisdom.acm.sys.vo.SysMessageViewVo">
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="opt_type" property="optType"/>
+        <result column="title" property="title"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="content_" property="content"/>
+        <result column="claim_deal_time" property="claimDealTime"/>
+        <association property="sendUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="suser_id" property="id" />
+            <result column="suser_name" property="name"/>
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+    </resultMap>
+
+    <select id="selectMsgView" resultMap="msgViewMap">
+          select e.id,e.title,e.parent_id,e.opt_type,e.send_time,e.content_,e.claim_deal_time,e.claim_deal_type,
+                u.id as suser_id,u.actu_name as suser_name
+          from wsd_sys_message e
+          left join wsd_sys_message_user s on s.message_id = e.id
+          left join wsd_sys_user u on u.id = e.send_user
+          where e.id = #{messageId}
+    </select>
+
+
+
+    <!-- 获取草稿箱列表 -->
+    <select id="selectMsgDraftsList" resultMap="msgDraftsMap">
+        select distinct(e.id),e.title,e.creat_time,e.type,e.claim_deal_type,e.collect,
+        (case e.collect when 0 then '否' else '是' end) as collect_name
+        from wsd_sys_message e
+        left join wsd_sys_message_user s on s.message_id = e.id
+        where e.del = 2 and e.send_user = #{userId}
+        <if test="title !=null and title !='' ">
+            and e.title like "%"#{title}"%"
+        </if>
+        order by e.sort_num
+    </select>
+
+    <resultMap id="msgDraftsMap" type="com.wisdom.acm.sys.vo.SysMessageDraftsVo">
+    <result column="id" property="id"/>
+    <result column="user_id" property="draftsUserId"/>
+    <result column="title" property="title"/>
+    <result column="creat_time" property="creatTime"/>
+    <!--<association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">-->
+        <!--<result column="user_id" property="id" />-->
+        <!--<result column="user_name" property="name"/>-->
+    <!--</association>-->
+    <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+        <result column="type" property="id" />
+    </association>
+    <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+        <result column="claim_deal_type" property="id" />
+    </association>
+    <association property="collect" javaType="com.wisdom.base.common.vo.GeneralVo">
+        <result column="collect" property="id" />
+        <result column="collect_name" property="name"/>
+    </association>
+</resultMap>
+
+
+    <!-- 获取发件箱收件人 -->
+    <resultMap id="msgRecvUserForSendMap" type="com.wisdom.acm.sys.vo.SysMessageRecvUserVo">
+        <result column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="user_id" property="id" />
+            <result column="user_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectRecvUsersByMsgIds" resultMap="msgRecvUserForSendMap">
+        select s.id,s.message_id,
+              u.id as user_id,u.actu_name as user_name
+        from wsd_sys_message_user s
+        left join wsd_sys_user u on u.id = s.recv_user
+        where s.message_id in
+        <foreach collection="msgIds" item="msgId" open="(" separator="," close=")">
+            #{msgId}
+        </foreach>
+    </select>
+
+    <select id="selectRecvUsersByMsgId" resultMap="msgRecvUserForSendMap">
+        select s.id,s.message_id,
+              u.id as user_id,u.actu_name as user_name
+        from wsd_sys_message_user s
+        left join wsd_sys_user u on u.id = s.recv_user
+        where s.message_id = #{msgId}
+    </select>
+
+    <!-- 获取邮件附件信息  -->
+    <resultMap id="docVosForMsg" type="com.wisdom.acm.sys.vo.DocForMessageVo">
+        <result column="id" property="id"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_type" property="fileType"/>
+        <result column="size_" property="size"/>
+        <result column="group_name" property="groupName"/>
+        <result column="remote_file_name" property="remoteFileName"/>
+        <result column="message_id" property="messageId"/>
+    </resultMap>
+
+    <select id="selectDocVosByMsgIds" resultMap="docVosForMsg">
+        select f.id,f.file_name,f.file_type,f.size_,f.group_name,f.remote_file_name,r.message_id
+        from wsd_doc_file f
+        left join wsd_sys_message_relation r on r.biz_id = f.id and r.biz_type = 'file'
+        where r.message_id = #{msgId}
+    </select>
+
+    <!-- 我的消息！！ -->
+    <select id="selectMyMessageList" parameterType="java.util.Map" resultMap="MyMessageVo">
+        select s.id,s.message_id,e.title,e.send_time,e.type,e.claim_deal_type,
+        s.real_status,(case s.real_status when 0 then '未读' when 1 then '已读' else '空' end) as real_status_name,
+        u.id as send_id,u.actu_name as send_name,
+        u2.id as recv_id,u2.actu_name as recv_name
+        from wsd_sys_message_user s
+        left join wsd_sys_message e on s.message_id = e.id
+        left join wsd_sys_user u2 on u2.id = s.recv_user
+        left join wsd_sys_user u on u.id = e.send_user
+        where 1=1
+        and s.del = 0
+        and s.recv_user = #{userId} and s.real_status = 0
+        <if test="searchMap.title !=null and searchMap.title !='' ">
+            and e.title like concat('%',#{searchMap.title},'%')
+        </if>
+        <if test="searchMap.startTime !=null and searchMap.startTime !='' ">
+            and to_days(s.recv_time) &gt;= to_days(str_to_date(#{searchMap.startTime},'%Y-%m-%d'))
+        </if>
+        <if test="searchMap.endTime !=null and searchMap.endTime !='' ">
+            and to_days(s.recv_time) &lt;= to_days(str_to_date(#{searchMap.endTime},'%Y-%m-%d'))
+        </if>
+        order by s.recv_time desc
+    </select>
+
+    <resultMap id="MyMessageVo" type="com.wisdom.acm.sys.vo.MyMessageVo">
+        <result column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <result column="title" property="title"/>
+        <result column="send_time" property="sendTime"/>
+        <association property="sendUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="send_id" property="id" />
+            <result column="send_name" property="name"/>
+        </association>
+        <association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="recv_id" property="id" />
+            <result column="recv_name" property="name"/>
+        </association>
+        <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="type" property="id" />
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+        <association property="realStatus" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="real_status" property="id" />
+            <result column="real_status_name" property="name"/>
+        </association>
+    </resultMap>
+
+
+    <!-- 查询收件箱未读消息数 -->
+    <select id="selectUnreadNum"  resultType="java.lang.Integer">
+        select count(s.id)
+        from wsd_sys_message_user s
+        left join wsd_sys_message e on s.message_id = e.id
+        where s.del = 0
+        and s.recv_user = #{userId} and s.real_status = 0
+    </select>
+
+    <!-- 查询删除消息数 -->
+    <select id="selectDeletedNum" resultType="java.lang.Integer">
+        select count(distinct(e.id))
+        from wsd_sys_message e
+        left join wsd_sys_message_user s on s.message_id = e.id
+        where 1=1
+        and ((e.del = 1 and e.send_user = #{userId}) or (s.del = 1 and s.recv_user = #{userId}))
+    </select>
+
+    <select id="selectMyRecvMessageList" parameterType="java.util.Map" resultMap="MyNewestMessageVo">
+        select s.id,s.message_id,e.title,s.recv_time,
+            u.id as send_id,u.actu_name as send_name,e.type,e.claim_deal_type,
+            s.real_status,(case s.real_status when 0 then '未读' when 1 then '已读' else '空' end) as real_status_name,
+            s.collect,(case s.collect when 0 then '否' else '是' end) as collect_name
+        from wsd_sys_message_user s
+            left join wsd_sys_message e on s.message_id = e.id
+            left join wsd_sys_user u on u.id = e.send_user
+        where s.del = 0 and s.recv_user = #{userId} and s.real_status = 0
+        order by s.recv_time desc
+    </select>
+
+
+
+    <resultMap id="MyNewestMessageVo" type="com.wisdom.acm.sys.vo.MyNewestMessageVo">
+        <result column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <result column="title" property="title"/>
+        <result column="recv_time" property="recvTime"/>
+        <association property="sendUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="send_id" property="id" />
+            <result column="send_name" property="name"/>
+        </association>
+        <association property="type" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="type" property="id" />
+        </association>
+        <association property="source" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="source" property="id" />
+            <result column="source_name" property="name"/>
+        </association>
+        <association property="claimDealType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="claim_deal_type" property="id" />
+        </association>
+        <association property="collect" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="collect" property="id" />
+            <result column="collect_name" property="name"/>
+        </association>
+        <association property="realStatus" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="real_status" property="id" />
+            <result column="real_status_name" property="name"/>
+        </association>
+    </resultMap>
+</mapper>

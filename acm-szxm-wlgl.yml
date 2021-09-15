@@ -1,0 +1,2292 @@
+swagger: '2.0'
+info:
+  title: 物料管理
+  description: 苏州项目物料管理API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+  - http
+basePath: /api
+tags:
+  - name: classification
+    description: 物料分类
+  - name: inspection
+    description: 物料检测
+  - name: storage
+    description: 物料入库
+  - name: outstore
+    description: 物料出库
+  - name: inventory
+    description: 物料台账
+
+produces:
+  - application/json
+paths:
+  /szxm/wlgl/classification/add:
+    post:
+      tags:
+        - classification
+      summary: 增加物料分类
+      description: 增加物料分类
+      operationId: addClassification
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加物料分类
+          required: true
+          schema:
+            $ref: '#/definitions/ClassificationAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/delete:
+    delete:
+      tags:
+        - classification
+      summary: 删除物料分类
+      description: 删除物料分类
+      operationId: deleteClassification
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除物料分类
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/classification/update:
+    put:
+      tags:
+        - classification
+      summary: 修改物料分类
+      description:
+      operationId: updateClassification
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改的项目组织信息对象
+          required: true
+          schema:
+            $ref: '#/definitions/ClassificationUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/{id}:
+    get:
+      tags:
+        - classification
+      summary: 查询单个物料信息
+      description: 查询单个物料信息
+      operationId: getClassification
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - classification
+      summary: 查询物料分类信息
+      description: 查询项目和标段的物料分类
+      operationId: getClassificationList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: source
+          in: query
+          description: 物料来源 0:甲供 1:乙供
+          type: string
+          required: false
+        - name: needThirdInspection
+          in: query
+          description: 是否需要第三方检测
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 审批状态
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 物料编码/物料名称
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/list:
+    get:
+      tags:
+        - classification
+      summary: 查询物料分类信息--无分页
+      description: 查询物料分类信息--无分页
+      operationId: getClassList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: source
+          in: query
+          description: 物料来源 0:甲供 1:乙供
+          type: string
+          required: false
+        - name: needThirdInspection
+          in: query
+          description: 是否需要第三方检测
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 审批状态
+          type: string
+          required: false
+        - name: inspectionCode
+          in: query
+          description: 检测编码
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/getContractBySegCode:
+    get:
+      tags:
+        - classification
+      summary: 根据标段id查询合同列表
+      description: 根据标段id查询合同列表
+      operationId: getContractBySegCode
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GeneralVo'
+
+  /szxm/wlgl/classification/getContractListByCode:
+    get:
+      tags:
+        - classification
+      summary: 根据合同code获取物料列表
+      description: 根据合同code获取物料列表
+      operationId: getContractListByCode
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: contractCode
+          in: query
+          description: 合同编码
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/importWlflFromContract:
+    post:
+      tags:
+        - classification
+      summary: 批量导入合同物料清单
+      description: 批量导入合同物料清单
+      operationId: importWlflFromContract
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 批量导入合同物料清单
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/getFlowClassificationList:
+    get:
+      tags:
+        - classification
+      summary: 查询物料分类(流程用)
+      description: 查询物料分类(流程用)
+      operationId: getFlowClassificationList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 流程状态查询
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/classification/downwlflTemp:
+    post:
+      tags:
+        - classification
+      summary: 分类模板导出（格式为XSLX文件）
+      description: 分类模板导出（格式为XSLX文件）
+      operationId: downClassificationTemp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/classification/uploadwlflFile:
+    post:
+      tags:
+        - classification
+      summary: 分类导入
+      description: 分类导入
+      operationId: uploadClassificationFile
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionId
+          in: query
+          description: 标段ID
+          type: integer
+          required: false
+      responses:
+        200:
+          description: 操作（返回错误日志ID,errorId）
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/inspection/add:
+    post:
+      tags:
+        - inspection
+      summary: 增加检测信息
+      description: 增加检测信息
+      operationId: addInspection
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加检测信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/InspectionAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/InspectionVo'
+
+  /szxm/wlgl/inspection/delete:
+    delete:
+      tags:
+        - inspection
+      summary: 删除检测信息
+      description: 删除检测信息
+      operationId: deleteInspection
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除检测信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/inspection/update:
+    put:
+      tags:
+        - inspection
+      summary: 修改检测信息
+      description: 修改检测信息
+      operationId: updateInspection
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改检测信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/InspectionUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/InspectionVo'
+
+  /szxm/wlgl/inspection/{id}:
+    get:
+      tags:
+        - inspection
+      summary: 查询单个检测信息
+      description: 查询单个检测信息
+      operationId: getInspection
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/InspectionVo'
+
+  /szxm/wlgl/inspection/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - inspection
+      summary: 查询检测信息
+      description: 查询检测信息
+      operationId: getInspectionList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: inspectionType
+          in: query
+          description: 检测类型 0:开箱检验 1:进场报验
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 检测编码/检测名称
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InspectionVo'
+
+  /szxm/wlgl/inspection/list:
+    get:
+      tags:
+        - inspection
+      summary: 查询检测信息--无分页
+      description: 查询检测信息--无分页
+      operationId: getInspList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InspectionVo'
+
+  /szxm/wlgl/inspection/{inspectionCode}/getMaterialList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - inspection
+      summary: 查询检测物料明细
+      description: 查询检测明细
+      operationId: getMaterialList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: inspectionCode
+          in: path
+          description: 检测编码
+          type: integer
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClassificationVo'
+
+  /szxm/wlgl/inspectionRel/add:
+    post:
+      tags:
+        - inspection
+      summary: 增加检测明细
+      description: 增加检测明细
+      operationId: addInspectionRel
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加检测明细
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InspectionRelAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InspectionRelVo'
+
+  /szxm/wlgl/inspectionRel/delete:
+    delete:
+      tags:
+        - inspection
+      summary: 删除检测明细
+      description: 删除检测明细
+      operationId: deleteInspectionRel
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除检测明细
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/inspectionProgress/add:
+    post:
+      tags:
+        - inspection
+      summary: 增加检测进展信息
+      description: 增加检测进展信息
+      operationId: addInspectionProgress
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加检测进展信息
+          required: true
+          schema:
+            $ref: '#/definitions/InspectionProgressAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/InspectionProgressVo'
+
+  /szxm/wlgl/inspectionProgress/delete:
+    delete:
+      tags:
+        - inspection
+      summary: 删除检测进展信息
+      description: 删除检测进展信息
+      operationId: deleteInspectionProgress
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除物料分类
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/inspectionProgress/update:
+    put:
+      tags:
+        - inspection
+      summary: 修改检测进展信息
+      description: 修改检测进展信息
+      operationId: updateInspectionProgress
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改的项目组织信息对象
+          required: true
+          schema:
+            $ref: '#/definitions/InspectionProgressUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/InspectionProgressVo'
+
+  /szxm/wlgl/inspectionProgress/{inspectionCode}/list:
+    get:
+      tags:
+        - inspection
+      summary: 查询检测进展信息
+      description: 查询检测进展信息
+      operationId: getInspectionProgressList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: inspectionCode
+          in: path
+          description: 检测编码
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InspectionProgressVo'
+
+  /szxm/wlgl/storage/add:
+    post:
+      tags:
+        - storage
+      summary: 增加入库信息
+      description: 增加入库信息
+      operationId: addStorage
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加检测信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/StorageAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/StorageVo'
+
+  /szxm/wlgl/storage/delete:
+    delete:
+      tags:
+        - storage
+      summary: 删除入库信息
+      description: 删除入库信息
+      operationId: deleteStorage
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除入库与信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/storage/update:
+    put:
+      tags:
+        - storage
+      summary: 修改入库信息
+      description: 修改入库信息
+      operationId: updateStorage
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改入库信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/StorageUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/StorageVo'
+
+  /szxm/wlgl/storage/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - storage
+      summary: 查询入库信息
+      description: 查询入库信息
+      operationId: getStorageList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: storageDate
+          in: query
+          description: 入库日期
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 入库编号/入库名称
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StorageVo'
+
+  /szxm/wlgl/storageRel/update:
+    put:
+      tags:
+        - storage
+      summary: 修改入库明细
+      description:
+      operationId: updateStorageRel
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改入库明细入参
+          required: true
+          schema:
+            $ref: '#/definitions/StorageRelUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/StorageRelVo'
+
+  /szxm/wlgl/storage/{storageCode}/getStorageList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - storage
+      summary: 查询入库明细
+      description: 查询入库明细
+      operationId: getStorageList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: storageCode
+          in: path
+          description: 入库编码
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StorageRelVo'
+
+  /szxm/wlgl/outstore/add:
+    post:
+      tags:
+        - outstore
+      summary: 增加出库信息
+      description: 增加出库信息
+      operationId: addOutstore
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加出库信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/OutstoreAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/OutstoreVo'
+
+  /szxm/wlgl/outstore/delete:
+    delete:
+      tags:
+        - outstore
+      summary: 删除出库信息
+      description: 删除出库信息
+      operationId: deleteOutstore
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除入库与信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/outstore/update:
+    put:
+      tags:
+        - outstore
+      summary: 修改出库信息
+      description: 修改出库信息
+      operationId: updateOutstore
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改出库信息入参
+          required: true
+          schema:
+            $ref: '#/definitions/OutstoreUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/OutstoreVo'
+
+  /szxm/wlgl/outstore/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - outstore
+      summary: 查询出库信息
+      description: 查询出库信息
+      operationId: getOutstoreList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 出库编号/出库名称
+          type: string
+          required: false
+        - name: outstoreDate
+          in: query
+          description: 出库日期
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutstoreVo'
+
+  /szxm/wlgl/outstore/getCulist:
+    get:
+      tags:
+        - outstore
+      summary: 查询出库施工单位信息
+      description: 查询出库施工单位信息
+      operationId: getOutstoreCulist
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GeneralVoList'
+
+  /szxm/wlgl/outstore/{outstoreCode}/getOutstoreList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - outstore
+      summary: 查询出库明细
+      description: 查询出库明细
+      operationId: getOutstoreList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: outstoreCode
+          in: path
+          description: 出库编码
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutstoreRelVo'
+
+  /szxm/wlgl/outstoreRel/add:
+    post:
+      tags:
+        - outstore
+      summary: 批量增加检测明细
+      description: 批量增加检测明细
+      operationId: addOutstoreRel
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 批量增加检测明细入参
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutstoreRelAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutstoreRelVo'
+
+  /szxm/wlgl/outstoreRel/update:
+    put:
+      tags:
+        - outstore
+      summary: 修改出库物料明细
+      description: 修改出库物料明细
+      operationId: updateOutstoreRel
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改出库物料明细入参
+          required: true
+          schema:
+            $ref: '#/definitions/OutstoreRelUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/OutstoreRelVo'
+
+  /szxm/wlgl/outstoreRel/delete:
+    delete:
+      tags:
+        - outstore
+      summary: 删除出库明细
+      description: 删除出库明细
+      operationId: deleteOutstoreRel
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除出库明细id列表
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/wlgl/inventory/update4Storage:
+    put:
+      tags:
+        - inventory
+      summary: 入库时更新台账信息
+      description: 入库时更新台账信息
+      operationId: updateInventory4Storage
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 入库时台账信息列表
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Inventory4StorageUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/InventoryVo'
+
+  /szxm/wlgl/inventory/update4Outstore:
+    put:
+      tags:
+        - inventory
+      summary: 出库时更新台账信息
+      description: 出库时更新台账信息
+      operationId: updateInventory4Outstore
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 出库时台账信息列表
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Inventory4OutstoreUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/InventoryVo'
+
+  /szxm/wlgl/inventory/update:
+    put:
+      tags:
+        - inventory
+      summary: 修改台账信息
+      description: 修改台账信息
+      operationId: updateInventory
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改台账信息对象
+          required: true
+          schema:
+            $ref: '#/definitions/InventoryUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/InventoryVo'
+
+  /szxm/wlgl/inventory/{id}:
+    get:
+      tags:
+        - inventory
+      summary: 查询单个台账信息
+      description: 查询单个台账信息
+      operationId: getInventory
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/InventoryVo'
+
+  /szxm/wlgl/inventory/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - inventory
+      summary: 查询库存信息
+      description: 查询库存信息
+      operationId: getInventoryList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 物料编码/物料名称
+          type: string
+          required: false
+        - name: warehouse
+          in: query
+          description: 仓库地址
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InventoryVo'
+
+  /szxm/wlgl/inventory/list:
+    get:
+      tags:
+        - inventory
+      summary: 查询库存信息--无分页
+      description: 查询库存信息--无分页
+      operationId: getInventoryList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 物料编码/物料名称
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InventoryVo'
+
+  /szxm/wlgl/inventory/getMaterialRecordReport/export:
+    post:
+      tags:
+        - inventory
+      summary: 台账报表导出（格式为XSLX文件）
+      description: 台账报表导出（格式为XSLX文件）
+      operationId: export
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: ，多个以“,”相隔
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  ClassificationVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionName:
+        type: string
+        description: 标段名称
+      materialCode:
+        type: string
+        description: 物料编码
+      materialName:
+        type: string
+        description: 物料名称
+      source:
+        type: string
+        description: 来源
+      specification:
+        type: string
+        description: 规格型号
+      unit:
+        type: string
+        description: 计量单位
+      contractAmount:
+        type: integer
+        description: 合同数量
+      supplier:
+        type: string
+        description: 供应商
+      brand:
+        type: string
+        description: 品牌
+      needThirdInspectionVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否需要第三方检测 0:需要 1:不需要
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 审批状态 0:已审批 1:未审批
+      description:
+        type: string
+        description: 备注说明
+
+  ClassificationAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      materialName:
+        type: string
+        description: 物料名称
+      source:
+        type: string
+        description: 来源
+      specification:
+        type: string
+        description: 规格型号
+      unit:
+        type: string
+        description: 计量单位
+      contractAmount:
+        type: integer
+        description: 合同数量
+      supplier:
+        type: string
+        description: 供应商
+      brand:
+        type: string
+        description: 品牌
+      needThirdInspection:
+        type: string
+        description: 是否需要第三方检测
+      description:
+        type: string
+        description: 备注说明
+
+  ClassificationUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键编号
+      materialName:
+        type: string
+        description: 物料名称
+      source:
+        type: string
+        description: 来源
+      specification:
+        type: string
+        description: 规格型号
+      unit:
+        type: string
+        description: 计量单位
+      supplier:
+        type: string
+        description: 供应商
+      brand:
+        type: string
+        description: 品牌
+      needThirdInspection:
+        type: string
+        description: 是否需要第三方检测
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionName:
+        type: string
+        description: 标段名称
+      inspectionCode:
+        type: string
+        description: 检测编码
+      inspectionName:
+        type: string
+        description: 检测名称
+      inspectionCompany:
+        type: string
+        description: 检测单位
+      inspectionTime:
+        type: string
+        description: 检测日期
+      inspectionType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 检测类型：0:开箱检验 1：入场报验
+      status:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否通过
+      needThirdInspection:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 需要第三方检测
+      creat_time:
+        type: string
+        description: 创建时间
+      creator:
+        type: string
+        description: 创建人
+      inspector:
+        type: string
+        description: 检测员
+      sampler:
+        type: string
+        description: 取样员
+      uploader:
+        type: string
+        description: 上传单位
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      inspectionCode:
+        type: string
+        description: 检测编码
+      inspectionName:
+        type: string
+        description: 检测名称
+      inspectionCompany:
+        type: string
+        description: 检测单位
+      inspectionTime:
+        type: string
+        description: 检测时间
+      inspectionType:
+        type: string
+        description: 检测类型
+      status:
+        type: string
+        description: 是否通过
+      needThirdInspection:
+        type: string
+        description: 是否需要第三方检测
+      inspector:
+        type: string
+        description: 检测员
+      sampler:
+        type: string
+        description: 取样员
+      uploader:
+        type: string
+        description: 上传人员
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键编号
+      inspectionName:
+        type: string
+        description: 检测名称
+      inspectionCompany:
+        type: string
+        description: 检测单位
+      inspectionTime:
+        type: string
+        description: 检测时间
+      inspectionType:
+        type: string
+        description: 检测类型
+      status:
+        type: string
+        description: 是否通过
+      needThirdInspection:
+        type: string
+        description: 是否需要第三方检测
+      inspector:
+        type: string
+        description: 检测员
+      sampler:
+        type: string
+        description: 取样员
+      uploader:
+        type: string
+        description: 上传人员
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionRelAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      inspectionCode:
+        type: string
+        description: 检测编码
+      materialCode:
+        type: string
+        description: 物料编码
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionRelVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionName:
+        type: string
+        description: 标段名称
+      inspectionCode:
+        type: string
+        description: 检测编码
+      materialCode:
+        type: string
+        description: 物料编码
+      classificationVo:
+        type: object
+        $ref: '#/definitions/ClassificationVo'
+        description: 物料分类
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionProgressAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      inspectionCode:
+        type: string
+        description: 检测编码
+      progressComment:
+        type: string
+        description: 进展说明
+      status:
+        type: string
+        description: 进展状态
+      fileIds:
+        type: array
+        items:
+          type: integer
+          description: 文件id
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionProgressUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键id
+      progressComment:
+        type: string
+        description: 进展说明
+      status:
+        type: string
+        description: 进展状态
+      fileIds:
+        type: array
+        items:
+          type: integer
+          description: 文件id
+      description:
+        type: string
+        description: 备注说明
+
+  InspectionProgressVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionName:
+        type: string
+        description: 标段名称
+      inspectionCode:
+        type: string
+        description: 检测编码
+      progressComment:
+        type: string
+        description: 进展说明
+      status:
+        type: string
+        description: 进展状态
+      creator:
+        type: string
+        description: 创建人
+      creatTime:
+        type: string
+        description: 创建时间
+      fileCount:
+        type: integer
+        description: 文件数量
+      description:
+        type: string
+        description: 备注说明
+
+  StorageAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      storageName:
+        type: string
+        description: 入库名称
+      inspectionCode:
+        type: string
+        description: 检测编码
+      storagePosition:
+        type: string
+        description: 仓库位置
+      status:
+        type: string
+        description: 计量单位
+      storageDate:
+        type: string
+        description: 入库日期
+      description:
+        type: string
+        description: 备注说明
+
+  StorageUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键id
+      storageName:
+        type: string
+        description: 入库名称
+      inspectionCode:
+        type: string
+        description: 检测编码
+      storagePosition:
+        type: string
+        description: 仓库位置
+      storeDate:
+        type: string
+        description: 入库日期
+      status:
+        type: string
+        description: 入库状态
+      description:
+        type: string
+        description: 备注说明
+
+  StorageVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: integer
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      storageCode:
+        type: string
+        description: 入库编码
+      storageName:
+        type: string
+        description: 入库名称
+      inspectionCode:
+        type: string
+        description: 检测编码
+      storagePosition:
+        type: string
+        description: 仓库位置
+      sgdw:
+        type: string
+        description: 施工单位
+      storageDate:
+        type: string
+        description: 入库日期
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 入库状态 0:未入库 1:已入库
+      description:
+        type: string
+        description: 备注说明
+
+  StorageRelUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      quantity:
+        type: integer
+        description: 入库数量
+
+  StorageRelVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: integer
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      storageCode:
+        type: string
+        description: 入库编码
+      materialCode:
+        type: string
+        description: 物料编码
+      classificationVo:
+        type: object
+        $ref: '#/definitions/ClassificationVo'
+      quantity:
+        type: integer
+        description: 入库数量
+      description:
+        type: string
+        description: 备注说明
+
+  OutstoreAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      outstoreName:
+        type: string
+        description: 出库名称
+      builder:
+        type: string
+        description: 施工单位
+      description:
+        type: string
+        description: 备注说明
+
+  OutstoreUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键id
+      outstoreName:
+        type: string
+        description: 出库名称
+      outstoreDate:
+        type: string
+        description: 出库日期
+      status:
+        type: string
+        description: 出库状态
+      description:
+        type: string
+        description: 备注说明
+
+  OutstoreVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: integer
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      outstoreCode:
+        type: string
+        description: 出库编码
+      outstoreName:
+        type: string
+        description: 出库名称
+      sgdw:
+        type: string
+        description: 施工单位
+      storageDate:
+        type: string
+        description: 出库日期
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 入库状态 0:未入库 1:已入库
+      description:
+        type: string
+        description: 备注说明
+
+  OutstoreRelAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      outstoreCode:
+        type: string
+        description: 出库编码
+      materialCode:
+        type: string
+        description: 物料编码
+
+  OutstoreRelUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      quantity:
+        type: integer
+        description: 入库数量
+
+  OutstoreRelVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: integer
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      outstoreCode:
+        type: string
+        description: 出库编码
+      materialCode:
+        type: string
+        description: 物料编码
+      classificationVo:
+        type: object
+        $ref: '#/definitions/ClassificationVo'
+      quantity:
+        type: integer
+        description: 出库数量
+      description:
+        type: string
+        description: 备注说明
+
+  Inventory4StorageUpdateForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      sectionId:
+        type: integer
+        description: 标段id
+      storageCode:
+        type: string
+        description: 入库编码
+
+  Inventory4OutstoreUpdateForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      sectionId:
+        type: integer
+        description: 标段id
+      outstoreCode:
+        type: string
+        description: 出库编码
+
+  InventoryUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      updateTime:
+        type: string
+        description: 更新时间
+      thisWeekConsume:
+        type: integer
+        description: 本周消耗量
+      nextWeekPlanQuantity:
+        type: integer
+        description: 累计消耗量
+
+  InventoryVo:
+    properties:
+      id:
+        type: integer
+        description: 主键id
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: integer
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      materialCode:
+        type: string
+        description: 物料编码
+      storagePosition:
+        type: string
+        description: 仓库位置
+      thisWeekArrival:
+        type: integer
+        description: 本周到货量
+      thisWeekOutstore:
+        type: integer
+        description: 本周出库量
+      thisWeekConsume:
+        type: integer
+        description: 本周消耗量
+      contractAmount:
+        type: integer
+        description: 合同总量
+      totalArrival:
+        type: integer
+        description: 累计到货量
+      totalOutstore:
+        type: integer
+        description: 累计出库量
+      totalConsume:
+        type: integer
+        description: 累计消耗量
+      storageQuantity:
+        type: integer
+        description: 库存量
+      nextWeekPlanQuantity:
+        type: integer
+        description: 下周计划量
+      classificationVo:
+        type: object
+        $ref: '#/definitions/ClassificationVo'
+        description: 物料对象
+      warning:
+        type: string
+        description: 预警
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  GeneralVoList:
+    type: array
+    items:
+      type: object
+      $ref: '#/definitions/GeneralVo'
+      description: GeneralVoList

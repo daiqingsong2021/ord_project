@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseTmplTaskMapper">
+
+    <sql id="baseSelectSql">
+      select t.id,t.tmpl_id,t.parent_id,t.task_code,t.task_name,t.plan_drtn,t.plan_qty,t.plan_level,
+      e.dict_name level_name,t.plan_type,d.dict_name type_name,t.is_feedback,t.control_account,
+      t.task_type,f.dict_name tasktype_name,t.drtn_type, g.dict_name drtn_name, t.remark, t.status,
+      t.creat_time,t.creator, u.actu_name
+      from wsd_base_tmpltask t
+      left join wsd_sys_user u on t.creator = u.id
+      left join wsd_base_dict d on t.plan_type=d.dict_code and d.type_code='plan.define.plantype'
+      left join wsd_base_dict e on to_char(t.plan_level)=e.dict_code and e.type_code='plan.task.planlevel'
+      left join wsd_base_dict f on t.task_type=f.dict_code and f.type_code='plan.project.tasktype'
+      left join wsd_base_dict g on t.drtn_type=g.dict_code and g.type_code='plan.project.taskdrtntype'
+    </sql>
+
+    <resultMap id="baseTmplTaskVoMap" type="com.wisdom.acm.base.vo.tmpltask.BaseTmplTaskVo" >
+        <id column="id" property="id" />
+        <result column="tmpl_id" property="tmplId" />
+        <result column="parent_id" property="parentId" />
+        <result column="task_name" property="taskName" />
+        <result column="task_code" property="taskCode" />
+        <result column="plan_drtn" property="planDrtn" />
+        <result column="plan_qty" property="planQty" />
+        <result column="is_feedback" property="isFeedback" />
+        <result column="control_account" property="controlAccount" />
+        <result column="remark" property="remark" />
+        <result column="creat_time" property="creatTime" />
+        <association property="planType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="plan_type" property="id"></result>
+            <result column="type_name" property="name"></result>
+        </association>
+        <association property="planLevel" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="plan_level" property="id"></result>
+            <result column="level_name" property="name"></result>
+        </association>
+        <association property="taskType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="task_type" property="id"></result>
+            <result column="tasktype_name" property="name"></result>
+        </association>
+        <association property="drtnType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="drtn_type" property="id"></result>
+            <result column="drtn_name" property="name"></result>
+        </association>
+        <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="creator" property="id" />
+            <result column="actu_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectTmplTaskList" resultMap="baseTmplTaskVoMap">
+      <include refid="baseSelectSql"></include> order by t.sort_num,t.task_code
+    </select>
+
+
+    <select id="selectTmplTaskById" parameterType="int" resultMap="baseTmplTaskVoMap">
+        <include refid="baseSelectSql"></include>
+        where t.id = #{value}
+    </select>
+
+    <delete id="deleTmplTaskById">
+         delete from wsd_base_tmpltask  where tmpl_id = #{id}
+    </delete>
+
+    <select id="selectTmplTaskByTmplId" parameterType="int" resultMap="baseTmplTaskVoMap">
+        <include refid="baseSelectSql"></include>
+        where t.tmpl_id=#{value}
+    </select>
+
+</mapper>

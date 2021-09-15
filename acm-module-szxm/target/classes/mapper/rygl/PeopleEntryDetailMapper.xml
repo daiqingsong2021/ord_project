@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.PeopleEntryDetailMapper">
+
+    <resultMap id="peopleEntryDetailVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleEntryDetailVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="name" column="name"/>
+        <result property="telPhone" column="telphone"/>
+        <result property="idCard" column="id_card"/>
+        <result property="classHour" column="class_hour"/>
+        <result property="bornDate" column="born_date"/>
+        <result property="gzkh" column="gzkh"/>
+        <result property="score" column="score"/>
+        <result property="entryType" column="entry_type"/>
+        <result property="orgName" column="org_name"/>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type"/>
+            <result property="name" column="type_name"/>
+        </association>
+        <association property="sexVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="sex"/>
+            <result property="name" column="sex_name"/>
+        </association>
+        <association property="peoTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="peo_type"/>
+            <result property="name" column="peo_type_name"/>
+        </association>
+        <association property="jobVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="job"/>
+            <result property="name" column="job"/>
+        </association>
+    </resultMap>
+
+    <select id="selectPeopleEntryDetail" parameterType="java.util.Map" resultMap="peopleEntryDetailVo">
+        SELECT a.*,
+        (case a.peo_type
+        when '0' then
+        '分包'
+        when '1' then
+        '自有'
+        end) as peo_type_name,
+        dt.dict_name as type_name,
+        (case a.sex
+        when '0' then
+        '女'
+        when '1' then
+        '男'
+        end) as sex_name,
+        b.proj_info_id
+        FROM szxm_rygl_people_entrydetail a
+        left join szxm_rygl_people_entry b
+        on a.entry_id = b.id
+        left join wsd_base_dict dt
+        on a.type = dt.dict_code
+        and dt.TYPE_CODE = 'szxm.rygl.peopleType'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND ((a.name like '%'|| #{searcher} || '%') or (a.telphone like '%'|| #{searcher} || '%'))
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="entryId != null and entryId != '' ">
+                AND a.entry_id =#{entryId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                AND a.section_id =#{sectionId}
+            </if>
+            <if test="job != null and job != '' ">
+                AND a.job =#{job}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="selectEntryDetail" parameterType="java.util.Map" resultMap="peopleEntryDetailVo">
+         SELECT a.*,
+         b.type entry_type, b.org_name
+         FROM szxm_rygl_people_entrydetail a
+         left join szxm_rygl_people_entry b
+         on a.entry_id = b.id
+        <where>
+            <if test="idCard != null and idCard != '' ">
+                AND a.id_card = #{idCard}
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="idCards != null">
+                AND a.id_card IN
+                <foreach collection="idCards" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+       order by b.creat_time desc
+    </select>
+</mapper>
+

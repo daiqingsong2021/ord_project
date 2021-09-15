@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.TrainMonthlyMapper">
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultType="com.wisdom.acm.dc2.po.TrainMonthlyPo">
+        SELECT    a.*    FROM  odr_train_monthly a
+        <where>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="recordTime != null and recordTime != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{recordTime}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+
+</mapper>
+

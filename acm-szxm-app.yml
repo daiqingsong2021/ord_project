@@ -1,0 +1,680 @@
+swagger: '2.0'
+info:
+  title: 苏州项目 - 移动端 API
+  description: 苏州项目 - 移动端 API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: org
+  description: 组织信息
+- name: holiday
+  description: 请假管理
+- name: addressBook
+  description: 通讯录
+- name: SecurityCheck
+  description: 安全检查
+
+produces:
+- application/json
+paths:
+  /szxm/app/org/queryOrgInfo/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - org
+      summary: 查询组织信息
+      description: 查询组织信息
+      operationId: queryOrgInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: orgName
+          in: query
+          description: 查询条件 组织名称
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OrgInfoVo'
+
+  /szxm/app/org/{orgId}/queryOrgMap:
+    get:
+      tags:
+      - org
+      summary: 查询项目地图
+      description: 查询项目地图
+      operationId: queryOrgMap
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: orgId
+        in: query
+        description: 组织ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+              $ref: '#/definitions/OrgMapVo'
+
+  /szxm/app/addressBook/addCommonlyUsedUser:
+    post:
+      tags:
+      - addressBook
+      description: 增加常用联系人
+      summary: 增加常用联系人
+      operationId: addCommonlyUsedUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 增加常用联系人
+        required: true
+        schema:
+          $ref: '#/definitions/CommonlyUsedUserAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+              $ref: '#/definitions/ApiResult'
+
+  /szxm/app/addressBook/queryCommonlyUsedUser:
+    get:
+      tags:
+      - addressBook
+      summary: 查询常用联系人
+      description: 查询常用联系人
+      operationId: queryCommonlyUsedUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            $ref: '#/definitions/ContactsUserVo'
+
+  /szxm/app/addressBook/queryInnerPeople/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - addressBook
+      summary: 查询内部通讯录单位人员
+      description: 查询内部通讯录单位人员
+      operationId: queryInnerPeople
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目ID
+        type: integer
+        required: true
+      - name: contactsName
+        in: query
+        description: 联系人姓名
+        type: string
+        required: false
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            $ref: '#/definitions/ContactsUserVo'
+
+  /szxm/app/addressBook/queryOuterOrg:
+    get:
+      tags:
+      - addressBook
+      summary: 查询外部通讯录单位组织机构
+      description: 查询外部通讯录单位组织机构
+      operationId: queryOuterOrg
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            $ref: '#/definitions/OrgInfoVo'
+
+  /szxm/app/addressBook/queryOuterUserByOrgId/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - addressBook
+      summary: 查询外部通讯录 根据组织ID查人员
+      description: 查询外部通讯录 根据组织ID查人员
+      operationId: queryOuterUserByOrgId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目ID
+        type: integer
+        required: true
+      - name: orgId
+        in: query
+        description: 所选组织ID
+        type: string
+        required: true
+      - name: orgName
+        in: query
+        description: 所选组织名称
+        type: string
+        required: true
+      - name: source
+        in: query
+        description: 所选组织来源 0 人员管理，1 项目团队
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            $ref: '#/definitions/ContactsUserVo'
+
+
+  /szxm/rygl/attenter/addHoliday:
+    post:
+      tags:
+      - holiday
+      summary: 增加请假
+      description: 增加请假
+      operationId: addHoliday
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 增加请假
+        required: true
+        schema:
+          $ref: '#/definitions/HolidayAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/HolidayVo'
+
+  /szxm/rygl/attenter/getHolidayDay:
+    get:
+      tags:
+      - holiday
+      summary: 获得请假天数
+      description: 获得请假天数
+      operationId: getHolidayDay
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目ID
+        required: true
+        type: integer
+      - name: sectionId
+        in: query
+        description: 标段ID
+        required: true
+        type: integer
+      - name: startTime
+        in: query
+        description: 开始时间
+        required: true
+        type: string
+      - name: endTime
+        in: query
+        description: 结束时间
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作 ,取值days，为请假天数
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/rygl/attenter/getHoliday/{id}:
+    get:
+      tags:
+      - attenter
+      summary: 查询单个请假对象信息
+      description: 查询单个请假对象信息
+      operationId: getHoliday
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 主键ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description:
+          schema:
+            $ref: '#/definitions/HolidayVo'
+
+  /szxm/app/securityCheck/queryMoveSecurityCheckList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - securityCheck
+      summary: 移动端查询安全检查数据列表
+      description: 移动端查询安全检查数据列表
+      operationId: queryMoveSecurityCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: type
+          in: query
+          description: （0是创建人的，1是负责人的）
+          type: string
+        - name: jclx
+          in: query
+          description: 检查类型
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityCheckVo'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  OrgInfoVo:
+    properties:
+      orgId:
+        type: integer
+        description: 组织ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionCode:
+        type: string
+        description: 标段编号
+      sectionName:
+        type: string
+        description: 标段名称
+      orgName:
+        type: string
+        description: 组织名称
+      telPhone:
+        type: string
+        description: 联系电话
+      leader:
+        type: string
+        description: 分管项目部领导
+      source:
+        type: string
+        description: 来源 0 人员管理 1 项目团队
+
+
+
+  ContactsUserVo:
+    properties:
+      contactsId:
+        type: integer
+        description: 联系人ID
+      contactsName:
+        type: integer
+        description: 联系人姓名
+      contactsDept:
+        type: integer
+        description: 联系人部门
+      job:
+        type: integer
+        description: 联系人职务
+      telPhone:
+        type: integer
+        description: 联系人电话
+      source:
+        type: integer
+        description: 联系人来源 0 人员信息 1 项目团队
+
+  CommonlyUsedUserAddForm:
+    properties:
+      contactsId:
+        type: integer
+        description: 联系人ID 必填
+      contactsName:
+        type: integer
+        description: 联系人姓名 必填
+      contactsDept:
+        type: integer
+        description: 联系人部门 必填
+      job:
+        type: integer
+        description: 联系人职务
+      telPhone:
+        type: integer
+        description: 联系人电话
+      source:
+        type: integer
+        description: 联系人来源 0 人员信息 1 项目团队
+
+  OrgMapVo:
+    properties:
+      name:
+        description: 名称信息[name1,name2,name3]
+        type: array
+        items:
+          type: string
+          description: 信息
+      address:
+        description: 地址信息[address1,address2,address3]
+        type: array
+        items:
+          type: string
+          description: 信息
+      type:
+        description: 类型[type1,type2,type3]
+        type: array
+        items:
+          type: string
+          description: 0仓库 1调试平台
+
+  HolidayAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id(必填项)
+      sectionId:
+        type: integer
+        description: 标段Id(必填项)
+      peopleId:
+        type: integer
+        description: 人员Id(必填项)
+      peopleName:
+        type: string
+        description: 人员名称(必填项)
+      orgName:
+        type: string
+        description: 组织机构名称(必填项)
+      type:
+        type: string
+        description: 请假类别（必填项 数据字典szxm.rygl.holitype）
+      startTime:
+        type: string
+        description: 开始时间(必填项 yyyy-MM-dd)
+      endTime:
+        type: string
+        description: 结束时间(必填项 yyyy-MM-dd)
+      days:
+        type: integer
+        description: 请假天数
+      reason:
+        type: string
+        description: 请假原因
+
+  HolidayVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段ID
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      serialId:
+        type: string
+        description: 编号
+      peopleId:
+        type: integer
+        description: 请假人员ID
+      peopleName:
+        type: string
+        description: 请假人员名称
+      orgName:
+        type: string
+        description: 组织机构名称
+      startTime:
+        type: string
+        description: 开始时间
+      endTime:
+        type: string
+        description: 完成时间
+      days:
+        type: integer
+        description: 请假天数
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 请假类型VO 数据字典(szxm.rygl.holitype)
+      reason:
+        type: string
+        description: 请假原因
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  SecurityCheckVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      code:
+        type: string
+        description: 检查编号
+      gcmc:
+        type: string
+        description: 检查标题
+      jclxVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 检查类型（数字字典）
+      zgzrrId:
+        type: integer
+        description: 整改责任人ID
+      zgzrrName:
+        type: string
+        description: 整改责任人姓名
+      zgzrrPosition:
+        type: string
+        description: 整改责任人身份
+      jcsx:
+        type: string
+        description: 检查时限
+      creatTime:
+        type: string
+        description: 表创建时间
+      checkContent:
+        type: string
+        description: 检查内容
+      isTestCheckVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否考评检查
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionName:
+        type: string
+        description: 标段名称
+      projectName:
+        type: string
+        description: 项目名称
+      sjdw:
+        type: string
+        description: 受检单位
+      zgzrrOrgId:
+        type: integer
+        description: 整改责任人orgID
+      constructionContent:
+        type: string
+        description: 现场主要施工内容
+      stationPoint:
+        type: string
+        description: 站点
+      sectionNames:
+        type: string
+        description: 多个标段的数据
+      checkStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 检查形式(0个人检查1组织检查)
+      checkLocation:
+        type: string
+        description: 检查地点
+      bhNums:
+        type: string
+        description: 问题闭环个数
+      wbhNums:
+        type: string
+        description: 问题未闭环个数
+      wtNums:
+        type: string
+        description: 问题个数
+

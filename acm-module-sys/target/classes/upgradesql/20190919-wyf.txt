@@ -1,0 +1,2 @@
+alter table wsd_sys_user add(user_code varchar2(250));
+update wsd_sys_user set user_code=user_name;

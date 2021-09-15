@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.wf.mapper.WfDelegateMapper">
+
+    <resultMap id="WfDelegateVoMap" type="com.wisdom.acm.wf.vo.WfDelegateVo">
+        <result column="id" property="id" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="global" property="global" />
+        <result column="enable" property="enable" />
+        <result column="remarks" property="remark" />
+        <association property="assignee" javaType="com.wisdom.base.common.vo.sys.UserVo">
+            <result property="id" column="assignee" />
+            <result property="code" column="assignee_code" />
+            <result property="name" column="assignee_name" />
+        </association>
+        <association property="attorney" javaType="com.wisdom.base.common.vo.sys.UserVo">
+            <result property="id" column="attorney" />
+            <result property="code" column="attorney_code" />
+            <result property="name" column="attorney_name" />
+        </association>
+    </resultMap>
+
+    <sql id="baseSql">
+        select d.id,d.start_time,d.end_time,d.global,d.enable,d.remarks,
+        d.assignee,u1.user_name assignee_code,u1.actu_name assignee_name,
+        d.attorney,u2.user_name attorney_code,u2.actu_name attorney_name
+        from wsd_wf_delegate d
+        left join wsd_sys_user u1 on u1.id = d.assignee
+        left join wsd_sys_user u2 on u2.id = d.attorney
+    </sql>
+
+    <select id="selectWfDelegateInfo" resultMap="WfDelegateVoMap">
+        <include refid="baseSql"/>
+        where d.id = #{id}
+    </select>
+
+    <select id="selectWfDelegateVosByIds" resultMap="WfDelegateVoMap">
+        <include refid="baseSql"/>
+        where d.id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectWfDelegateVosByBizTypeCode" resultMap="WfDelegateVoMap">
+        select d.id, d.start_time, d.end_time, d.global, d.enable,d.remarks,
+        d.assignee, d.attorney, u.user_name attorney_code, u.actu_name attorney_name
+        from wsd_wf_delegate d
+        left join wsd_sys_user u on u.id = d.attorney
+        where d.enable = 1 and d.start_time &lt;= #{dateTime} and d.end_time &gt;= #{dateTime}
+        and d.assignee in
+        <foreach collection="assignees" item="assignee" open="(" separator="," close=")">
+            #{assignee}
+        </foreach>
+        and (d.global = 1 or d.id in(select p.delegate_id from wsd_wf_delegate_proc p where p.biz_type_code=#{bizTypeCode}))
+    </select>
+
+</mapper>

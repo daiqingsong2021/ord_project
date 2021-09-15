@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.FbzydMapper">
+
+    <resultMap id="fbzydVo" type="com.wisdom.acm.szxm.vo.rygl.FbzydVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="residentNum" column="resident_num"/>
+        <result property="houseCharacter" column="house_character"/>
+        <result property="houseArea" column="house_area"/>
+        <result property="creater" column="creater"/>
+        <result property="createTime" column="creat_time"/>
+    </resultMap>
+
+    <resultMap id="sectionWorkteam" type="com.wisdom.acm.szxm.vo.rygl.FbzydVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="residentNum" column="resident_num"/>
+        <result property="houseCharacter" column="house_character"/>
+        <result property="houseArea" column="house_area"/>
+        <result property="creater" column="creater"/>
+        <result property="teamLeader" column="teamLeader"/>
+        <result property="telPhone" column="telphone"/>
+
+    </resultMap>
+
+    <select id="selectFbzydList" parameterType="java.util.Map" resultMap="fbzydVo">
+        select a.*,u.ACTU_NAME as creater from szxm_rygl_fbzyd a
+        left join wsd_sys_user u on u.id=a.creator
+        <where>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.PROJ_INFO_ID = #{projInfoId}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="selectSectionWorkteamList" parameterType="java.util.Map" resultMap="sectionWorkteam">
+        Select a.*,p.name as teamLeader,p.telphone
+        From Szxm_Rygl_Fbzyd a
+        Left Join  Szxm_Rygl_People p
+        On a.proj_info_id =p.proj_info_id
+        Left Join Wsd_Base_Dict Dt
+        On p.Type = Dt.Dict_Code
+        And Dt.Type_Code = 'szxm.rygl.peopleType'
+
+        <where>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND dt.dict_code = #{dictCode}
+            </if>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.PROJ_INFO_ID = #{projInfoId}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+</mapper>
+

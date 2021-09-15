@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.OperationAuditMapper">
+
+    <select id="selectOperationAudit" resultType="com.wisdom.acm.sys.vo.SysOperationAuditVo" parameterType="java.util.Map">
+        select s.id,s.application_name applicationName,
+        s.exception,
+        s.ip_address ipAddress,
+        s.logger_type loggerType,
+        s.operation_desc operationDesc,
+        s.operation_name operationName,
+        s.operation_result operationResult,
+        s.creat_time creatTime,
+        u.user_name userName,
+        u.actu_name actuName,
+        s.module_name moduleName
+        from wsd_sys_operation_audit s
+        left join wsd_sys_user u on u.id = s.operation_user
+        <where>
+            <if test="searchMap.startTime != null and searchMap.startTime != ''">
+                and s.creat_time &gt;= str_to_date(#{searchMap.startTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="searchMap.endTime != null and searchMap.endTime != ''">
+                and s.creat_time &lt;= str_to_date(#{searchMap.endTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="searchMap.thisStartTime != null and searchMap.thisStartTime != ''">
+                and s.creat_time &gt;= str_to_date(#{searchMap.thisStartTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="searchMap.thisEndTime != null and searchMap.thisEndTime != ''">
+                and s.creat_time &lt;= str_to_date(#{searchMap.thisEndTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="searchMap.searcher != null and searchMap.searcher != ''">
+               and (s.logger_type like concat('%',#{searchMap.searcher},'%')
+                or
+                s.module_name like concat('%',#{searchMap.searcher},'%'))
+            </if>
+            order by s.creat_time desc
+        </where>
+    </select>
+</mapper>

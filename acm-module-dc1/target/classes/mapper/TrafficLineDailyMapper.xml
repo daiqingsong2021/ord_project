@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc1.mapper.TrafficLineDailyMapper">
+    <resultMap id="trafficLineDailyVo" type="com.wisdom.acm.dc1.vo.TrafficLineDailyVo">
+        <id property="id" column="id"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="sortNum" column="sort_num"/>
+        <result property="creator" column="creator"/>
+        <result property="line" column="line"/>
+        <result property="linePeriod" column="line_period"/>
+        <result property="arrivalVolume" column="arrival_volume"/>
+        <result property="outboundVolume" column="outbound_volume"/>
+        <result property="transferVolume" column="transfer_volume"/>
+        <result property="trafficVolume" column="traffic_volume"/>
+        <result property="trafficVolumeMonth" column="trafficVolumeMonth"/>
+        <result property="trafficVolumeMonthAverage" column="trafficVolumeMonthAverage"/>
+        <result property="trafficVolumeYear" column="trafficVolumeYear"/>
+        <result property="trafficVolumeYearAverage" column="trafficVolumeYearAverage"/>
+        <result property="trafficVolumeOpen" column="trafficVolumeOpen"/>
+        <result property="trafficVolumeOpenAverage" column="trafficVolumeOpenAverage"/>
+        <result property="maxVolume" column="maxVolume"/>
+        <result property="recordTime" column="recordTime"/>
+    </resultMap>
+    <select id="queryTrafficLineList" parameterType="java.util.Map" resultMap="trafficLineDailyVo">
+         SELECT
+                    a.id AS id,
+                    a.creat_time AS creatTime,
+                    a.sort_num AS sortNum,
+                    a.creator AS creator,
+                    a.line AS line,
+                    a.line_period AS linePeriod,
+                    a.arrival_volume AS arrivalVolume,
+                    a.outbound_volume AS outboundVolume,
+                    a.transfer_volume AS transferVolume,
+                    a.traffic_volume AS trafficVolume,
+                    a.traffic_volume_month AS trafficVolumeMonth,
+                    a.traffic_volume_month_average AS trafficVolumeMonthAverage,
+                    a.traffic_volume_year AS trafficVolumeYear,
+                    a.traffic_volume_year_average AS trafficVolumeYearAverage,
+                    a.traffic_volume_open AS trafficVolumeOpen,
+                    a.traffic_volume_open_average AS trafficVolumeOpenAverage
+         FROM       odr_traffic_line_daily a
+        <where>
+            <if test="line != null and line != '' ">
+                AND A.line =#{line}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.init_time <![CDATA[  <= ]]> to_date(#{endTime},'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.init_time <![CDATA[  >= ]]> to_date(#{startTime},'yyyy-MM-dd')
+            </if>
+        </where>
+                    order by a.creat_time desc
+    </select>
+    <delete id="delTrafficLineByDates" parameterType="java.lang.String">
+        DELETE FROM odr_traffic_line_daily
+        <where>
+            record_time IN
+            <foreach collection="recordTimes" item="date" open="(" close=")"
+                     separator=",">
+                #{date}
+            </foreach>
+        </where>
+    </delete>
+    <select id="queryTrafficLineNetWorkList" parameterType="java.util.Map" resultMap="trafficLineDailyVo">
+        SELECT
+        a.creat_time AS creatTime,
+        a.RECORD_TIME as recordTime,
+        a.sort_num AS sortNum,
+        a.creator AS creator,
+        a.line_period AS linePeriod,
+        (select sum(a.arrival_volume) from odr_traffic_line_daily a1 where a.CREAT_TIME=a1.CREAT_TIME)  AS arrivalVolume,
+        (select sum(a.outbound_volume) from odr_traffic_line_daily a2 where a.CREAT_TIME=a2.CREAT_TIME) AS outboundVolume,
+        (select sum(a.transfer_volume) from odr_traffic_line_daily a3 where a.CREAT_TIME=a3.CREAT_TIME) AS transferVolume,
+        (select sum(a.traffic_volume) from odr_traffic_line_daily a4 where a.CREAT_TIME=a4.CREAT_TIME) AS trafficVolume,
+        (select sum(a.traffic_volume_month) from odr_traffic_line_daily a5 where a.CREAT_TIME=a5.CREAT_TIME) AS trafficVolumeMonth,
+        (select avg(a.traffic_volume_month_average) from odr_traffic_line_daily a6 where a.CREAT_TIME=a6.CREAT_TIME) AS trafficVolumeMonthAverage,
+        (select sum(a.traffic_volume_year) from odr_traffic_line_daily a7 where a.CREAT_TIME=a7.CREAT_TIME) AS trafficVolumeYear,
+        (select avg(a.traffic_volume_year_average) from odr_traffic_line_daily a8 where a.CREAT_TIME=a8.CREAT_TIME) AS trafficVolumeYearAverage,
+        (select sum(a.traffic_volume_open) from odr_traffic_line_daily a9 where a.CREAT_TIME=a9.CREAT_TIME) AS trafficVolumeOpen,
+        (select avg(a.traffic_volume_open_average) from odr_traffic_line_daily a10 where a.CREAT_TIME=a10.CREAT_TIME)  AS trafficVolumeOpenAverage
+        from    odr_traffic_line_daily a
+        <where>
+            <if test="endTime != null and endTime != '' ">
+                AND a.init_time <![CDATA[  <= ]]> to_date(#{endTime},'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.init_time <![CDATA[  >= ]]> to_date(#{startTime},'yyyy-MM-dd')
+            </if>
+        </where>
+        order by a.creat_time desc
+    </select>
+    <select id="queryMaxTrafficVolume" parameterType="java.util.Map" resultMap="trafficLineDailyVo">
+        SELECT
+        max(a.TRAFFIC_VOLUME) AS maxVolume,
+        a.RECORD_TIME as recordTime,
+        a.id AS id,
+        a.creat_time AS creatTime,
+        a.sort_num AS sortNum,
+        a.creator AS creator,
+        a.line AS line,
+        a.line_period AS linePeriod,
+        a.arrival_volume AS arrivalVolume,
+        a.outbound_volume AS outboundVolume,
+        a.transfer_volume AS transferVolume,
+        a.traffic_volume AS trafficVolume,
+        a.traffic_volume_month AS trafficVolumeMonth,
+        a.traffic_volume_month_average AS trafficVolumeMonthAverage,
+        a.traffic_volume_year AS trafficVolumeYear,
+        a.traffic_volume_year_average AS trafficVolumeYearAverage,
+        a.traffic_volume_open AS trafficVolumeOpen,
+        a.traffic_volume_open_average AS trafficVolumeOpenAverage
+        FROM       odr_traffic_line_daily a
+        <where>
+            <if test="yearMonth != null and yearMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{yearMonth}
+            </if>
+        </where>
+        group by  a.line
+    </select>
+</mapper>

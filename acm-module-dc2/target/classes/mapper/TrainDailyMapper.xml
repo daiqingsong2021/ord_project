@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.TrainDailyMapper">
+
+    <resultMap id="trainDailyVo" type="com.wisdom.acm.dc2.vo.TrainDailyVo">
+        <result property="id" column="id"/>
+        <result property="recordTime" column="RECORD_TIME" />
+        <result property="line" column="LINE"/>
+        <result property="scheduleId" column="SCHEDULE_ID" />
+        <result property="actualOperatingColumn" column="ACTUAL_OPERATING_COLUMN" />
+        <result property="fulfillmentRate" column="FULFILLMENT_RATE" />
+        <result property="onTimeRate" column="ON_TIME_RATE" />
+        <result property="arriveEarlyColumn" column="ARRIVE_EARLY_COLUMN" />
+        <result property="arriveLateColumn" column="ARRIVE_LATE_COLUMN" />
+        <result property="arriveOntimeColumn" column="ARRIVE_ONTIME_COLUMN" />
+        <result property="deadheadKilometres" column="DEADHEAD_KILOMETRES" />
+        <result property="carryingKilometres" column="CARRYING_KILOMETRES" />
+        <result property="operatingKilometres" column="OPERATING_KILOMETRES" />
+        <result property="startingLateColumn_2_5" column="STARTING_LATE_COLUMN_2_5" />
+        <result property="endingLateColumn_2_5" column="ENDING_LATE_COLUMN_2_5" />
+        <result property="startingLateColumn_5_10" column="STARTING_LATE_COLUMN_5_10" />
+        <result property="endingLateColumn_5_10" column="ENDING_LATE_COLUMN_5_10" />
+        <result property="startingLateColumn_10_15" column="STARTING_LATE_COLUMN_10_15"/>
+        <result property="endingLateColumn_10_15" column="ENDING_LATE_COLUMN_10_15"/>
+        <result property="startingLateColumn_15" column="STARTING_LATE_COLUMN_15"/>
+        <result property="endingLateColumn_15" column="ENDING_LATE_COLUMN_15" />
+        <result property="columnJk" column="COLUMN_JK" />
+        <result property="columnJy" column="COLUMN_JY" />
+        <result property="columnTt" column="COLUMN_TT" />
+        <result property="columnCx" column="COLUMN_CX" />
+        <result property="columnXx" column="COLUMN_XX"/>
+        <result property="columnQk" column="COLUMN_QK"/>
+        <result property="columnYy" column="COLUMN_YY"/>
+        <result property="reviewer" column="REVIEWER"/>
+        <result property="description" column="DESCRIPTION" />
+        <result property="creatTime" column="creat_time"/>
+        <result property="useCar" column="USE_CAR"/>
+        <result property="spareCar" column="SPARE_CAR"/>
+        <result property="debugCar" column="DEBUG_CAR"/>
+        <result property="inspectionCar" column="INSPECTION_CAR"/>
+        <result property="other" column="OTHER"/>
+        <result property="lineName" column="line_name"/>
+        <result property="dayLate" column="DAY_LATE"/>
+        <association property="createrVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="creator"/>
+            <result property="name" column="ACTU_NAME"/>
+        </association>
+        <association property="reviewStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="REVIEW_STATUS"/>
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="trainScheduleVo" javaType="com.wisdom.acm.dc2.vo.TrainScheduleVo">
+            <result property="scheduleCode" column="SCHEDULE_CODE"/>
+            <result property="maxOnlineTrain" column="MAX_ONLINE_TRAIN"/>
+            <result property="minDrivingInterval" column="MIN_DRIVING_INTERVAL"/>
+            <result property="standbyTrain" column="STANDBY_TRAIN"/>
+            <result property="plannedOperationColumn" column="PLANNED_OPERATION_COLUMN"/>
+            <result property="line" column="SCHEDULE_LINE"/>
+            <result property="startStation" column="START_STATION"/>
+            <result property="endStation" column="END_STATION"/>
+            <result property="startDriveTime" column="START_DRIVE_TIME"/>
+            <result property="endDriveTime" column="END_DRIVE_TIME"/>
+        </association>
+
+    </resultMap>
+
+
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="trainDailyVo">
+        SELECT
+        a.*, s.SCHEDULE_CODE,s.MAX_ONLINE_TRAIN,s.MIN_DRIVING_INTERVAL,s.STANDBY_TRAIN,s.PLANNED_OPERATION_COLUMN,s.LINE as SCHEDULE_LINE,
+        s.START_STATION,s.END_STATION,s.START_DRIVE_TIME,s.END_DRIVE_TIME,
+        (case a.review_status
+        when 'INIT' then '新建'
+        when 'REJECT' then '被驳回'
+        when 'APPROVAL' then '审批中'
+        when 'APPROVED' then '已发布' end    ) as status_name ,dt.dict_name as line_name,u.ACTU_NAME as ACTU_NAME
+        FROM  odr_train_daily a
+        LEFT JOIN odr_train_schedule s ON a.SCHEDULE_ID = s.ID
+        LEFT JOIN wsd_sys_user u ON a.CREATOR = u.ID
+        left join wsd_base_dict dt
+        on a.line = dt.dict_code and dt.TYPE_CODE = 'line'
+        <where>
+            <if test="scheduleCode != null and scheduleCode != '' ">
+                AND a.SCHEDULE_CODE =#{scheduleCode}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="checkReviewStatus != null and checkReviewStatus != '' ">
+                AND a.REVIEW_STATUS !=#{checkReviewStatus}
+            </if>
+            <if test="reviewStatus != null and reviewStatus != '' ">
+                AND a.review_status =#{reviewStatus}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="lines != null and lines != '' ">
+                AND a.line in
+                <foreach collection="lines" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="checkCreatTime != null and checkCreatTime != '' ">
+                AND a.RECORD_TIME =str_to_date(#{checkCreatTime},'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  <= ]]> str_to_date(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  >= ]]> str_to_date(#{startTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.RECORD_TIME desc
+    </select>
+
+    <select id="selectByMonthRecordTime" parameterType="java.util.Map" resultMap="trainDailyVo">
+        SELECT
+        SUM(s.PLANNED_OPERATION_COLUMN) as PLANNED_OPERATION_COLUMN,
+        SUM(a.ACTUAL_OPERATING_COLUMN) as ACTUAL_OPERATING_COLUMN,
+        AVG(a.FULFILLMENT_RATE) as FULFILLMENT_RATE,
+        AVG(a.ON_TIME_RATE) as ON_TIME_RATE,
+        SUM(a.ARRIVE_EARLY_COLUMN) as ARRIVE_EARLY_COLUMN,
+        SUM(a.ARRIVE_LATE_COLUMN) as ARRIVE_LATE_COLUMN,
+        SUM(a.ARRIVE_ONTIME_COLUMN) as ARRIVE_ONTIME_COLUMN,
+        SUM(a.DEADHEAD_KILOMETRES) as DEADHEAD_KILOMETRES,
+        SUM(a.CARRYING_KILOMETRES) as CARRYING_KILOMETRES,
+        SUM(a.OPERATING_KILOMETRES) as OPERATING_KILOMETRES,
+        SUM(a.STARTING_LATE_COLUMN_2_5) as STARTING_LATE_COLUMN_2_5,
+        SUM(a.ENDING_LATE_COLUMN_2_5) as ENDING_LATE_COLUMN_2_5,
+        SUM(a.STARTING_LATE_COLUMN_5_10) as STARTING_LATE_COLUMN_5_10,
+        SUM(a.ENDING_LATE_COLUMN_5_10) as ENDING_LATE_COLUMN_5_10,
+        SUM(a.STARTING_LATE_COLUMN_10_15) as STARTING_LATE_COLUMN_10_15,
+        SUM(a.ENDING_LATE_COLUMN_10_15) as ENDING_LATE_COLUMN_10_15,
+        SUM(a.STARTING_LATE_COLUMN_15) as STARTING_LATE_COLUMN_15,
+        SUM(a.ENDING_LATE_COLUMN_15) as ENDING_LATE_COLUMN_15,
+        SUM(a.COLUMN_JK) as COLUMN_JK,
+        SUM(a.COLUMN_JY) as COLUMN_JY,
+        SUM(a.COLUMN_TT) as COLUMN_TT,
+        SUM(a.COLUMN_CX) as COLUMN_CX,
+        SUM(a.COLUMN_XX) as COLUMN_XX,
+        SUM(a.COLUMN_QK) as COLUMN_QK,
+        SUM(a.COLUMN_YY) as COLUMN_YY
+        FROM  odr_train_daily a
+        LEFT JOIN odr_train_schedule s ON a.SCHEDULE_ID = s.ID
+        LEFT JOIN wsd_sys_user u ON a.CREATOR = u.ID
+        <where>
+            <if test="scheduleCode != null and scheduleCode != '' ">
+                AND a.SCHEDULE_CODE =#{scheduleCode}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="up2MonthRecordTime != null and up2MonthRecordTime != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{up2MonthRecordTime}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+
+</mapper>
+

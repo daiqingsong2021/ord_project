@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.HolidayMapper">
+
+    <resultMap id="holidayVoMap" type="com.wisdom.acm.szxm.vo.rygl.HolidayVo">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="peopleId" column="people_id"/>
+        <result property="peopleName" column="PEOPLE_NAME"/>
+        <result property="agentId" column="agent_id"/>
+        <result property="changeName" column="change_name"/>
+        <result property="serialId" column="serial_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="days" column="days"/>
+        <result property="reason" column="reason"/>
+        <result property="orgName" column="org_name"/>
+        <result property="ryZw" column="RY_ZW"/>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type"/>
+            <result property="name" column="type"/>
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+        </association>
+    </resultMap>
+
+    <select id="queryHisTory" parameterType="java.util.Map" resultMap="holidayVoMap">
+        SELECT a.*  FROM szxm_rygl_holiday_records a where a.people_id=#{peopleId} and to_date(to_char(a.end_time,'yyyy-MM-dd'),'yyyy-MM-dd') <![CDATA[  >= ]]> to_date(#{startTime},'yyyy-MM-dd') and to_date(to_char(a.start_time,'yyyy-MM-dd'),'yyyy-MM-dd') <![CDATA[  <= ]]> to_date(#{endTime},'yyyy-MM-dd')
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="selectHolidayList" parameterType="java.util.Map" resultMap="holidayVoMap">
+        SELECT a.id,
+        a.project_id,
+        a.section_id,
+        a.people_id,
+        p.name as people_name,
+        a.serial_id,
+        a.start_time,
+        a.end_time,
+        a.days,
+        a.reason,
+        a.type,
+        a.status,
+        a.RY_ZW,
+        a.agent_id,
+        cp.name as change_name,
+        pj.org_name FROM szxm_rygl_holiday_records a left join
+        szxm_rygl_people p on a.people_id = p.id
+        left join szxm_rygl_people cp on a.agent_id = cp.id
+        left join szxm_rygl_projinfo pj on p.proj_info_id=pj.id
+        <where>
+            <if test="ryType != null and ryType != '' ">
+                AND a.RY_TYPE= #{ryType}
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="searcher != null and searcher != '' ">
+                AND ((a.PEOPLE_NAME like '%'|| #{searcher} || '%') or (a.serial_id like '%'|| #{searcher} || '%'))
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="ids != null">
+                AND a.id IN
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="selectInOneDate" parameterType="java.util.Map" resultMap="holidayVoMap">
+        select *
+        from szxm_rygl_holiday_records t
+        <where>
+            1=1 and t.RY_TYPE='glry'
+            <if test="status != null and status != '' ">
+                AND t.status = #{status}
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND t.project_id = #{projectId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                AND t.section_id = #{sectionId}
+            </if>
+            <if test="sectionList != null">
+                AND t.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="date != null and date != '' ">
+                AND to_date(to_char(t.start_time,'yyyy-MM-dd'), 'yyyy-MM-dd') <![CDATA[  <= ]]> to_date(#{date},
+                'yyyy-MM-dd')
+                AND to_date(to_char(t.end_time,'yyyy-MM-dd'), 'yyyy-MM-dd') <![CDATA[  >= ]]>  to_date(#{date},
+                'yyyy-MM-dd')
+            </if>
+        </where>
+    </select>
+
+    <select id="queryHolidayCount" resultType="java.lang.Integer">
+        select count(*) from szxm_rygl_holiday_records
+        where a.RY_TYPE='glry' and to_date(to_char(start_time-1,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[ < ]]>
+        to_date(to_char(creat_time,'yyyy-mm-dd'), 'yyyy-mm-dd')
+        and creat_time <![CDATA[ < ]]> to_date((select concat(to_char(sysdate,'yyyy-MM'), '-25') endday from
+        dual),'yyyy-mm-dd')
+        and creat_time <![CDATA[ >= ]]> to_date((select concat(to_char(ADD_MONTHS(sysdate,-1),'yyyy-MM'), '-25') endday
+        from dual),'yyyy-mm-dd')
+        <if test="sectionId != null and sectionId != '' ">
+            AND section_id =#{sectionId}
+        </if>
+        group by section_id
+    </select>
+
+    <select id="queryLwryHolidayRecord" resultType="com.wisdom.acm.szxm.vo.rygl.HolidayVo">
+        SELECT a.START_TIME AS startTime,a.END_TIME as endTime,days  FROM szxm_rygl_holiday_records a
+        where a.people_id=#{peopleId} and status='APPROVED' and ry_type='lwry'
+        and to_date(to_char(a.end_time,'yyyy-MM-dd'),'yyyy-MM-dd') <![CDATA[ >= ]]> to_date(#{startTime},'yyyy-MM-dd') and to_date(to_char(a.start_time,'yyyy-MM-dd'),'yyyy-MM-dd')  <![CDATA[ <= ]]> to_date(#{endTime},'yyyy-MM-dd')
+        order by a.START_TIME
+    </select>
+
+    <select id="selectSectionLwryHolidayList" resultType="com.wisdom.acm.szxm.vo.rygl.LwryHolidayVo">
+        SELECT a.id as id,a.SERIAL_ID as serialId,a.people_id as peopleId, a.people_name as peopleName,a.org_name as workOrgName,a.SECTION_ID as sectionId,a.START_TIME AS startTime,a.END_TIME as endTime,a.days,a.INITIATOR as provideName,a.status as status,a.CREAT_TIME as createTime
+        FROM szxm_rygl_holiday_records a
+        where a.ry_type='lwry'
+        <if test="projectId != null and projectId != '' ">
+            and a.PROJECT_ID =#{projectId}
+        </if>
+        <if test="sectionId != null and sectionId != '' ">
+            and a.SECTION_ID =#{sectionId}
+        </if>
+        <if test="id != null and id != '' ">
+            AND a.id =#{id}
+        </if>
+        order by a.CREAT_TIME desc
+    </select>
+</mapper>
+

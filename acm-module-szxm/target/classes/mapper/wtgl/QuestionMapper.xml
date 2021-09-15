@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.szxm.mapper.wtgl.QuestionMapper">
+
+    <sql id="baseSql">
+       select ques.*,p.name PROJECT_NAME,so.org_code section_code,so.org_name section_name,
+u1.actu_name,u1.user_code,u1.user_name,u1.phone,
+u2.actu_name CREATER_ACTU_NAME,u2.user_code CREATER_USER_CODE,u2.user_name CREATER_USER_NAME,u2.phone CREATER_USER_PHONE,
+u3.actu_name CURRENT_USER_ACTU_NAME,u3.user_code CURRENT_USER_CODE,u3.user_name CURRENT_USER_NAME,u3.phone CURRENT_USER_PHONE,
+u4.actu_name LAST_USER_ACTU_NAME,u4.user_code LAST_USER_CODE,u4.user_name LAST_USER_NAME,u4.phone LAST_USER_PHONE,
+o1.org_code,o1.org_name,
+o2.org_code CREATOR_ORG_CODE,o2.org_name CREATOR_ORG_NAME,
+o3.org_code CURRENT_USER_ORG_CODE,o3.org_name CURRENT_USER_ORG_NAME,
+o4.org_code LAST_USER_ORG_CODE,o4.org_name LAST_USER_ORG_NAME,
+dt1.dict_name type_name,dt2.dict_name priority_name,dt3.dict_name BIZ_TYPE_NAME,dt4.dict_name status_name,dt5.dict_name LAST_STATUS_NAME
+ from Szxm_Sys_Question ques
+  left join wsd_sys_user u1 on ques.user_id = u1.id
+            left join wsd_sys_user u2 on ques.creator = u2.id
+            left join wsd_sys_user u3 on ques.current_user_id = u3.id
+            left join wsd_sys_user u4 on ques.last_user_id = u4.id
+            left join wsd_plan_project p on ques.project_id = p.id
+            left join wsd_sys_org so on ques.section_id = so.id
+            left join wsd_sys_org o1 on ques.org_id = o1.id
+            left join wsd_sys_org o2 on ques.creator_org_id = o2.id
+            left join wsd_sys_org o3 on ques.current_user_org_id = o3.id
+            left join wsd_sys_org o4 on ques.last_user_org_id = o4.id
+            left join wsd_base_dict dt1 on ques.type = dt1.dict_code and dt1.TYPE_CODE = 'comu.question.type'
+            left join wsd_base_dict dt2 on ques.priority = dt2.dict_code and dt2.TYPE_CODE = 'comu.question.priority'
+            left join wsd_base_dict dt3 on ques.biz_type = dt3.dict_code and dt3.TYPE_CODE = 'comu.question.biztype'
+            left join wsd_base_dict dt4 on ques.status = dt4.dict_code and dt4.TYPE_CODE = 'comu.question.status'
+            left join wsd_base_dict dt5 on ques.last_status = dt5.dict_code and dt5.TYPE_CODE = 'comu.question.status'
+    </sql>
+
+    <resultMap id="questionVo" type="com.wisdom.acm.szxm.vo.wtgl.QuestionVo">
+        <result column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="remark" property="remark"/>
+        <result column="handle" property="handle"/>
+        <result column="handle_time" property="handleTime"/>
+        <result column="creat_time" property="createTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="PROJECT_ID" property="projectId"/>
+        <result column="SECTION_ID" property="sectionId"/>
+        <result column="PROJECT_NAME" property="projectName"/>
+        <result column="SECTION_CODE" property="sectionCode"/>
+        <result column="SECTION_NAME" property="sectionName"/>
+        <result column="BIZ_ID" property="bizId"/>
+        <result column="station" property="station"/>
+        <association property="bizTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="BIZ_TYPE"/>
+            <result property="name" column="BIZ_TYPE_NAME"/>
+        </association>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type"/>
+            <result property="name" column="type_name"/>
+        </association>
+        <association property="priorityVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="priority"/>
+            <result property="name" column="priority_name"/>
+        </association>
+        <association property="orgVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="ORG_ID"/>
+            <result property="code" column="org_code"/>
+            <result property="name" column="org_name"/>
+        </association>
+        <association property="userVo" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="user_id"/>
+            <result property="code" column="user_name"/>
+            <result property="name" column="actu_name"/>
+            <result property="userCode" column="user_code"/>
+            <result property="phone" column="phone"/>
+        </association>
+        <association property="currentUserOrgVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="CURRENT_USER_ORG_ID"/>
+            <result property="code" column="CURRENT_USER_ORG_CODE"/>
+            <result property="name" column="CURRENT_USER_ORG_NAME"/>
+        </association>
+        <association property="currentUserVo" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="CURRENT_USER_ID"/>
+            <result property="code" column="CURRENT_USER_NAME"/>
+            <result property="name" column="CURRENT_USER_ACTU_NAME"/>
+            <result property="userCode" column="CURRENT_USER_CODE"/>
+            <result property="phone" column="CURRENT_USER_PHONE"/>
+        </association>
+        <association property="lastUserOrgVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="LAST_USER_ORG_ID"/>
+            <result property="code" column="LAST_USER_ORG_CODE"/>
+            <result property="name" column="LAST_USER_ORG_NAME"/>
+        </association>
+        <association property="lastUserVo" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="LAST_USER_ID"/>
+            <result property="code" column="LAST_USER_NAME"/>
+            <result property="name" column="LAST_USER_ACTU_NAME"/>
+            <result property="userCode" column="LAST_USER_CODE"/>
+            <result property="phone" column="LAST_USER_PHONE"/>
+        </association>
+        <association property="createrOrgVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="CREATOR_ORG_ID"/>
+            <result property="code" column="CREATOR_ORG_CODE"/>
+            <result property="name" column="CREATOR_ORG_NAME"/>
+        </association>
+        <association property="createrVo" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="CREATOR"/>
+            <result property="code" column="CREATER_USER_NAME"/>
+            <result property="name" column="CREATER_ACTU_NAME"/>
+            <result property="userCode" column="CREATER_USER_CODE"/>
+            <result property="phone" column="CREATER_USER_PHONE"/>
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="lastStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="LAST_STATUS"/>
+            <result property="name" column="LAST_STATUS_NAME"/>
+        </association>
+        <association property="stationVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="stat_code"/>
+            <result property="name" column="stat_name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="docFileInfoVo" type="com.wisdom.acm.szxm.vo.wtgl.FileBizType">
+        <result column="id" property="fileId"/>
+        <result column="biz_id" property="bizId"/>
+        <result column="biz_type" property="bizType"/>
+    </resultMap>
+
+    <resultMap id="questionClassVo" type="com.wisdom.acm.szxm.vo.wtgl.QuestionClassVo">
+        <result column="issueType" property="issueType"/>
+        <result column="issueTypeCode" property="issueTypeCode"/>
+        <result column="issueQuantity" property="issueQuantity"/>
+        <result column="unclosedQuantity" property="unclosedQuantity"/>
+    </resultMap>
+
+    <resultMap id="questionMonthVo" type="com.wisdom.acm.szxm.vo.wtgl.QuestionMonthVo">
+        <result column="month" property="month"/>
+        <result column="monthIssueQuantity" property="monthIssueQuantity"/>
+    </resultMap>
+
+    <select id="selectQuestionList" resultMap="questionVo">
+        <include refid="baseSql"/>
+        <where>
+            (
+            ques.current_user_id= #{loginUserId}
+            or exists(select 1 from Szxm_Sys_Question_Record a inner join Szxm_Sys_Question b on a.question_id=b.id and
+            b.status <![CDATA[ <> ]]> '4' and a.creator=#{loginUserId} where ques.id=b.id)
+            )
+            <if test="projectId != ''and projectId != null">
+                and ques.project_id=#{projectId}
+            </if>
+            <if test="sectionList != null">
+                AND ques.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="bizType != ''and bizType != null">
+                and ques.BIZ_TYPE=#{bizType}
+            </if>
+            <if test="title != ''and title != null">
+                and ques.title like '%'|| #{title} || '%'
+            </if>
+            <if test="statusList != null">
+                AND ques.status IN
+                <foreach collection="statusList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status != ''and status != null">
+                and ques.status=#{status}
+            </if>
+            <if test="type != ''and type != null">
+                and ques.type=#{type}
+            </if>
+            <if test="createrId != ''and createrId != null">
+                and ques.creator = #{createrId}
+            </if>
+            <if test="currentUserId != ''and currentUserId != null">
+                and ques.current_user_id = #{currentUserId}
+            </if>
+            <if test="priority != ''and priority != null">
+                and ques.priority=#{priority}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND ques.creat_time <![CDATA[  <= ]]> to_date(#{endTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND ques.creat_time <![CDATA[  >= ]]> to_date(#{startTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="bizId != ''and bizId != null">
+                and ques.BIZ_ID=#{bizId}
+            </if>
+            <if test="id != ''and id != null">
+                and ques.id=#{id}
+            </if>
+            order by ques.creat_time desc
+        </where>
+    </select>
+
+    <select id="selectYqQuestionList" resultMap="questionVo">
+        <include refid="baseSql"/>
+        <where>
+            <if test="projectId != ''and projectId != null">
+                and ques.project_id=#{projectId}
+            </if>
+            <if test="sectionList != null">
+                AND ques.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="bizType != ''and bizType != null">
+                and ques.BIZ_TYPE=#{bizType}
+            </if>
+            <if test="title != ''and title != null">
+                and ques.title like '%'|| #{title} || '%'
+            </if>
+            <if test="statusList != null">
+                AND ques.status IN
+                <foreach collection="statusList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status != ''and status != null">
+                and ques.status=#{status}
+            </if>
+            <if test="type != ''and type != null">
+                and ques.type=#{type}
+            </if>
+            <if test="createrId != ''and createrId != null">
+                and ques.creator = #{createrId}
+            </if>
+            <if test="currentUserId != ''and currentUserId != null">
+                and ques.current_user_id = #{currentUserId}
+            </if>
+            <if test="priority != ''and priority != null">
+                and ques.priority=#{priority}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND ques.creat_time <![CDATA[  <= ]]> to_date(#{endTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND ques.creat_time <![CDATA[  >= ]]> to_date(#{startTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="bizId != ''and bizId != null">
+                and ques.BIZ_ID=#{bizId}
+            </if>
+            <if test="id != ''and id != null">
+                and ques.id=#{id}
+            </if>
+            order by ques.creat_time desc
+        </where>
+    </select>
+
+    <select id="selectQuestionQuantity" resultMap="questionVo">
+        <include refid="baseSql"/>
+        <where>
+            <if test="projectId != ''and projectId != null">
+                and ques.project_id=#{projectId}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND ques.creat_time <![CDATA[  <= ]]> to_date(#{endTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND ques.creat_time <![CDATA[  >= ]]> to_date(#{startTime}, 'yyyy-MM-dd')
+            </if>
+        </where>
+    </select>
+
+    <select id="secIssueList" resultMap="questionVo">
+        <include refid="baseSql"/>
+        <where>
+            <if test="projectId != ''and projectId != null">
+                and ques.project_id=#{projectId}
+            </if>
+            <if test="type != ''and type != null">
+                and ques.type=#{type}
+            </if>
+            <if test="sectionId != ''and sectionId != null">
+                and ques.section_id=#{sectionId}
+            </if>
+            <if test="station != ''and station != null">
+                and instr(ques.station,station)>0
+            </if>
+            <if test="statusList != null">
+                AND ques.status IN
+                <foreach collection="statusList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status != ''and status != null">
+                and ques.status=#{status}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND ques.creat_time <![CDATA[  <= ]]> to_date(#{endTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND ques.creat_time <![CDATA[  >= ]]> to_date(#{startTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="bizType != ''and bizType != null">
+                and ques.BIZ_TYPE=#{bizType}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectQuestionType" resultMap="questionClassVo">
+        select count(ques.id) as issueQuantity,sum(case when ques.status='3' then 1 else 0 end) as unclosedQuantity,
+        ques.type as issueTypeCode , dt1.dict_name as issueType
+        from Szxm_Sys_Question ques
+        left join wsd_base_dict dt1 on ques.type = dt1.dict_code and dt1.TYPE_CODE = 'comu.question.type'
+        <where>
+            <if test="projectId != ''and projectId != null">
+                and ques.project_id=#{projectId}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND ques.creat_time <![CDATA[  <= ]]> to_date(#{endTime}, 'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND ques.creat_time <![CDATA[  >= ]]> to_date(#{startTime}, 'yyyy-MM-dd')
+            </if>
+        </where>
+        group by ques.type, dt1.dict_name
+    </select>
+
+    <select id="selectQuestionMonth" resultMap="questionMonthVo">
+        select to_char(creat_time,'YYYY-MM') as month, count(*) as monthIssueQuantity from Szxm_Sys_Question
+        <where>
+            <if test="projectId != ''and projectId != null">
+                and project_id=#{projectId}
+            </if>
+        </where>
+        group by to_char(creat_time,'YYYY-MM') order by to_char(creat_time,'YYYY-MM')
+    </select>
+
+    <select id="selectQuestion" resultMap="questionVo">
+        <include refid="baseSql"/>
+        <where>
+            <if test="id != ''and id != null">
+                and ques.id=#{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectQuestionFile" resultMap="docFileInfoVo">
+        select f.id,fr.biz_type,fr.biz_id
+        from wsd_doc_file_relation fr
+        inner join wsd_doc_file f
+        on fr.file_id = f.id
+        and f.del='0'
+        where fr.biz_id in
+        <foreach collection="bizIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectProjectTeamOrg" resultType="java.lang.Integer">
+        select o.id
+          from wsd_sys_org o
+         inner join wsd_sys_userorg uo
+            on o.id = uo.org_id
+           and o.biz_id = #{projectId}
+           and o.extended_column_1 = 'org'
+           and uo.user_id = #{userId}
+    </select>
+    <select id="queryQuestionList" resultMap="questionVo">
+        select * from Szxm_Sys_Question q where q.biz_id=#{id}
+    </select>
+
+    <select id="queryQuestionCount" resultType="java.lang.Integer">
+        select count(*) from Szxm_Sys_Question a left join
+        (select min(creat_time) last_time,question_id from Szxm_Sys_Question_Record where action = '2' group by
+        question_id) b on a.id = b.question_id
+        where (to_date(to_char(b.last_time,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[ > ]]>
+        to_date(to_char(a.handle_time,'yyyy-mm-dd'), 'yyyy-mm-dd') or b.question_id is null )
+        and handle_time <![CDATA[ < ]]> to_date((select concat(to_char(sysdate,'yyyy-MM'), '-25') endday from
+        dual),'yyyy-mm-dd')
+        and handle_time <![CDATA[ >= ]]> to_date((select concat(to_char(ADD_MONTHS(sysdate,-1),'yyyy-MM'), '-25') endday
+        from dual),'yyyy-mm-dd')
+        <if test="sectionId != null and sectionId != '' ">
+            AND a.section_id =#{sectionId}
+        </if>
+        group by a.section_id
+    </select>
+</mapper>

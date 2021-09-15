@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.processing.mapper.fault.FaultDailyMapper">
+    <resultMap id="faultVo" type="com.wisdom.acm.processing.vo.fault.FaultVo">
+        <result property="id" column="id"/>
+        <result property="line" column="LINE"/>
+        <result property="gzbrcl" column="gzbrcl" />
+        <result property="gzbrgd" column="gzbrgd" />
+        <result property="gzbrxh" column="gzbrxh" />
+        <result property="gzbrtx" column="gzbrtx" />
+        <result property="gzbrgj" column="gzbrgj" />
+        <result property="gzbrjd" column="gzbrjd" />
+        <result property="gzbrafx" column="gzbrafx" />
+        <result property="gzbrqt" column="gzbrqt" />
+        <result property="gzbrhj" column="gzbrhj" />
+        <result property="gzbycl" column="gzbycl" />
+        <result property="gzbygd" column="gzbygd" />
+        <result property="gzbyxh" column="gzbyxh" />
+        <result property="gzbytx" column="gzbytx" />
+        <result property="gzbygj" column="gzbygj" />
+        <result property="gzbyjd" column="gzbyjd"/>
+        <result property="gzbyafx" column="gzbyafx"/>
+        <result property="gzbyqt" column="gzbyqt"/>
+        <result property="gzbyhj" column="gzbyhj" />
+    </resultMap>
+    <select id="quertFaultVo" parameterType="java.util.Map" resultMap="faultVo">
+          select
+                a.id,
+                a.line,
+                a.major_vehicle as gzbrcl,
+                a.major_power as gzbrgd,
+                a.major_signal as gzbrxh,
+                a.major_communication as gzbrtx,
+                a.major_construction as gzbrgj,
+                a.major_mechatronics as gzbrjd,
+                a.major_afc as gzbrafx,
+                a.major_other as gzbrqt,
+                (a.major_vehicle+a.major_power+a.major_signal+
+                a.major_communication+a.major_construction+
+                a.major_mechatronics+a.major_afc+a.major_other) as gzbrhj,
+                b.major_vehicle as gzbycl,
+                b.major_power as gzbygd,
+                b.major_signal as gzbyxh,
+                b.major_communication as gzbytx,
+                b.major_construction as gzbygj,
+                b.major_mechatronics as gzbyjd,
+                b.major_afc as gzbyafx,
+                b.major_other as gzbyqt,
+                b.total_fault as gzbyhj
+          from odr_fault_daily a left join odr_fault_monthly b on a.line=b.line
+          where a.line=#{line} and  a.record_day=#{recordTime}
+    </select>
+
+    <select id="queryLeftOverVo" parameterType="java.util.Map" resultMap="faultVo">
+          select
+                a.id,
+                a.line
+          from odr_fault_daily a
+          where a.line=#{line} and  a.record_day &lt; #{recordTime}
+    </select>
+</mapper>
+

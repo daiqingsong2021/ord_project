@@ -1,0 +1,1391 @@
+swagger: '2.0'
+info:
+  title: SZXM - DeviceAPI
+  description: SZXM设备管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: user
+  description: 用户管理
+- name: sbgl
+  description: 设备管理
+- name: tzgl
+  description: 台账管理
+- name: dzgl
+  description: 吊装管理
+
+produces:
+- application/json
+paths:
+  /auth/jwt/token:
+    post:
+      tags:
+      - user
+      description: 获取token
+      summary: 获取token
+      operationId: userToken
+      parameters:
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+            $ref: '#/definitions/UserNamePwdVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/login/user/info:
+    get:
+      tags:
+      - user
+      description: 用户登录
+      summary: 用户登录
+      operationId: getUserInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserLoginVo'
+
+  /szxm/sbgl/check/queryDeviceCheckList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - sbgl
+      description: 搜索设备报验数据，列表项目ID单传，标段ID多个以"，"相隔
+      summary: 搜索设备报验数据列表
+      operationId: queryDeviceCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: title
+          in: query
+          description: 标题
+          required: false
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceCheckVo'
+
+  /szxm/sbgl/check/queryFlowDeviceCheckList:
+    get:
+      tags:
+        - sbgl
+      description: 搜索流程相关设备报验数据
+      summary: 搜索流程相关设备报验数据
+      operationId: queryFlowDeviceCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: title
+          in: query
+          description: 标题
+          required: false
+          type: string
+        - name: ids
+          in: query
+          description: 主键IDs
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceCheckVo'
+
+  /szxm/sbgl/check/queryDeviceCheckInfo/{id}:
+    get:
+      tags:
+        - sbgl
+      summary: 查询单个设备报验基础信息
+      description: 查询单个设备报验基础信息
+      operationId: queryDeviceCheckInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/DeviceCheckVo'
+
+  /szxm/sbgl/check/addDeviceCheck:
+    post:
+      tags:
+        - sbgl
+      description: 增加设备报验数据
+      summary: 增加设备报验数据
+      operationId: addDeviceCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 设备报验数据
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceCheckAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/DeviceCheckVo'
+
+  /szxm/sbgl/check/updateDeviceCheck:
+    put:
+      tags:
+        - sbgl
+      description: 修改设备报验数据
+      summary: 修改设备报验数据
+      operationId: updateDeviceCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceCheckUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DeviceCheckVo'
+
+  /szxm/sbgl/check/delDeviceCheck:
+    delete:
+      tags:
+        - sbgl
+      description: 删除设备报验数据
+      summary: 删除设备报验数据
+      operationId: deleteDeviceCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+              $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/check/queryDeviceDetailList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - sbgl
+      description: 搜索设备明细接口，列表项目ID单传，标段ID多个以"，"相隔
+      summary: 搜索设备明细列表
+      operationId: queryDeviceDetailList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: deviceCheckId
+          in: query
+          description: 设备报验主表Id
+          required: true
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceDetailVo'
+
+  /szxm/sbgl/check/addDeviceDetail:
+    post:
+      tags:
+        - sbgl
+      description: 增加设备明细
+      summary: 增加设备明细
+      operationId: addDeviceDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加设备详情信息
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceDetailAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/DeviceDetailVo'
+
+  /szxm/sbgl/check/updateDeviceDetail:
+    put:
+      tags:
+        - sbgl
+      description: 修改设备明细
+      summary:  修改设备明细
+      operationId: updateDeviceDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceDetailUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DeviceRecordVo'
+
+  /szxm/sbgl/check/delDeviceDetail:
+    delete:
+      tags:
+        - sbgl
+      description: 删除设备明细
+      summary: 删除设备明细
+      operationId: delDeviceDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/check/dowDeviceDetailTemp:
+    post:
+      tags:
+        - sbgl
+      summary: 设备明细模板模板（格式为XSLX文件）
+      description: 设备明细模板（格式为XSLX文件）
+      operationId: dowDeviceDetailTemp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/check/uploadDeviceDetailFile:
+    post:
+      tags:
+        - sbgl
+      summary: 设备明细导入
+      description: 设备明细导入
+      operationId: uploadDeviceDetailFile
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: deviceCheckId
+          in: query
+          description: 设备报验主表ID
+          type: integer
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionId
+          in: query
+          description: 标段ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 操作（返回错误日志ID,errorId）
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/record/queryDeviceRecordList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - tzgl
+      description: 搜索设备台账数据接口，列表项目ID单传，标段ID多个以"，"相隔
+      summary: 搜索设备台账数据接口列表
+      operationId: queryDeviceRecordList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceRecordVo'
+
+  /szxm/sbgl/record/delDeviceRecord:
+    delete:
+      tags:
+        - tzgl
+      description: 删除设备台账清单
+      summary:  删除设备台账
+      operationId: delDeviceRecord
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/record/querySpecialStaffList/{recordId}:
+    get:
+      tags:
+        - tzgl
+      description: 查询特殊人员信息
+      summary: 查询特殊人员信息
+      operationId: querySpecialStaffList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: recordId
+          in: path
+          description: 设备台账ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceSpecialStaffVo'
+
+  /szxm/sbgl/record/queryDeviceRecordInfo/{id}:
+    get:
+      tags:
+        - tzgl
+      summary: 查询单个设备台账基础信息
+      description: 查询单个设备台账基础信息
+      operationId: queryDeviceRecordInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/DeviceRecordVo'
+
+  /szxm/sbgl/record/addDeviceSpecialStaff:
+    post:
+      tags:
+        - tzgl
+      description: 增加特殊人员信息
+      summary: 增加特殊人员信息
+      operationId: addDeviceSpecialStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加特殊人员信息
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceSpecialStaffAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/DeviceSpecialStaffVo'
+
+  /szxm/sbgl/record/updateDeviceSpecialStaff:
+    put:
+      tags:
+        - tzgl
+      description: 修改特殊人员数据
+      summary: 修改特殊人员数据
+      operationId: updateDeviceSpecialStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceSpecialStaffUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DeviceSpecialStaffVo'
+
+  /szxm/sbgl/record/delDeviceSpecialStaff:
+    delete:
+      tags:
+        - tzgl
+      description: 删除特殊人员信息
+      summary: 删除特殊人员信息
+      operationId: delDeviceSpecialStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/record/dowDeviceStaffTemp:
+    post:
+      tags:
+        - tzgl
+      summary: 设备维护人员模板（格式为XSLX文件）
+      description: 设备维护人员模板（格式为XSLX文件）
+      operationId: dowDeviceStaffTemp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/record/uploadDeviceStaffFile:
+    post:
+      tags:
+        - tzgl
+      summary: 人员进场明细导入
+      description: 人员进场明细导入
+      operationId: uploadDeviceStaffFile
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: recordId
+          in: query
+          description: 台账主键ID
+          type: integer
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionId
+          in: query
+          description: 标段ID
+          type: integer
+          required: false
+      responses:
+        200:
+          description: 操作（返回错误日志ID,errorId）
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/sbgl/hoisting/queryDeviceHoistingList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - dzgl
+      description: 查询设备吊装数据
+      summary: 查询设备吊装数据
+      operationId: queryDeviceHoistingList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: title
+          in: query
+          description: 标题
+          required: false
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceHoistingVo'
+
+  /szxm/sbgl/hoisting/queryFlowDeviceHoistingList:
+    get:
+      tags:
+        - dzgl
+      description: 查询流程相关设备吊装数据
+      summary: 查询流程相关设备吊装数据
+      operationId: queryFlowDeviceHoistingList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: title
+          in: query
+          description: 标题
+          required: false
+          type: string
+        - name: ids
+          in: query
+          description: 主键ID
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceHoistingVo'
+  /szxm/sbgl/hoisting/queryDeviceHoistingInfo/{id}:
+    get:
+      tags:
+        - dzgl
+      summary: 查询单个设备吊装基础信息
+      description: 查询单个设备吊装基础信息
+      operationId: queryDeviceHoistingInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/DeviceHoistingVo'
+
+  /szxm/sbgl/hoisting/addDeviceHoisting:
+    post:
+      tags:
+        - dzgl
+      description: 增加设备吊装数据
+      summary: 增加设备吊装数据
+      operationId: addDeviceHoisting
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加设备吊装数据
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceHoistingAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/DeviceHoistingVo'
+
+  /szxm/sbgl/hoisting/updateDeviceHoisting:
+    put:
+      tags:
+        - dzgl
+      description: 修改设备吊装数据
+      summary: 修改设备吊装数据
+      operationId: updateDeviceHoisting
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改设备吊装数据
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceHoistingUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DeviceHoistingVo'
+
+  /szxm/sbgl/hoisting/delDeviceHoisting:
+    delete:
+      tags:
+        - dzgl
+      description: 删除设备吊装数据
+      summary: 删除设备吊装数据
+      operationId: delDeviceHoisting
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  SysUserLoginVo:
+    properties:
+      userId:
+        type: integer
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      isOpen:
+        type: integer
+        description: 三员管理状态（0：未开启  1：开启）
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 菜单类型(1:组件 2:菜单  3:分组 4:模块)
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      group:
+        type: integer
+        description: 组
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 跟新时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+      children:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的ids
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  DeviceCheckVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      title:
+        type: string
+        description: 标题
+      projectId:
+        type: integer
+        description: 项目Id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+       type: integer
+       description: 标段ID
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      creatTime:
+        type: string
+        description: 创建时间
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+
+  DeviceCheckAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID(必填)
+      sectionId:
+        type: integer
+        description: 标段ID(必填)
+      title:
+        type: string
+        description: 标题
+      remark:
+        type: string
+        description: 备注
+
+  DeviceCheckUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID(必填)
+      title:
+        type: string
+        description: 标题
+      remark:
+        type: string
+        description: 备注
+
+  DeviceRecordVo:
+     properties:
+      id:
+        type: integer
+        description: 主键ID
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目Id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      deviceDetailId:
+        type: integer
+        description: 设备明细ID
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceName:
+        type: string
+        description: 设备名称
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否特种设备（0为否、1为是）非数字字典
+      deviceType:
+        type: string
+        description: 设备规格型号
+      deviceNum:
+        type: integer
+        description: 数量
+      measurement:
+        type: string
+        description: 计量单位
+      constantCapacity:
+        type: string
+        description: 额定容量
+      constantVoltage:
+        type: string
+        description: 额定电压
+      deviceProducer:
+        type: string
+        description: 生产商
+      deviceBirthday:
+        type: string
+        description: 设备生产日期
+      deviceValidity:
+        type: string
+        description: 设备有效期
+      deviceCheckYear:
+        type: string
+        description: 设备年检时间
+
+  DeviceSpecialStaffVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      recordId:
+        type: integer
+        description: 设备台账ID
+      name:
+        type: string
+        description: 姓名
+      craft:
+        type: string
+        description: 工种
+      certificate:
+        type: string
+        description: 相关证书
+      fileCount:
+        type: integer
+        description: fileCount
+
+  DeviceSpecialStaffAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      recordId:
+        type: integer
+        description: 台账主表ID（必填）
+      name:
+        type: string
+        description: 姓名（必填）
+      craft:
+        type: string
+        description: 工种
+      certificate:
+        type: string
+        description: 相关证书
+      fileCount:
+        type: integer
+        description: fileCount
+
+  DeviceSpecialStaffUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 特殊人员ID（必填）
+      name:
+        type: string
+        description: 姓名（必填）
+      craft:
+        type: string
+        description: 工种
+      certificate:
+        type: string
+        description: 相关证书
+      fileCount:
+        type: integer
+        description: fileCount
+
+  DeviceHoistingVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目Id
+      projectName:
+        type: string
+        description: 项目名称
+      title:
+        type: string
+        description: 标题
+      remark:
+        type: string
+        description: 备注
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+
+  DeviceHoistingAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID(必填)
+      sectionId:
+        type: integer
+        description: 标段ID(必填)
+      title:
+        type: string
+        description: 标题(必填)
+      remark:
+        type: string
+        description: 备注
+
+  DeviceHoistingUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      title:
+        type: string
+        description: 标题
+      remark:
+        type: string
+        description: 备注
+
+  DeviceDetailVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      deviceCheckId:
+        type: integer
+        description: 设备报验ID
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceName:
+        type: string
+        description: 设备名称
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否特种设备（0为否、1为是）非数字字典
+      deviceType:
+        type: string
+        description: 设备规格型号
+      deviceNum:
+        type: integer
+        description: 数量
+      measurement:
+        type: string
+        description: 计量单位
+      constantCapacity:
+        type: string
+        description: 额定容量
+      constantVoltage:
+        type: string
+        description: 额定电压
+      deviceProducer:
+        type: string
+        description: 生产商
+      deviceBirthday:
+        type: string
+        description: 设备生产日期
+      deviceValidity:
+        type: string
+        description: 设备有效期
+      deviceCheckYear:
+        type: string
+        description: 设备年检时间
+
+  DeviceDetailAddForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceName:
+        type: string
+        description: 设备名称
+      type:
+        type: string
+        description: 是否特种设备
+      deviceType:
+        type: string
+        description: 设备规格型号
+      deviceNum:
+        type: integer
+        description: 数量
+      measurement:
+        type: string
+        description: 计量单位
+      constantCapacity:
+        type: string
+        description: 额定容量
+      constantVoltage:
+        type: string
+        description: 额定电压
+      deviceProducer:
+        type: string
+        description: 生产商
+      deviceBirthday:
+        type: string
+        description: 设备生产日期
+      deviceValidity:
+        type: string
+        description: 设备有效期
+      deviceCheckYear:
+        type: string
+        description: 设备年检时间
+      status:
+        type: string
+        description: 是否台账（必填）
+      deviceCheckId:
+        type: integer
+        description: 设备报验ID
+
+  DeviceDetailUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceName:
+        type: string
+        description: 设备名称
+      type:
+        type: string
+        description: 是否特种设备
+      deviceType:
+        type: string
+        description: 设备规格型号
+      deviceNum:
+        type: integer
+        description: 数量
+      measurement:
+        type: string
+        description: 计量单位
+      constantCapacity:
+        type: string
+        description: 额定容量
+      constantVoltage:
+        type: string
+        description: 额定电压
+      deviceProducer:
+        type: string
+        description: 生产商
+      deviceBirthday:
+        type: string
+        description: 设备生产日期
+      deviceValidity:
+        type: string
+        description: 设备有效期
+      deviceCheckYear:
+        type: string
+        description: 设备年检时间
+      status:
+        type: string
+        description: 是否台账（必填）
+
+

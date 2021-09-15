@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.sysscore.SysScoreMapper">
+
+    <resultMap id="sysScoreVoMap" type="com.wisdom.acm.szxm.vo.sysscore.SysScoreVo">
+        <id property="id" column="id"/>
+        <result property="totalScore" column="total_score"/>
+        <result property="objectiveScore" column="objective_score"/>
+        <result property="subjectiveScore" column="subjective_score"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="sectionCode" column="section_code"/>
+        <result property="projectId" column="project_id"/>
+        <result property="year" column="year"/>
+        <result property="month" column="month"/>
+        <result property="isPass" column="is_pass"/>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status" />
+        </association>
+    </resultMap>
+
+    <select id="selectSysScoreList" parameterType="java.util.Map" resultMap="sysScoreVoMap">
+      SELECT a.*, o.org_code section_code
+        FROM szxm_sys_score a
+        left join wsd_sys_org o
+        on a.section_id = o.id
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="year != null and year != '' ">
+                AND a.year = #{year}
+            </if>
+            <if test="month != null and month != '' ">
+                AND a.month = #{month}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="ids != null">
+                AND a.id IN
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.year, a.month desc,
+        to_number(substr(o.org_code,instr(o.org_code,'-',1)+1,instr(o.org_code,'-',1,2)- INSTR (o.org_code, '-', 1, 1)-1)) asc, to_number(substr(o.org_code,instr(o.org_code,'-',1,2)+1)) asc
+    </select>
+
+    <select id="selectEvaluationSections" resultType="java.lang.String">
+        SELECT id FROM wsd_sys_org where open_exam = '1'
+        <if test="projectId != null and projectId != '' ">
+            AND biz_id = #{projectId}
+        </if>
+       and EXAM_START_DATE <![CDATA[  <= ]]> sysdate and EXAM_END_DATE <![CDATA[  >= ]]> sysdate
+    </select>
+</mapper>
+

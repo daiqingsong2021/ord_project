@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.activiti.mapper.ActivitiMapper">
+    <resultMap id="WfMineTaskVo" type="com.wisdom.base.common.vo.wf.WfMineTaskVo">
+        <result column="proc_inst_id_" property="id"/>
+        <result column="proc_inst_id_" property="procInstId"/>
+        <result column="name_" property="procInstName"/>
+        <result column="status" property="status"/>
+        <result column="curr_task_name" property="taskName"/>
+        <result column="start_time_" property="createTime"/>
+        <result column="end_time_" property="endTime"/>
+    </resultMap>
+
+    <select id="selectWfMineTaskList" resultMap="WfMineTaskVo" >
+        select p.proc_inst_id_, p.start_time_, p.end_time_, p.name_, p.duration_,
+        case when p.end_time_ is not null then '已完成' else '未完成' end as status,
+        (select max(t.name_) from act_ru_task t where t.execution_id_ in (
+        select e.id_ from act_ru_execution e where e.proc_inst_id_ = p.proc_inst_id_)) as curr_task_name
+        from act_hi_procinst p where p.start_user_id_ = #{userId}
+        <if test="search.startTime != null">
+            and p.start_time_ &gt;= #{search.startTime}
+        </if>
+        <if test="search.endTime != null">
+            and p.end_time_ &lt;= #{search.endTime}
+        </if>
+        <if test="search.bizType != '' and search.bizType != null">
+            and exists(select d.id_ from act_re_procdef d where d.id_=p.proc_def_id_ and d.category_= #{search.bizType})
+        </if>
+        <if test="search.keyword != '' and search.keyword != null">
+            and p.name_ like #{search.keyword}
+        </if>
+        order by p.start_time_ desc
+    </select>
+
+    <resultMap id="IdentityMap" type="com.wisdom.acm.activiti.vo.IdentityInfoVo">
+        <result column="id_" property="id"/>
+        <result column="user_id_" property="userId"/>
+        <result column="proc_inst_id_" property="procInstId"/>
+        <result column="task_id_" property="taskId"/>
+    </resultMap>
+
+    <select id="selectNextUserIdByTaskIds" resultMap="IdentityMap" >
+        select k.user_id_,k.id_,k.proc_inst_id_,k.task_id_
+        from act_ru_identitylink k
+        where k.task_id_ in
+        <foreach collection="taskIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <resultMap id="ProcWaitWorkMap" type="com.wisdom.acm.activiti.vo.ProcWaitWorkVo">
+        <result column="id_" property="id"/>
+        <result column="start_time_" property="startTime"/>
+        <result column="end_time_" property="endTime"/>
+        <result column="nowNodeName" property="activity"/>
+        <result column="next_user" property="nextUser"/>
+        <result column="proc_inst_id_" property="procInstId"/>
+        <result column="act_id" property="actId"/>
+    </resultMap>
+
+    <select id="selectProcessWaitWork" resultMap="ProcWaitWorkMap" >
+        select hp.proc_inst_id_, hp.id_, hp.start_time_, hp.end_time_, hp.name_, hp.business_key_, hp.duration_, rt.name_m as nownodename, rt.act_id, rt.assigneeid as next_user, rt.createtime, rt.assigneeid,
+            case
+        when hp.end_time_ is not null then
+            end_time_
+        when rt.createtime is not null then
+            rt.createtime
+        end sort
+        from
+             act_hi_procinst hp
+        left join (
+            select
+                gt.proc_inst_id_,
+                max(gt.name_) name_m,
+                max(gt.id_) act_id,
+                max(gt.assignee_) assigneeid,
+                max(gt.create_time_) createtime
+            from
+                act_ru_task gt
+            group by
+                gt.proc_inst_id_
+        ) as rt on rt.proc_inst_id_ = hp.proc_inst_id_
+        where hp.proc_inst_id_ in
+        <foreach collection="procInstIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by sort desc
+    </select>
+
+    <resultMap id="TaskStartTimeMap" type="com.wisdom.acm.activiti.vo.TaskStartTimeVo">
+        <result column="START_TIME_" property="startTime"/>
+    </resultMap>
+    <select id="selectTaskStartTimeByProcInsId" resultMap="TaskStartTimeMap" >
+       select act.start_time_  from  act_hi_taskinst act where act.proc_inst_id_ = #{procinstid} order by start_time_ desc
+    </select>
+
+    <resultMap id="WorkFlowLogVo" type="com.wisdom.acm.activiti.vo.WorkFlowLogVo">
+        <result column="id" property="id"/>
+        <result column="operate" property="operate"/>
+        <result column="wsd_creator" property="wsdCreator"/>
+        <result column="next_user_id" property="nextUserId"/>
+        <result column="act_end_time" property="actEndTime"/>
+        <result column="proc_end_time" property="procEndTime"/>
+    </resultMap>
+
+    <select id="selectWorkFlowLogByProcInsId" resultMap="WorkFlowLogVo" >
+       select w.id,w.processinstid,w.operate,w.workitemid,w.wsd_creator,w.next_user_id,w.next_type,aha.end_time_ act_end_time,ahp.end_time_ proc_end_time
+       from  wsd_wf_workflowlog w
+         left join act_hi_actinst aha on aha.task_id_ = w.workitemid
+         left join act_hi_procinst ahp on ahp.proc_inst_id_ = w.processinstid
+         where w.processinstid = #{procInstId}
+    </select>
+
+    <resultMap id = "WfProcLogVo" type="com.wisdom.base.common.vo.wf.WfProcLogVo">
+        <result column="id_" property="id"/>
+        <result column="proc_inst_id_" property="procInstId"/>
+        <result column="start_time_" property="startTime"/>
+        <result column="end_time_" property="endTime"/>
+        <result column="name_" property="name"/>
+        <result column="activity" property="activity"/>
+        <result column="create_time_" property="creatTime"/>
+        <result column="assignee_" property="newUser"/>
+    </resultMap>
+
+    <select id = "selectWorkFlowInfoByProcInstIds" resultMap="WfProcLogVo">
+        select hp.id_, hp.proc_inst_id_, hp.proc_def_id_, hp.start_time_, hp.end_time_, hp.name_
+        from act_hi_procinst hp
+        where hp.proc_inst_id_ in
+        <foreach collection="procInstIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id = "selectWorkFlowInfo2ByProcInstIds" resultMap="WfProcLogVo">
+        select rt.id_, rt.parent_task_id_, rt.proc_inst_id_, rt.name_ as activity, rt.owner_, rt.create_time_, rt.assignee_
+        from act_ru_task rt
+        where rt.proc_inst_id_ in
+        <foreach collection="procInstIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by  rt.id_ desc
+    </select>
+
+    <select id = "selectTaskIdByCurrentUserIdAndProcInstrId" resultType="java.lang.String">
+        select rt.id_ id
+        from act_ru_task rt  where  rt.proc_inst_id_ = #{procInstId}
+        order by rt.create_time_ desc
+    </select>
+
+    <resultMap id = "ActModelVo" type="com.wisdom.base.common.vo.base.ActModelVo">
+        <result column="id_" property="id"/>
+        <result column="name_" property="name"/>
+        <result column="key_" property="key"/>
+        <result column="status" property="status"/>
+        <result column="meta_info_" property="metaInfo"/>
+    </resultMap>
+
+    <select id = "selectActAssignList" resultMap="ActModelVo">
+        select id_,name_,key_,deployment_id_,deployment_id_ as status,meta_info_ from act_re_model
+        where id_ in
+        <foreach collection="modelIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id = "selectProcDefByModulIdList" resultMap="WfProcessDefVo">
+        select t.id_,t.key_,t.name_,t.version_,d.version_ from act_re_procdef t
+        left join (select key_,max(version_) version_ from act_re_procdef group by key_) d
+        on d.key_= t.key_ and d.version_=t.version_
+        where d.version_ is not null and t.key_ in(
+        select m.key_ from act_re_model m
+        where m.id_ in
+        <foreach collection="modelIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+    <resultMap id = "WfProcessDefVo" type="com.wisdom.base.common.vo.wf.WfProcessDefVo">
+        <result column="id_" property="id"/>
+        <result column="name_" property="name"/>
+        <result column="key_" property="key"/>
+        <result column="version_" property="version"/>
+    </resultMap>
+
+    <select id = "selectWfListenerConfigureUrl" resultType="java.lang.String">
+        select s.bs_value from wsd_base_set s where s.bo_code='wf' and s.bs_key='wfListenerConfigure'
+    </select>
+</mapper>

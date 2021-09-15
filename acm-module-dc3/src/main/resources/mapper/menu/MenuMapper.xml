@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc3.mapper.menu.MenuMapper">
+    <select id="queryMenuNameByCode" parameterType="java.lang.String" resultType="java.lang.String">
+      select m.menu_name from wsd_sys_menu m
+      where m.menu_code = #{menuCode}  limit 1
+    </select>
+</mapper>

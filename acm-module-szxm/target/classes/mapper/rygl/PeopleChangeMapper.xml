@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.PeopleChangeMapper">
+
+    <resultMap id="resultPeopleChangeMap" type="com.wisdom.acm.szxm.vo.rygl.PeopleChangeVo">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="code" column="code"/>
+        <result property="bchanger" column="b_changer"/>
+        <result property="bchangerId" column="b_change_id"/>
+        <result property="achanger" column="a_changer"/>
+        <result property="achangerId" column="a_change_id"/>
+        <result property="changeGw" column="change_gw"/>
+        <result property="contractNumber" column="contract_number"/>
+        <result property="changeReason" column="change_reason"/>
+        <result property="changeTime" column="change_time"/>
+        <result property="createTime" column="creat_time"/>
+        <result property="creater" column="creater"/>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+        </association>
+    </resultMap>
+
+    <select id="selectPeopleChangeList" parameterType="java.util.Map" resultMap="resultPeopleChangeMap">
+        SELECT a.*, b.actu_name as creater
+        FROM szxm_rygl_people_change a
+        LEFT JOIN wsd_sys_user b ON a.creator = b.id
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND (a.b_changer like '%'|| #{searcher} || '%' or a.a_changer like '%'|| #{searcher} || '%' or
+                a.contract_number like '%'|| #{searcher} || '%')
+            </if>
+            <if test="userId != null and userId != '' ">
+                AND (a.b_change_id like '%'|| #{userId} || '%' or a.b_change_id like '%'|| #{userId} || '%')
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id =#{projectId}
+            </if>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.proj_info_id =#{projInfoId}
+            </if>
+            <if test="ids != null">
+                AND a.id IN
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="queryPeopleChangeCount" resultType="java.lang.Integer">
+        select count(*) from szxm_rygl_people_change
+        where to_date(to_char(change_time + 7,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[ < ]]>
+        to_date(to_char(creat_time,'yyyy-mm-dd'), 'yyyy-mm-dd')
+        and creat_time <![CDATA[ < ]]> to_date((select concat(to_char(sysdate,'yyyy-MM'), '-25') endday from
+        dual),'yyyy-mm-dd')
+        and creat_time <![CDATA[ >= ]]> to_date((select concat(to_char(ADD_MONTHS(sysdate,-1),'yyyy-MM'), '-25') endday
+        from dual),'yyyy-mm-dd')
+        <if test="sectionId != null and sectionId != '' ">
+            AND section_id =#{sectionId}
+        </if>
+        group by section_id
+    </select>
+
+
+
+</mapper>
+

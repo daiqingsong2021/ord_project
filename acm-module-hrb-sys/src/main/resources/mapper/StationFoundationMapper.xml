@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.hrb.sys.mapper.StationFoundationMapper">
+    <update id="updateStationFoundationList" parameterType="java.util.List">
+        <foreach collection="updateList" item="item" index="index">
+            update
+                  odr_station_foundation
+            <set>
+                  station_num = #{item.stationNum}
+            </set>
+            where id = #{item.id};
+        </foreach>
+    </update>
+    <delete id="delStationFoundationListByLine" parameterType="java.util.List">
+        DELETE FROM odr_station_foundation
+        <where>
+            line IN
+            <foreach collection="lines" item="item" open="(" close=")"
+                     separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <resultMap id="stationFoundationVo" type="com.wisdom.acm.hrb.sys.vo.StationFoundationVo">
+        <result property="id" column="id"/>
+        <result property="stationCode" column="station_code" />
+        <result property="stationName" column="station_name"/>
+        <result property="line" column="line"/>
+        <result property="stationNum" column="station_num"/>
+        <result property="stationType" column="station_type"/>
+        <result property="relationStation" column="relation_station"/>
+        <result property="isChangeStation" column="is_change_station"/>
+    </resultMap>
+    <select id="queryStationListByParam" parameterType="java.util.Map" resultMap="stationFoundationVo">
+        SELECT a.* FROM  odr_station_foundation a
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="stationType != null and stationType != '' ">
+                AND a.station_type =#{stationType}
+            </if>
+            <if test="stationTypes != null and stationTypes != '' ">
+                AND a.station_type in
+                <foreach collection="stationTypes" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="stationCode != null and stationCode != '' ">
+                AND a.station_code =#{stationCode}
+            </if>
+            <if test="stationCodes != null and stationCodes != '' ">
+                AND a.station_code in
+                <foreach collection="stationCodes" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="startStationCode != null and startStationCode != ''">
+                and relation_station like concat('%', #{startStationCode}, '%')
+            </if>
+        </where>
+        order by a.station_num asc
+    </select>
+</mapper>

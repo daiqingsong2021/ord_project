@@ -1,0 +1,27 @@
+spring:
+  redis:
+    database: 2
+    host: ${REDIS_HOST:192.168.3.13}
+    port: ${REDIS_PORT:6379}
+    pool:
+    max-active: 20
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:192.168.3.13}
+    port:  ${RABBIT_MQ_PORT:5672}
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    statusPageUrlPath: /actuator/info
+    healthCheckUrlPath: /actuator/health
+    # docker 部署开启
+    ip-address: 192.168.3.11
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    hostname: ${spring.cloud.client.ip-address}
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      #            defaultZone: http://127.0.0.1:8761/eureka/
+      # docker 部署开启
+      defaultZone: http://${EUREKA_HOST:192.168.3.11}:${EUREKA_PORT:8761}/eureka/

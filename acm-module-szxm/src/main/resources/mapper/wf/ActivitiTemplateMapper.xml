@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.wf.ActivitiTemplateMapper">
+
+    <select id="queryActivitiByIds" parameterType="java.util.List" resultType="com.wisdom.acm.szxm.po.wf.ActivitiTemplatePo">
+        select p.activiti_id activitiId, p.screen_code screenCode from szxm_activiti_screen p
+        <where>
+            p.activiti_id IN
+            <foreach collection="activitiIds" item="activitiId" open="(" close=")"
+                     separator=",">
+                #{activitiId}
+            </foreach>
+        </where>
+    </select>
+
+</mapper>
+

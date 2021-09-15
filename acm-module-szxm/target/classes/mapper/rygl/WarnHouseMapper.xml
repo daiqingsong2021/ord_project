@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.WarnHouseMapper">
+
+    <resultMap id="warnHouseVo" type="com.wisdom.acm.szxm.vo.rygl.WarnHouseVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="creater" column="creater"/>
+        <result property="createTime" column="creat_time"/>
+    </resultMap>
+
+    <select id="selectWarnHouseList" parameterType="java.util.Map" resultMap="warnHouseVo">
+        select a.*,u.ACTU_NAME as creater from szxm_rygl_warehouse a
+        left join wsd_sys_user u on u.id=a.creator
+        <where>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.PROJ_INFO_ID = #{projInfoId}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="selectWarnHouseListByProjId" parameterType="java.util.Map" resultMap="warnHouseVo">
+        select a.*,u.ACTU_NAME as creater from szxm_rygl_warehouse a
+        left join wsd_sys_user u on u.id=a.creator
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+</mapper>
+

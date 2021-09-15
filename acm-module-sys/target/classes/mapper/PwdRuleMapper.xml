@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.PwdRuleMapper">
+
+    <select id="selectPwdRuleAll" resultMap="resultPwdRuleMap">
+        select p.cycle,p.length,p.errornumber,p.locktime,p.id
+        from wsd_sys_pwdrule p
+        order by p.creat_time desc
+    </select>
+
+    <resultMap id="resultPwdRuleMap" type="com.wisdom.acm.sys.vo.SysPwdRuleVo">
+        <id column="id" property="id"/>
+        <result column="cycle" property="cycle"/>
+        <result column="length" property="length"/>
+        <result column="errornumber" property="errorNumber"/>
+        <result column="locktime" property="lockTime"/>
+    </resultMap>
+
+    <select id="getOne" resultMap="resultPwdRuleMap">
+        select p.cycle,p.length,p.errornumber,p.locktime
+        from wsd_sys_pwdrule p
+        where p.id = #{pwdRuleId}
+    </select>
+
+</mapper>

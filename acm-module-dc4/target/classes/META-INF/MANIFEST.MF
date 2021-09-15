@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: lenovo
+Build-Jdk: 16.0.1
+Implementation-Title: acm-module-dc4
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.wisdom.acm
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/cldm_springcloud/acm-module-dc4
+Created-By: Maven Integration for Eclipse
+

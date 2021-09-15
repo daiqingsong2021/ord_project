@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.szxm.mapper.wtgl.QuestionRecordMapper">
+    <resultMap id="questionRecordVo" type="com.wisdom.acm.szxm.vo.wtgl.QuestionRecordVo">
+        <result column="id" property="id" />
+        <result column="PROJECT_ID" property="projectId" />
+        <result column="SECTION_ID" property="sectionId" />
+        <result column="QUESTION_ID" property="questionId" />
+        <result column="creat_time" property="createTime" />
+        <result column="remark" property="remark" />
+        <result column="file_count" property="fileCount" />
+        <association property="orgVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="ORG_ID" />
+            <result property="code" column="org_code" />
+            <result property="name" column="org_name" />
+        </association>
+        <association property="userVo" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="user_id" />
+            <result property="code" column="user_name" />
+            <result property="name" column="actu_name" />
+            <result property="userCode" column="user_code" />
+            <result property="phone" column="phone" />
+        </association>
+        <association property="createrOrgVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="CREATOR_ORG_ID" />
+            <result property="code" column="CREATOR_ORG_CODE" />
+            <result property="name" column="CREATOR_ORG_NAME" />
+        </association>
+        <association property="createrVo" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="CREATOR" />
+            <result property="code" column="CREATER_USER_NAME" />
+            <result property="name" column="CREATER_ACTU_NAME" />
+            <result property="userCode" column="CREATER_USER_CODE" />
+            <result property="phone" column="CREATER_USER_PHONE" />
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status" />
+            <result property="name" column="status_name" />
+        </association>
+        <association property="actionVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="action" />
+            <result property="name" column="action_name" />
+        </association>
+    </resultMap>
+
+    <select id="selectQuestionRecords" resultMap="questionRecordVo">
+        select a.id,
+        a.question_id,
+        a.section_id,
+        a.project_id,
+        a.creat_time,
+        a.creator,
+        a.creator_org_id,
+        a.user_id,
+        a.org_id,
+        a.status,
+        a.action,
+        a.remark,
+        a.actu_name,
+        a.user_code,
+        a.user_name,
+        a.phone,
+        a.CREATER_ACTU_NAME,
+        a.CREATER_USER_CODE,
+        a.CREATER_USER_NAME,
+        a.CREATER_USER_PHONE,
+        a.org_code,
+        a.org_name,
+        a.CREATOR_ORG_CODE,
+        a.CREATOR_ORG_NAME,
+        a.status_name,
+        a.action_name,
+        count(r.file_id) as file_count
+        from (select a.id,
+        a.question_id,
+        a.section_id,
+        a.project_id,
+        a.creat_time,
+        a.creator,
+        a.creator_org_id,
+        a.user_id,
+        a.org_id,
+        a.status,
+        a.action,
+        a.remark,
+        u1.actu_name,
+        u1.user_code,
+        u1.user_name,
+        u1.phone,
+        u2.actu_name     CREATER_ACTU_NAME,
+        u2.user_code     CREATER_USER_CODE,
+        u2.user_name     CREATER_USER_NAME,
+        u2.phone         CREATER_USER_PHONE,
+        o1.org_code,
+        o1.org_name,
+        o2.org_code      CREATOR_ORG_CODE,
+        o2.org_name      CREATOR_ORG_NAME,
+        dt1.dict_name    status_name,
+        dt2.dict_name    action_name
+        from Szxm_Sys_Question_Record a
+        left join wsd_sys_user u1
+        on a.user_id = u1.id
+        left join wsd_sys_user u2
+        on a.creator = u2.id
+        left join wsd_sys_org o1
+        on a.org_id = o1.id
+        left join wsd_sys_org o2
+        on a.CREATOR_ORG_ID = o2.id
+        left join wsd_base_dict dt1
+        on a.status = dt1.dict_code
+        and dt1.TYPE_CODE = 'comu.question.status'
+        left join wsd_base_dict dt2
+        on a.action = dt2.dict_code
+        and dt1.TYPE_CODE = 'comu.questionrecord.action'
+        ) a
+        left join wsd_doc_file_relation r
+        on a.id = r.biz_id
+        and r.biz_type = 'question-record'
+        <where>
+            <if test="questionId != ''and questionId != null">
+                and a.question_id=#{questionId}
+            </if>
+        </where>
+        group by a.id,
+        a.question_id,
+        a.section_id,
+        a.project_id,
+        a.creat_time,
+        a.creator,
+        a.creator_org_id,
+        a.user_id,
+        a.org_id,
+        a.status,
+        a.action,
+        a.remark,
+        a.actu_name,
+        a.user_code,
+        a.user_name,
+        a.phone,
+        a.CREATER_ACTU_NAME,
+        a.CREATER_USER_CODE,
+        a.CREATER_USER_NAME,
+        a.CREATER_USER_PHONE,
+        a.org_code,
+        a.org_name,
+        a.CREATOR_ORG_CODE,
+        a.CREATOR_ORG_NAME,
+        a.status_name,
+        a.action_name order by a.creat_time asc
+    </select>
+
+    <select id="selectAppQuestionRecords" resultMap="questionRecordVo">
+        select a.id,
+        a.question_id,
+        a.section_id,
+        a.project_id,
+        a.creat_time,
+        a.creator,
+        a.creator_org_id,
+        a.user_id,
+        a.org_id,
+        a.status,
+        a.action,
+        a.remark,
+        u1.actu_name,
+        u1.user_code,
+        u1.user_name,
+        u1.phone,
+        u2.actu_name     CREATER_ACTU_NAME,
+        u2.user_code     CREATER_USER_CODE,
+        u2.user_name     CREATER_USER_NAME,
+        u2.phone         CREATER_USER_PHONE,
+        o1.org_code,
+        o1.org_name,
+        o2.org_code      CREATOR_ORG_CODE,
+        o2.org_name      CREATOR_ORG_NAME,
+        dt1.dict_name    status_name,
+        dt2.dict_name    action_name
+        from Szxm_Sys_Question_Record a
+        left join wsd_sys_user u1
+        on a.user_id = u1.id
+        left join wsd_sys_user u2
+        on a.creator = u2.id
+        left join wsd_sys_org o1
+        on a.org_id = o1.id
+        left join wsd_sys_org o2
+        on a.CREATOR_ORG_ID = o2.id
+        left join wsd_base_dict dt1
+        on a.status = dt1.dict_code
+        and dt1.TYPE_CODE = 'comu.question.status'
+        left join wsd_base_dict dt2
+        on a.action = dt2.dict_code
+        and dt1.TYPE_CODE = 'comu.questionrecord.action'
+        <where>
+            <if test="questionId != ''and questionId != null">
+                and a.question_id=#{questionId}
+            </if>
+            <if test="questIds != null">
+                AND a.question_id IN
+                <foreach collection="questIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.creat_time desc
+    </select>
+</mapper>

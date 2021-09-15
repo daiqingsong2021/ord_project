@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.UserLoginMapperExpansion">
+
+
+    <select id="selectMemberByGroupId" resultType="com.wisdom.acm.sys.po.SysUserPo">
+    SELECT u.actu_name,u.userId,u.user_name,u.birth,u.sex,u.email,u.`password`,u.phone FROM wsd_sys_user u
+  </select>
+    <select id="selectLeaderByGroupId" resultType="com.wisdom.acm.sys.po.SysUserPo">
+    SELECT u.actu_name,u.userId,u.user_name,u.birth,u.sex,u.email,u.`password`,u.phone FROM wsd_sys_user u
+  </select>
+
+	<select id="selectUserLoginInfo" resultMap="userLoginInfoMap">
+        select u.id id,u.user_name username,u.actu_name actuname,u.birth,u.creat_time creattime,u.email,u.phone,u.sex,u.remark
+        from wsd_sys_user u
+        where u.user_name = #{userName}
+    </select>
+
+    <resultMap id="userLoginInfoMap" type="com.wisdom.acm.sys.vo.SysUserLoginVo">
+    </resultMap>
+
+	<select id="selectUserInfo" resultMap="selectsUserInfoMap">
+		select u.user_name,u.password,u.id user_id  from  wsd_sys_user u where u.user_name = #{userName}
+	</select>
+
+
+	<resultMap id="selectsUserInfoMap" type="com.wisdom.base.common.vo.UserInfo">
+		<id column="user_id" property="id"/>
+		<result column="user_name" property="userName"/>
+		<result column="actu_name" property="actuName"/>
+		<result column="birth" property="birth"/>
+		<result column="sex" property="sex"/>
+		<result column="password" property="password"/>
+		<result column="email" property="password"/>
+		<result column="phone" property="phone"/>
+	</resultMap>
+</mapper>

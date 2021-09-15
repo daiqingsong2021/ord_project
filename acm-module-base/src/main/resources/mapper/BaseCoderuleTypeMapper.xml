@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCoderuleTypeMapper">
+
+    <resultMap id="BaseCoderuleTypeMap" type="com.wisdom.acm.base.vo.coderule.BaseCoderuleTypeVo" >
+        <id column="id" property="id"/>
+        <result column="rule_type_name" property="ruleTypeName"/>
+        <result column="type_sql" property="typeSql"/>
+        <result column="foreign_key" property="foreignKey"/>
+        <association property="columnName" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="column_name" property="id" />
+        </association>
+        <association property="tableName" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="table_name" property="id" />
+        </association>
+        <association property="dictTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="dt_id" property="code" />
+            <result column="dt_name" property="name"/>
+        </association>
+        <association property="dictBoVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="db_id" property="code" />
+            <result column="db_name" property="name"/>
+        </association>
+        <association property="attributeTypeVo" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="at_id" property="id" />
+            <result column="at_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <sql id="CoderuleType">
+        select c.*,
+        c.attribute_type as at_id,
+        d.dict_name as at_name,
+        c.dict_type as dt_id,
+        dt.type_name as dt_name,
+        c.dict_bo as db_id,
+        db.bo_name as db_name
+        from wsd_base_coderule_type c
+        left join wsd_base_dict d on c.attribute_type = d.dict_code
+        left join wsd_base_dict_type dt on dt.type_code = c.dict_type
+        left join wsd_base_bo db on db.bo_code = c.dict_bo and db.bo_type=1
+    </sql>
+
+    <select id="selectCoderuleTypeListByboId" resultMap="BaseCoderuleTypeMap">
+        <include refid="CoderuleType"/>
+        where c.rule_bo_id = #{boId}
+        order by c.sort_num
+    </select>
+
+    <select id="selectCoderuleListById" resultMap="BaseCoderuleTypeMap">
+        <include refid="CoderuleType"/>
+        where c.id = #{id}
+    </select>
+
+
+</mapper>

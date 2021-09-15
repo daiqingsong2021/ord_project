@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.SectionMapper">
+    <resultMap id="sectionMap" type="com.wisdom.acm.sys.vo.SectionVo">
+        <result column="id" property="id"/>
+        <result column="parentId" property="parentId"/>
+        <result column="projectId" property="projectId"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="typeCoe" property="typeCoe"/>
+        <result column="typeName" property="typeName"/>
+        <result column="type" property="type"/>
+        <result column="professional" property="professional"/>
+        <result column="orgClassification" property="orgClassification"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="openPgd" column="OPEN_PGD"/>
+        <result property="openExam" column="OPEN_EXAM"/>
+        <result property="pgdStartDate" column="PGD_START_DATE"/>
+        <result property="pgdEndDate" column="PGD_END_DATE"/>
+        <result property="examStartDate" column="EXAM_START_DATE"/>
+        <result property="examEndDate" column="EXAM_END_DATE"/>
+        <association property="sectionStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="SECTION_STATUS"/>
+            <result property="name" column="SECTION_STATUS_NAME"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="sectionTreeMap" type="com.wisdom.acm.sys.vo.SectionTreeVo">
+        <result column="id" property="id"/>
+        <result column="parentId" property="parentId"/>
+        <result column="projectId" property="projectId"/>
+        <result column="code" property="code"/>
+        <result column="value" property="value"/>
+        <result column="name" property="name"/>
+        <result column="title" property="title"/>
+        <result column="typeCoe" property="typeCode"/>
+        <result column="typeName" property="typeName"/>
+        <result column="type" property="type"/>
+        <result column="professional" property="professional"/>
+        <result column="orgClassification" property="orgClassification"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="openPgd" column="OPEN_PGD"/>
+        <result property="openExam" column="OPEN_EXAM"/>
+        <result property="pgdStartDate" column="PGD_START_DATE"/>
+        <result property="pgdEndDate" column="PGD_END_DATE"/>
+        <result property="examStartDate" column="EXAM_START_DATE"/>
+        <result property="examEndDate" column="EXAM_END_DATE"/>
+        <association property="sectionStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="SECTION_STATUS"/>
+            <result property="name" column="SECTION_STATUS_NAME"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="userOrgVo" type="com.wisdom.acm.sys.vo.SysOrgUserVo">
+        <result property="userOrgId" column="id"/>
+        <result property="orgId" column="org_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="position" column="position"/>
+        <result property="professional" column="professional"/>
+    </resultMap>
+
+    <resultMap id="projectTeamUserVo" type="com.wisdom.acm.sys.vo.ProjectTeamUserVo">
+        <result property="id" column="id"/>
+        <result property="teamId" column="org_id"/>
+        <result property="teamCode" column="org_code"/>
+        <result property="teamName" column="org_name"/>
+        <result property="sortNum" column="sort_num"/>
+        <result property="phone" column="phone"/>
+        <result property="cardType" column="card_type"/>
+        <result property="cardNum" column="card_num"/>
+        <result property="birth" column="birth"/>
+        <result property="email" column="email"/>
+        <result property="position" column="position"/>
+        <result property="professional" column="professional"/>
+        <association property="level" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="level_"/>
+        </association>
+        <association property="sex" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="sex"/>
+            <result property="name" column="sexName"/>
+        </association>
+        <association property="staffStatus" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="staff_status"/>
+            <result property="name" column="staff_status_name"/>
+        </association>
+        <association property="status" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="status"/>
+            <result property="name" column="statusName"/>
+        </association>
+        <association property="user" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="user_id"/>
+            <result property="code" column="user_name"/>
+            <result property="userCode" column="user_code"/>
+            <result property="name" column="actu_name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="sectionProjectVo" type="com.wisdom.base.common.vo.sys.SectionProjectVo">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parentId"/>
+        <result property="projectId" column="projectId"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="projectName" column="projectName"/>
+        <result property="projectCode" column="projectCode"/>
+        <result property="orgType" column="orgType"/>
+        <result column="typeCode" property="typeCode"/>
+        <result property="professional" column="professional"/>
+    </resultMap>
+
+    <select id="selectSectionProjectVos" resultMap="sectionProjectVo">
+        select o.id,o.biz_id as projectId,o.org_code as code, o.org_name as name,o.parent_id as parentId,
+          p.code as projectCode,p.name as projectName,o.extended_column_1 as orgType,o.extended_column_5 as professional,
+        case when o.extended_column_2 is not null then o.extended_column_2 else o.extended_column_3 end AS typeCode
+        from wsd_sys_org o
+        inner join wsd_plan_project p on o.biz_id = p.id
+        WHERE o.biz_type = 'project'
+        <if test="type != '' and type != null">
+            AND o.extended_column_1 = #{type}
+        </if>
+        AND o.biz_id IN
+        <foreach collection="projectIds" close=")" item="item" index="index" open="(" separator=",">
+            #{item}
+        </foreach>
+        ORDER BY p.sort_num,o.sort_num
+    </select>
+
+    <select id="selectProjectTreamUserList" resultMap="projectTeamUserVo">
+        select
+            uo.id,uo.user_id,u.actu_name,u.user_name,u.user_code,uo.org_id,o.org_code,o.org_name,
+            (case u.sex when 0 then '女' when 1 then '男' end) as sexName, (case u.staff_status
+            when '1' then
+            '在岗' when '0' then '离职' end) as staff_status_name,u.visits,
+            (case u.status when 1 then '正常' when 0 then '锁定' end) as
+            statusName,u.status,u.staff_status,u.sex,u.sort_num,u.lastlogin_time,
+            u.phone,u.card_type,u.card_num,u.email,u.card_type,u.birth,u.user_type,u.email,u.level_,uo.position,uo.professional
+        from wsd_sys_userorg uo
+        inner join wsd_sys_user u on u.id = uo.user_id
+        inner join wsd_sys_org o on o.id = uo.org_id
+        where o.biz_type = 'project'
+        <if test="orgType != '' and orgType != null">
+            and o.extended_column_3 = #{orgType}
+        </if>
+        <if test="projectId != '' and projectId != null">
+            and o.biz_id = #{projectId}
+        </if>
+        <if test="userId != '' and userId != null">
+            and uo.user_id = #{userId}
+        </if>
+        ORDER BY uo.sort_num
+    </select>
+
+    <select id="selectSysOrgUserList" resultMap="userOrgVo">
+        select uo.id,uo.user_id,uo.org_id,uo.position,uo.professional
+        from wsd_sys_userorg uo
+        inner join wsd_sys_org o on o.id = uo.org_id and o.biz_type = 'project' and o.biz_id = #{projectId}
+        <where>
+            uo.user_id = #{userId}
+        </where>
+        ORDER BY uo.sort_num
+    </select>
+
+    <select id="selectSysOrgUserVoList" resultMap="userOrgVo">
+        select uo.id,uo.user_id,uo.org_id,uo.position,uo.professional
+        from wsd_sys_userorg uo
+        <where>
+            uo.org_id = #{orgId}
+        </where>
+        ORDER BY uo.sort_num
+    </select>
+
+    <select id="selectSysOrgUserVo" resultMap="userOrgVo">
+        select uo.id,uo.user_id,uo.org_id,uo.position,uo.professional
+        from wsd_sys_userorg uo
+        <where>
+            uo.org_id = #{orgId} and uo.user_id = #{userId}
+        </where>
+        ORDER BY uo.sort_num
+    </select>
+
+    <sql id="sectionInfoSql">
+       SELECT o.id,o.parent_id AS parentId,o.biz_id AS projectId ,o.org_code as  code ,o.id as value,o.org_name as name,o.org_name as title,o.extended_column_1 AS type,
+            case when o.extended_column_2 is not null then o.extended_column_2 else o.extended_column_3 end AS typeCoe,
+            case when d.dict_name is not null then d.dict_name else d2.dict_name end AS typeName,o.extended_column_5 as professional,
+            o.extended_column_4 as orgClassification,o.SECTION_STATUS,dt.dict_name as SECTION_STATUS_NAME,o.START_DATE,o.END_DATE,o.OPEN_PGD,o.PGD_START_DATE,o.PGD_END_DATE,o.OPEN_EXAM,o.EXAM_START_DATE,o.EXAM_END_DATE
+        FROM wsd_sys_org o
+        LEFT JOIN wsd_base_dict d ON d.type_code = 'proj.section.type' AND d.dict_code = o.extended_column_2
+        left join wsd_base_dict d2 on d2.type_code = 'base.org.type' and d2.dict_code = o.extended_column_3
+        left join wsd_base_dict dt on o.SECTION_STATUS = dt.dict_code and dt.TYPE_CODE = 'proj.section.status'
+    </sql>
+
+    <select id="selectOwnerOrgListByProjectId" resultMap="sectionTreeMap">
+        <include refid="sectionInfoSql"/>
+        WHERE (o.parent_id = '' OR o.parent_id = '0' OR o.parent_id IS NULL)  AND o.extended_column_1 = 'org' AND o.biz_type = 'project' AND o.biz_id = #{projectId}
+        ORDER BY o.sort_num
+    </select>
+
+
+    <select id="selectSectionByUserIdAndProjectId" resultMap="sectionTreeMap">
+        <include refid="sectionInfoSql"/>
+        WHERE o.biz_type = 'project'  AND o.extended_column_1 = 'section'
+        AND  exists (select 1 from wsd_sys_userorg ou1
+        INNER JOIN wsd_sys_org o1 ON o1.id = ou1.org_id AND o1.biz_type = 'project' AND o1.extended_column_1 = 'org'
+        WHERE ou1.user_id = #{userId} AND o1.biz_id = #{projectId} AND o1.parent_id=o.id)
+        ORDER BY o.sort_num
+    </select>
+
+    <select id="selectSubSectionByParentIds" resultMap="sectionTreeMap">
+        <include refid="sectionInfoSql"/>
+        WHERE o.biz_type = 'project'  AND o.extended_column_1 = #{type} AND o.parent_id IN
+        <foreach collection="parentIds" close=")" item="item" index="index" open="(" separator=",">
+            #{item}
+        </foreach>
+        ORDER BY o.sort_num
+    </select>
+
+    <select id="selectSectionById" resultMap="sectionMap">
+        <include refid="sectionInfoSql"/>
+        where o.id=#{id}
+    </select>
+
+    <select id="selectSectionByIds" resultMap="sectionMap">
+        <include refid="sectionInfoSql"/>
+        WHERE o.biz_type = 'project' AND o.id IN
+        <foreach collection="ids" close=")" item="item" index="index" open="(" separator=",">
+            #{item}
+        </foreach>
+        ORDER BY o.sort_num
+    </select>
+
+    <select id="selectSectionByProjectId" resultMap="sectionMap">
+        <include refid="sectionInfoSql"/>
+        WHERE o.biz_type = 'project' AND o.extended_column_1 = 'section' AND o.biz_id = #{projectId}
+        <if test="key != null and key != ''">
+            and (o.org_code like  concat('%',#{key},'%') or o.org_name like concat('%',#{key},'%' ))
+        </if>
+        ORDER BY o.sort_num
+    </select>
+
+
+    <select id="selectSections" parameterType="java.util.Map"  resultMap="sectionMap">
+        <include refid="sectionInfoSql"/>
+        <where>
+            o.biz_type = 'project' AND o.extended_column_1 = 'section' AND o.biz_id = #{projectId}
+            <if test="key != null and key != ''">
+                and (o.org_code like  concat('%',#{key},'%') or o.org_name like concat('%',#{key},'%' ))
+            </if>
+            <if test="id != null and id != '' ">
+                AND o.id = #{id}
+            </if>
+            <if test="sectionType != null and sectionType != '' ">
+                AND instr(#{sectionType},o.extended_column_2,1)>=1
+            </if>
+            <if test="ids != null">
+                AND o.id IN
+                <foreach collection="ids" close=")" item="item" index="index" open="(" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by
+        substr(o.org_code,instr(o.org_code,'-',1)+1,instr(o.org_code,'-',1,2)- INSTR (o.org_code, '-', 1, 1)-1) asc,substr(o.org_code,instr(o.org_code,'-',1,2)+1) asc
+    </select>
+
+    <resultMap id="GeneralVo" type="com.wisdom.base.common.vo.GeneralVo">
+        <id property="id" column="role_id"/>
+        <result property="code" column="role_code"/>
+        <result property="name" column="role_name"/>
+    </resultMap>
+    <select id="queryTeamRoles" resultMap="GeneralVo">
+	    select uo.id,uo.user_id,uo.org_id,uor.role_id,r.role_code,r.role_name
+        from wsd_sys_userorg uo
+        inner join wsd_sys_org o on o.id = uo.org_id and o.biz_type = 'project' and o.biz_id = #{projectId}
+        left join wsd_sys_userorg_role uor on uo.user_id=uor.user_id and uo.org_id=uor.org_id
+        left join wsd_sys_role r on r.id=uor.role_id
+        where uo.user_id= #{userId}
+	</select>
+
+    <select id="selectSectUserOrgIdsByUId" resultType="java.lang.Integer">
+    select uo.org_id
+        from wsd_sys_userorg uo
+          inner join wsd_sys_org o on o.id = uo.org_id and o.biz_type = 'project' AND o.extended_column_1 = 'section' and o.biz_id = #{projectId}
+          where uo.user_id = #{userId}
+    </select>
+
+    <select id="selectSgSectionByJls" resultType="com.wisdom.acm.sys.vo.SectionTreeVo">
+        <include refid="sectionInfoSql"/>
+        <if test="jlbList != null">
+            inner join SZXM_SYS_SECTION_RELATION sr on sr.sgb_id=o.id
+            and sr.jlb_id IN
+            <foreach collection="jlbList" close=")" item="item" index="index" open="(" separator=",">
+                #{item.value}
+            </foreach>
+        </if>
+         WHERE o.biz_type = 'project'  AND o.extended_column_1 = 'section' and o.extended_column_2 <![CDATA[  <> ]]> 'supervisor'
+    </select>
+
+    <select id="selectSgJlRelat" parameterType="java.util.Map" resultType="java.util.Map">
+         select * from SZXM_SYS_SECTION_RELATION
+        <where>
+            <if test="sgbIds != null">
+                AND sgb_id IN
+                <foreach collection="sgbIds" close=")" item="item" index="index" open="(" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="jlbIds != null">
+                AND jlb_id IN
+                <foreach collection="jlbIds" close=")" item="item" index="index" open="(" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="querySectionIdsParams" resultType="java.lang.Integer">
+        select section_id from org_section_relation where project_id = #{projectId} and org_id= #{orgId}
+    </select>
+</mapper>

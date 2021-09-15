@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.TrainScheduleMapper">
+
+    <resultMap id="trainScheduleVo" type="com.wisdom.acm.dc2.vo.TrainScheduleVo">
+        <result property="id" column="id"/>
+        <result property="scheduleCode" column="SCHEDULE_CODE"/>
+        <result property="scheduleName" column="SCHEDULE_NAME"/>
+        <result property="maxOnlineTrain" column="MAX_ONLINE_TRAIN"/>
+        <result property="minDrivingInterval" column="MIN_DRIVING_INTERVAL"/>
+        <result property="standbyTrain" column="STANDBY_TRAIN"/>
+        <result property="plannedOperationColumn" column="PLANNED_OPERATION_COLUMN"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="line" column="LINE"/>
+        <result property="startStation" column="START_STATION"/>
+        <result property="startStationName" column="startStationName"/>
+        <result property="endStation" column="END_STATION"/>
+        <result property="endStationName" column="endStationName"/>
+        <result property="startDriveTime" column="START_DRIVE_TIME"/>
+        <result property="endDriveTime" column="END_DRIVE_TIME"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="lineName" column="line_name"/>
+        <result property="trainListNumber" column="TRAIN_LIST_NUMBER"/>
+        <result property="passengerMiles" column="PASSENGER_MILES"/>
+        <result property="emptyMiles" column="EMPTY_MILES"/>
+        <result property="allLinePassenageMiles" column="ALL_LINE_PASSENAGE_MILES"/>
+        <result property="allLineEmptyMiles" column="ALL_LINE_EMPTY_MILES"/>
+        <result property="newLinePassenageMiles" column="NEW_LINE_PASSENAGE_MILES"/>
+        <result property="newLineEmptyMiles" column="NEW_LINE_EMPTY_MILES"/>
+        <result property="new_Line_Station_Mileage" column="newLineStationMileage"/>
+        <result property="old_Line_Station_Mileage" column="oldLineStationMileage"/>
+
+        <association property="reviewStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="REVIEW_STATUS"/>
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="createrVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="creator"/>
+            <result property="name" column="ACTU_NAME"/>
+        </association>
+
+    </resultMap>
+
+
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="trainScheduleVo">
+        SELECT
+        a.*, dt.dict_name AS line_name,
+        fo.station_name AS endStationName,
+        f.station_name AS startStationName,
+        (
+        CASE a.review_status
+        WHEN 'INIT' THEN
+        '新建'
+        WHEN 'REJECT' THEN
+        '被驳回'
+        WHEN 'APPROVAL' THEN
+        '审批中'
+        WHEN 'APPROVED' THEN
+        '已完成'
+        END
+        ) AS status_name,
+        u.ACTU_NAME AS ACTU_NAME
+        FROM
+        odr_train_schedule a
+        LEFT JOIN odr_station_foundation f ON f.station_code = a.START_STATION
+        LEFT JOIN odr_station_foundation fo ON fo.station_code = a.END_STATION
+        LEFT JOIN wsd_base_dict dt ON a.line = dt.dict_code
+        AND dt.TYPE_CODE = 'line'
+        LEFT JOIN wsd_sys_user u ON a.CREATOR = u.ID
+        <where>
+            <if test="checkScheduleName != null and checkScheduleName != '' ">
+                AND a.SCHEDULE_NAME =#{checkScheduleName}
+            </if>
+            <if test="scheduleCode != null and scheduleCode != '' ">
+                AND a.SCHEDULE_CODE =#{scheduleCode}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="lines != null and lines != '' ">
+                AND a.line in
+                <foreach collection="lines" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="scheduleName != null and scheduleName != '' ">
+                and a.SCHEDULE_NAME like concat('%',#{scheduleName},'%')
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+
+</mapper>
+

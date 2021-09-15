@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCalendarMapper">
+
+    <sql id="selectInfo">
+        select c.id,c.cal_name,c.cal_type,c.is_default,c.built_in,u.id as user_id, u.actu_name as user_name,c.creat_time
+        from wsd_base_calendar c
+        left join wsd_sys_user u on c.creator = u.id
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.wisdom.acm.base.vo.calendar.BaseCalendarVo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="cal_name" property="calName" jdbcType="VARCHAR" />
+        <result column="is_default" property="isDefault" jdbcType="INTEGER" />
+        <result column="built_in" property="builtIn" jdbcType="INTEGER" />
+    </resultMap>
+
+
+    <select id="selectCalendarList" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+    </select>
+
+    <select id="selectDefaultCalendar" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+        where c.is_default = 1
+    </select>
+
+    <select id="selectCalendarById" parameterType="int" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+        where c.id=#{value}
+    </select>
+
+
+    <select id="selectOneBaseCalendarVo" parameterType="int" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+        where c.id = #{calendarId}
+    </select>
+
+</mapper>

@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.OrgMapper">
+
+    <resultMap id="resultOrgInfoMap" type="com.wisdom.acm.sys.vo.SysOrgInfoVo">
+        <id property="id" column="id"/>
+        <result property="orgCode" column="org_code"/>
+        <result property="orgName" column="org_name"/>
+        <result property="remark" column="remark"/>
+        <result property="invalidDate" column="invalid_date"/>
+        <result property="effectDate" column="effect_date"/>
+        <result property="parentName" column="parentName"/>
+        <result property="webAddress" column="web_address"/>
+        <result property="contractNum" column="contract_num"/>
+        <result property="orgContract" column="org_contract"/>
+        <result property="orgAddress" column="org_address"/>
+        <result property="grogLoc" column="grog_loc"/>
+        <result property="zipCode" column="zip_code"/>
+        <result property="orgEmail" column="org_email"/>
+        <result property="sort" column="sort_num"/>
+        <result property="extendedColumn1" column="extended_column_1"/>
+        <result property="extendedColumn2" column="extended_column_2"/>
+        <result property="extendedColumn3" column="extended_column_3"/>
+        <result property="extendedColumn4" column="extended_column_4"/>
+        <result property="extendedColumn5" column="extended_column_5"/>
+        <association property="orgType" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="org_Type"/>
+            <result property="name" column="orgTypeName"/>
+        </association>
+        <association property="orgLevel" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="org_level"/>
+        </association>
+        <association property="status" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+            <result property="name" column="statusName"/>
+        </association>
+        <association property="parentOrg" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="parent_id"/>
+            <result property="name" column="parentName"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="projectTeamMap" type="com.wisdom.acm.sys.vo.ProjectTeamVo">
+        <result property="id" column="id"/>
+        <result property="teamCode" column="org_code"/>
+        <result property="teamName" column="org_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="bizType" column="biz_type"/>
+        <result property="bizId" column="biz_id"/>
+        <result property="pgSectionId" column="pg_section_id"/>
+        <result property="sortNum" column="sort_num"/>
+        <result property="extendedColumn1" column="extended_column_1"/>
+        <result property="extendedColumn2" column="extended_column_2"/>
+        <result property="extendedColumn3" column="extended_column_3"/>
+        <result property="extendedColumn4" column="extended_column_4"/>
+        <result property="extendedColumn5" column="extended_column_5"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="openPgd" column="OPEN_PGD"/>
+        <result property="openExam" column="OPEN_EXAM"/>
+        <result property="pgdStartDate" column="PGD_START_DATE"/>
+        <result property="pgdEndDate" column="PGD_END_DATE"/>
+        <result property="examStartDate" column="EXAM_START_DATE"/>
+        <result property="examEndDate" column="EXAM_END_DATE"/>
+        <association property="sectionStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="SECTION_STATUS"/>
+            <result property="name" column="SECTION_STATUS_NAME"/>
+        </association>
+    </resultMap>
+
+    <select id="selectOrgsBySearch" resultType="java.lang.Integer">
+        SELECT o.id FROM wsd_sys_org o
+        <where>
+            o.biz_id is null
+            <if test="search.searcher != null and search.searcher != ''">
+               and (o.org_name like concat('%',#{search.searcher},'%')
+                or
+                o.org_code like concat('%',#{search.searcher},'%'))
+            </if>
+        </where>
+        order by o.CREAT_TIME desc
+    </select>
+
+
+    <select id="selectOrgsAllByPid" resultMap="resultOrgMapByPid">
+        select o.ID,o.ORG_CODE,o.ORG_NAME from wsd_sys_org o where o.PARENT_ID = #{orgId}
+    </select>
+
+    <resultMap id="resultOrgMapByPid" type="com.wisdom.acm.sys.vo.SysOrgVo">
+        <id property="id" column="id"/>
+        <result property="orgName" column="ORG_NAME"/>
+        <collection column="id" property="children" ofType="com.wisdom.acm.sys.vo.SysOrgVo"
+                    select="selectOrgsAllByPid"/>
+    </resultMap>
+
+    <select id="selectOrgsByIds" parameterType="java.util.List" resultType="com.wisdom.acm.sys.vo.SysOrgVo">
+        select o.ID orgId,o.ORG_CODE orgCode,o.org_type orgType,o.ORG_NAME orgName,o.PARENT_ID parentId from wsd_sys_org
+        o where o.ID in
+        <foreach collection="orgList" item="item" open="(" separator="," close=")">
+            #{item.orgId}
+        </foreach>
+    </select>
+
+    <select id="selectRolationsByOrgIds" resultType="com.wisdom.acm.sys.vo.SysOrgUserVo" parameterType="java.util.List">
+        select o.user_id userId ,o.org_id orgId from wsd_sys_userorg o where o.org_id in
+        <foreach collection="orgIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectOrgsByUserId" resultMap="resultOrgInfoMap">
+        select
+            o.id,o.parent_id,o.org_name,g.org_name parentName,o.org_level,o.org_code,o.org_address,o.org_email,o.org_contract,o.contract_num,o.effect_date,o.invalid_date,
+            (case o.org_type when 0 then '公司' when 1 then '部门' end) as orgTypeName,o.org_type,(case o.status when '1' then '有效' when '0' then '无效' end) as statusName,o.status
+            ,o.remark,o.web_address,o.grog_loc,o.zip_code,o.sort_num
+            ,o.extended_column_1,o.extended_column_2,o.extended_column_3,o.extended_column_4,o.extended_column_5
+         from wsd_sys_org o
+         inner join wsd_sys_userorg ou on ou.org_id = o.id
+         left join wsd_sys_org g on o.parent_id = g.id
+         where o.biz_id is null and ou.user_id = #{userId}
+    </select>
+
+    <select id="selectMainOrgByUserId" resultMap="resultOrgInfoMap">
+        select
+            o.id,o.parent_id,o.org_name,g.org_name parentName,o.org_level,o.org_code,o.org_address,o.org_email,o.org_contract,o.contract_num,o.effect_date,o.invalid_date,
+            (case o.org_type when 0 then '公司' when 1 then '部门' end) as orgTypeName,o.org_type,(case o.status when '1' then '有效' when '0' then '无效' end) as statusName,o.status
+            ,o.remark,o.web_address,o.grog_loc,o.zip_code,o.sort_num
+            ,o.extended_column_1,o.extended_column_2,o.extended_column_3,o.extended_column_4,o.extended_column_5
+         from wsd_sys_org o
+         inner join wsd_sys_userorg ou on ou.org_id = o.id
+         left join wsd_sys_org g on o.parent_id = g.id
+         where o.biz_id is null and ou.user_id = #{userId} and ou.main_org = 1
+    </select>
+
+    <select id="selectOrgInfoById" resultMap="resultOrgInfoMap">
+        select
+            o.id,o.parent_id,o.org_name,g.org_name parentName,o.org_level,o.org_code,o.org_address,o.org_email,o.org_contract,o.contract_num,o.effect_date,o.invalid_date,
+            (case o.org_type when 0 then '公司' when 1 then '部门' end) as orgTypeName,o.org_type,(case o.status when '1' then '有效' when '0' then '无效' end) as statusName,o.status
+            ,o.remark,o.web_address,o.grog_loc,o.zip_code,o.sort_num
+            ,o.extended_column_1,o.extended_column_2,o.extended_column_3,o.extended_column_4,o.extended_column_5
+         from wsd_sys_org o left join wsd_sys_org g on o.parent_id = g.id
+         where o.id = #{orgId}
+    </select>
+
+   <select id="selectOrgInfoByIds" resultMap="resultOrgInfoMap">
+        select
+            o.id,o.parent_id,o.org_name,g.org_name parentName,o.org_level,o.org_code,o.org_address,o.org_email,o.org_contract,o.contract_num,o.effect_date,o.invalid_date,
+            (case o.org_type when 0 then '公司' when 1 then '部门' end) as orgTypeName,o.org_type,(case o.status when '1' then '有效' when '0' then '无效' end) as statusName,o.status
+            ,o.remark,o.web_address,o.grog_loc,o.zip_code,o.sort_num
+            ,o.extended_column_1,o.extended_column_2,o.extended_column_3,o.extended_column_4,o.extended_column_5
+         from wsd_sys_org o left join wsd_sys_org g on o.parent_id = g.id
+         where o.id in
+       <foreach collection="orgIds" item="item" open="(" separator="," close=")">
+           #{item}
+       </foreach>
+    </select>
+
+    <select id="selectOrgInfosByIds" resultMap="resultOrgInfoMap">
+        select
+            o.id,o.parent_id,g.org_name parentName,o.org_code,o.org_name,o.org_address,o.org_email,o.org_contract,o.contract_num,o.effect_date,o.invalid_date,
+            (case o.org_type when 0 then '公司' when 1 then '部门' end) as orgTypeName,o.org_type,(case o.status when '1' then '有效' when '0' then '无效' end) as statusName,o.status
+            ,o.remark,o.web_address,o.grog_loc,o.zip_code
+            ,o.extended_column_1,o.extended_column_2,o.extended_column_3,o.extended_column_4,o.extended_column_5
+         from wsd_sys_org o left join wsd_sys_org g on o.parent_id = g.id
+         where  o.id in
+         <foreach collection="orgIds" item="item" index="index" close=")" open="(" separator=",">
+             #{item}
+         </foreach>
+    </select>
+
+    <resultMap id="orgSectionRelationEntity" type="com.wisdom.acm.sys.po.OrgSectionRelation">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="sectionCode" column="section_code"/>
+        <result property="sectionName" column="section_name"/>
+        <result property="orgId" column="org_id"/>
+        <result property="orgCode" column="org_code"/>
+        <result property="orgName" column="org_name"/>
+    </resultMap>
+
+    <resultMap id="resultOrgVoList" type="com.wisdom.acm.sys.vo.SysOrgVo">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="orgCode" column="org_code"/>
+        <result property="orgType" column="org_type"/>
+        <result property="updateTime" column="last_upd_time"/>
+    </resultMap>
+
+    <resultMap id="OrgVoList" type="com.wisdom.base.common.vo.OrgVo">
+        <result property="id" column="id"/>
+        <result property="name" column="org_name"/>
+    </resultMap>
+
+    <select id="selectOrgList" resultMap="resultOrgVoList">
+        select o.id,o.parent_id,o.org_name,o.org_code,o.org_type,o.last_upd_time from wsd_sys_org o where o.biz_id is null order by o.sort_num asc
+    </select>
+
+    <select id = "selectOrgByOrgIds" resultMap="OrgVoList">
+        select o.id,o.org_name from wsd_sys_org o where o.id in
+        <foreach collection="orgIds" item="item" index="index" close=")" open="(" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectOrgByProjectId" resultMap="resultOrgVoList">
+        select o.id,o.parent_id,o.org_name,o.org_code from wsd_sys_org o where o.project_id = #{projectId}
+    </select>
+
+    <sql id="projectTeamSql">
+        select o.sort_num,o.id,o.org_code,o.org_name,o.parent_id,o.biz_type, o.biz_id,o.extended_column_1,o.extended_column_2,o.extended_column_3,o.extended_column_4,o.extended_column_5,o.pg_section_id
+        ,o.SECTION_STATUS,dt.dict_name as SECTION_STATUS_NAME,o.START_DATE,o.END_DATE,o.OPEN_PGD,o.PGD_START_DATE,o.PGD_END_DATE,o.OPEN_EXAM,o.EXAM_START_DATE,o.EXAM_END_DATE
+        from wsd_sys_org o left join wsd_base_dict dt on o.SECTION_STATUS = dt.dict_code and dt.TYPE_CODE = 'proj.section.status'
+    </sql>
+
+    <select id="selectProjectTeam" resultMap="projectTeamMap">
+        <include refid="projectTeamSql"/>
+        where o.extended_column_1 = #{type} and o.biz_type = 'project' and o.biz_id = #{projectId}
+        order by o.sort_num
+    </select>
+
+    <select id="selectSections" resultMap="projectTeamMap">
+        <include refid="projectTeamSql"/>
+        where o.extended_column_1 = 'section' and o.biz_type = 'project'
+        order by o.sort_num
+    </select>
+
+    <select id="selectProjectTeamList" resultMap="projectTeamMap">
+        <include refid="projectTeamSql"/>
+        where o.biz_type = #{bizType} and o.biz_id = #{bizId}
+        order by o.EXTENDED_COLUMN_1,
+        EXTENDED_COLUMN_3,o.sort_num
+    </select>
+
+    <select id="selectProjectTeamById" resultMap="projectTeamMap">
+        <include refid="projectTeamSql"/>
+        where o.id = #{id}
+    </select>
+    <select id="selectProjectTeamNextSort" resultType="java.lang.Integer">
+        select ifnull(max(o.sort_num),0) + 1
+        from wsd_sys_org o
+        where o.biz_type = #{bizType} and o.biz_id = #{bizId} and o.parent_id = #{parentId}
+    </select>
+
+    <select id="isUseTeamByProjectById" resultType="java.lang.Boolean">
+        select ifNull(sum(p.enable_project_team),0)
+        from wsd_plan_project p
+        where p.id = #{projectId}
+    </select>
+
+    <resultMap id="resultOrgUserVoList" type="com.wisdom.acm.sys.vo.SysOrgUserTreeVo">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="org_name"/>
+        <result property="code" column="org_code"/>
+        <result property="orgType" column="org_type"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="selectOrgUserTreeVo" resultMap="resultOrgUserVoList">
+        select o.id,o.parent_id,o.org_name,o.org_type,o.org_code,'org' as type from wsd_sys_org o where o.biz_id is null order by o.parent_id,o.sort_num asc
+    </select>
+
+    <select id="selectProjectIsExist" resultType="java.lang.Integer">
+        select id from wsd_plan_project where id = #{projectId}
+    </select>
+
+    <select id="queryTeamRoles"  resultType="com.wisdom.acm.sys.vo.SysRoleVo">
+	    select uor.role_id id,r.role_code roleCode,r.role_name roleName
+        from wsd_sys_userorg uo
+        inner join wsd_sys_org o on o.id = uo.org_id and o.biz_type = 'project' and o.biz_id = #{projectId}
+        left join wsd_sys_userorg_role uor on uo.user_id=uor.user_id and uo.org_id=uor.org_id
+        left join wsd_sys_role r on r.id=uor.role_id
+        where uo.user_id= #{userId}
+	</select>
+
+    <select id="selectJlSectionList" resultMap="projectTeamMap">
+        <include refid="projectTeamSql"/>
+        where o.biz_type = 'project' and o.EXTENDED_COLUMN_1='section' and o.EXTENDED_COLUMN_2='supervisor' and exists(select 1 from
+        SZXM_SYS_SECTION_RELATION SR where SR.JLB_ID=o.id and SR.SGB_ID =#{sectionId}
+        ) order by o.sort_num
+    </select>
+
+    <select id="selectXyJlSectionList" resultMap="projectTeamMap">
+        <include refid="projectTeamSql"/>
+        where o.biz_type = 'project' and o.EXTENDED_COLUMN_1='section' and o.EXTENDED_COLUMN_2='supervisor'  and not exists(select 1 from
+        SZXM_SYS_SECTION_RELATION SR where SR.JLB_ID=o.id and SR.SGB_ID =#{sectionId}
+        ) order by o.sort_num
+    </select>
+
+    <insert id="insertJlSection" useGeneratedKeys="false" parameterType="java.util.List">
+        INSERT INTO
+        SZXM_SYS_SECTION_RELATION(id,SGB_ID,JLB_ID)
+        select A.* from(
+        <foreach collection="sectionRelationPos" index="index" item="item" separator="UNION ALL" >
+            (SELECT #{item.id},#{item.sgbId},#{item.jlbId} FROM dual)
+        </foreach>
+        )A
+    </insert>
+
+    <delete id="deleteJlSection" parameterType="java.util.List">
+        delete from SZXM_SYS_SECTION_RELATION t
+        <where>
+            <foreach collection="jlSectionAddForms" index="index"  item="item"
+                     separator="or">
+                (t.sgb_id=#{item.sgbId} and t.jlb_id=#{item.jlbId})
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="deleteOrgSectionRelationBySectionId" parameterType="java.lang.Integer">
+        delete from ORG_SECTION_RELATION where section_id=#{sectionId}
+    </delete>
+
+    <insert id="insertOrgSectionRelation" parameterType="com.wisdom.acm.sys.po.OrgSectionRelation">
+        insert into org_section_relation (id,project_id,section_id,section_code,section_name,org_id,org_code,org_name,update_time,update_user)
+        values
+         (orgSectionRelation_SQ.nextVal,#{projectId},#{sectionId},#{sectionCode},#{sectionName},#{orgId},#{orgCode},#{orgName}, #{updateTime},#{updateUser})
+    </insert>
+
+    <select id="getOrgSectionRelation" parameterType="java.lang.Integer" resultType="com.wisdom.acm.sys.po.OrgSectionRelation">
+        select id,project_id as projectId,section_id as sectionId,section_code as sectionCode,section_name as sectionName,org_id as orgId,org_code as orgCode,org_name as orgName
+        from org_section_relation where section_id=#{sectionId}
+    </select>
+
+
+</mapper>

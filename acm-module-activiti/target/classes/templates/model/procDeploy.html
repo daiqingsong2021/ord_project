@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head th:include="include :: header"></head>
+<body>
+<!--导航-->
+<div th:include="include :: navbar"></div>
+<!--导航结束-->
+
+<!--编程基础-->
+<section id="course">
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="panel-header">
+                <div class="panel-header" style="float: right">
+                      <a th:href="@{'deployment?userId=' + ${userId} + '&amp;currentPage=' + ${upPage} + '&amp;pageSize=' + ${pageSize}}"  target="_self">上一页</a>
+                    | <a th:href="@{'deployment?userId=' + ${userId} + '&amp;currentPage=' + ${nextPage} + '&amp;pageSize=' + ${pageSize}}"  target="_self">下一页</a>
+                </div>
+            </div>
+            <div  class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>名字</th>
+                        <th>发布日期</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(deploymentList)}" >
+                    <tr  th:each="deployment : ${deploymentList}">
+                        <td><span th:text="${deployment.name}"></span></td>
+                        <td><span th:if="${deployment.deploymentTime}" th:text="${#dates.format(deployment.deploymentTime, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                        <td>
+                              <a th:href="@{'/modeler.html?deployId=' + ${deployment.id}}"  target="_blank">查看</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:createProcessInstance(\'' + ${deployment.id} + '\')'}">发起</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:deleteProc(\'' + ${deployment.id} + '\')'}">删除</a>
+                            |  <a th:href="@{'processInstance?userId=' + ${userId} + '&amp;currentPage=1&amp;pageSize=' + ${pageSize} + '&amp;deployId=' + ${deployment.id}}"
+                                  target="_self">实例</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!--编程基础end-->
+
+<div th:include="include :: footer"></div>
+
+<script>
+    $(function(){
+        try{
+            /*导航跳转效果插件*/
+            /*$('.nav').singlePageNav({
+                offset:70
+            });
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }*/
+            var  lis = $(".navbar-nav li");
+            lis.removeClass("active");
+            lis.eq(2).addClass("active"); // 追加样式
+        }catch (e) {
+            console.log(e);
+        }
+    })
+
+    /**
+     * 发起流程
+     * @param id
+     */
+    function createProcessInstance(id) {
+        if(confirm("确定发起流程？")) {
+            var user = window.localStorage.getItem("user");
+            $.post("startProcess", {userId: user, deployId: id}, function (result) {
+                alert(result.message);
+            });
+        }
+    }
+
+    /**
+     * 删除流程
+     * @param id
+     */
+    function deleteProc(id) {
+        if(confirm("确定要删除已发布的流程？")){
+            var cascade = confirm("是否和流程实例一并删除？");
+            $.ajax({
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-HTTP-Method-Override": "DELETE"
+                }, //PUT,DELETE
+                url: "/models/deployment/" + id + "?cascade=" + cascade,
+                type: "DELETE",
+                contentType: "application/json",
+                //data: "cascade=y",
+                //dataType: "json",
+                success:function(result){
+                    alert(result.message);
+                    window.location.reload();
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

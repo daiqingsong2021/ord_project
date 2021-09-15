@@ -1,0 +1,4 @@
+
+<span ng-if="!property.noValue">{{property.value|limitTo:100}}</span>
+<span ng-if="!property.noValue && property.value != null && property.value.length > 100">...</span>
+<span ng-if="property.noValue" translate>PROPERTY.EMPTY</span>

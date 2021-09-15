@@ -1,0 +1,6537 @@
+swagger: '2.0'
+info:
+  title: ACM新产品API
+  description: 系统管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: user
+  description: 用户管理
+- name: menu
+  description: 菜单管理
+- name: role
+  description: 角色管理
+- name: auth
+  description: 权限管理
+- name: org
+  description: 组织管理
+- name: ipt
+  description: IPT管理
+- name: tmm
+  description: 三员管理
+- name: logger
+  description: 审计日志
+- name: projectteam
+  description: 项目团队
+- name: wf
+  description: 工作流程
+- name: message
+  description: 消息
+- name: favorites
+  description: 收藏
+
+produces:
+- application/json
+paths:
+  /auth/jwt/token:
+    post:
+      tags:
+      - user
+      description: 获取token
+      summary: 获取token
+      operationId: userToken
+      parameters:
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/UserNamePwdVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/login/user/info:
+    get:
+      tags:
+      - user
+      description: 用户登录
+      summary: 用户登录
+      operationId: getUserInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserLoginVo'
+
+  /sys/menu/tree:
+    get:
+      tags:
+      - menu
+      description: 获取全部菜单，包含分组、菜单及右侧多标签
+      summary: 获取全部菜单，包含分组、菜单及右侧多标签
+      operationId: queryAllMenuTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysMenuVo'
+
+  /sys/menu/{id}/info:
+    get:
+      tags:
+      - menu
+      description: 获取菜单信息
+      summary: 获取菜单信息
+      operationId: getMenuInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 菜单Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysMenuPo'
+
+  /sys/menu/search:
+    get:
+      tags:
+      - menu
+      description: 搜索菜单列表
+      summary: 搜索菜单列表
+      operationId: queryMenyBySearch
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysMenuVo'
+
+  /sys/menu/label/{menuCode}/infos:
+    get:
+      tags:
+      - menu
+      description: 获取菜单页签
+      summary: 获取菜单页签
+      operationId: queryMenuTabs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+      - name: menuCode
+        in: path
+        description: 菜单编码
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysMenuGroupVo'
+
+  /sys/menu/add:
+    post:
+      tags:
+      - menu
+      description: 增加菜单
+      summary: 增加菜单
+      operationId: addMenus
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysMenuAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysMenuPo'
+
+  /sys/menu/update:
+    put:
+      tags:
+      - menu
+      description: 修改菜单
+      summary: 修改菜单
+      operationId: updateMenu
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysMenuUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysMenuPo'
+
+  /sys/menu/delete:
+    delete:
+      tags:
+      - menu
+      description: 删除菜单
+      summary: 删除菜单
+      operationId: deleteMenu
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /sys/logger/add:
+    post:
+      tags:
+      - logger
+      description: 增加日志
+      summary: 增加日志
+      operationId: addOperationLogger
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/AcmLogger'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/favorites/{bizType}/list:
+    get:
+      tags:
+      - favorites
+      description: 获取用户收藏夹
+      summary: 获取用户收藏夹
+      operationId: queryFavorites
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: bizType
+        description: 查询的类型
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysFavoritesReturnVo'
+
+
+  /sys/favorites/add:
+    post:
+      tags:
+      - favorites
+      description: 增加用户收藏
+      summary: 增加用户收藏
+      operationId: addFavorites
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysFavoritesAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /sys/favorites/{bizType}/{bizs}/delete:
+    delete:
+      tags:
+      - favorites
+      description: 删除用户收藏
+      summary: 删除用户收藏
+      operationId: deleteFavorites
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: bizType
+        description: 查询的类型
+        required: true
+        type: string
+      - in: path
+        name: bizs
+        description: 收藏内容
+        required: true
+        type: array
+        items:
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/role/list:
+    get:
+      tags:
+      - role
+      description: 获取角色列表
+      summary: 获取角色列表
+      operationId: queryAllRole
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysRoleVo'
+
+  /sys/role/search/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - role
+      description: 搜索角色列表
+      summary: 搜索角色列表
+      operationId: queryRoleBySearch
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysRoleVo'
+
+  /sys/role/{roleId}/info:
+    get:
+      tags:
+      - role
+      description: 获取角色信息
+      summary: 获取角色信息
+      operationId: getRoleInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: roleId
+        in: path
+        description: 角色Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysRolePo'
+
+  /sys/role/add:
+    post:
+      tags:
+      - role
+      description: 增加角色
+      summary: 增加角色
+      operationId: addRole
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysRoleAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysRoleVo'
+
+  /sys/role/update:
+    put:
+      tags:
+      - role
+      description: 修改角色
+      summary: 修改角色
+      operationId: updateRole
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysRoleUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysRoleVo'
+
+  /sys/role/delete:
+    delete:
+      tags:
+      - role
+      description: 删除角色
+      summary: 删除角色
+      operationId: deleteRole
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/auth/{roleId}/list:
+    get:
+      tags:
+      - auth
+      description: 获取功能模块和功能权限
+      summary: 获取功能模块和功能权限
+      operationId: queryAuthByRoleId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: roleId
+        in: path
+        description: 角色Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysAuthMenuVo'
+
+  /sys/auth/{roleId}/update/auth:
+    put:
+      tags:
+      - auth
+      description: 角色授权
+      summary: 角色授权
+      operationId: updateRoleFunc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: roleId
+        in: path
+        description: 角色Id
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysAddAuthForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/func/{menuId}/funcs:
+    get:
+      tags:
+      - menu
+      description: 获取权限配置
+      summary: 获取权限配置
+      operationId: updateRoleFuncs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: menuId
+        in: path
+        description: 菜单id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysFuncVo'
+
+  /sys/func/{funcId}/funcinfo:
+    get:
+      tags:
+      - menu
+      description: 获取权限配置信息
+      summary: 获取权限配置信息
+      operationId: queryRoleFuncs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: funcId
+        in: path
+        description: 功能id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysFuncVo'
+
+  /sys/func/add:
+    post:
+      tags:
+      - menu
+      description: 新增权限配置
+      summary: 新增权限配置
+      operationId: addMenuFunc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysAuthAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysFuncVo'
+
+  /sys/func/update:
+    put:
+      tags:
+      - menu
+      description: 修改权限配置
+      summary: 修改权限配置
+      operationId: updateRoleFuncss
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysAuthUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysFuncVo'
+
+  /sys/func/delete:
+    delete:
+      tags:
+      - menu
+      description: 删除权限配置
+      summary: 删除权限配置
+      operationId: deleteMenuFunc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/i18n/{menuId}/list:
+    get:
+      tags:
+      - menu
+      description: 获取国际化
+      summary: 获取国际化
+      operationId: queryI18ns
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: menuId
+        in: path
+        description: 菜单id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysI18nVo'
+
+  /sys/i18n/{id}/info:
+    get:
+      tags:
+      - menu
+      description: 获取国际化信息
+      summary: 获取国际化信息
+      operationId: getSysI18nVoInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 国际化id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysI18nVo'
+
+  /sys/i18n/add:
+    post:
+      tags:
+      - menu
+      description: 新增国际化
+      summary: 新增国际化
+      operationId: addSysI18n
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysI18nAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysI18nVo'
+
+  /sys/i18n/delete:
+    delete:
+      tags:
+      - menu
+      description: 删除国际化
+      summary: 删除国际化
+      operationId: deleteSysI18n
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/org/info:
+    get:
+      tags:
+      - org
+      description: 获取当前登陆用户组织信息
+      summary:  获取当前登陆用户组织信息
+      operationId: getUserOrgInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysOrgInfoVo'
+
+  /sys/org/{orgId}/info:
+    get:
+      tags:
+      - org
+      description: 获取组织信息
+      summary: 获取组织信息
+      operationId: queryOrgInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: orgId
+        in: path
+        description: 组织id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysOrgInfoVo'
+
+  /sys/org/search:
+    get:
+      tags:
+      - org
+      description: 搜索组织列表
+      summary: 搜索组织列表
+      operationId: queryOrgsBySearch
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: searcher
+        in: query
+        description: 对象
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysOrgVo'
+
+  /sys/org/add:
+    post:
+      tags:
+      - org
+      description: 增加组织
+      summary: 增加组织
+      operationId: addUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysOrgAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysOrgPo'
+
+  /sys/org/update:
+    put:
+      tags:
+      - org
+      description: 修改组织
+      summary: 修改组织
+      operationId: updateOrg
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysOrgUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysOrgPo'
+
+  /sys/org/delete:
+    delete:
+      tags:
+      - org
+      description: 删除组织
+      summary: 删除组织
+      operationId: deleteOrg
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/org/{orgId}/user/delete:
+    delete:
+      tags:
+      - org
+      description: 删除组织用户
+      summary: 删除组织用户
+      operationId: deleteOrgUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - name: orgId
+        in: path
+        description:  组织id
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 删除的用户id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/user/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - user
+      description: 搜索用户列表，带分页
+      summary: 搜索用户列表
+      operationId: queryUsers
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysUserVo'
+
+  /sys/user/select/{iptId}/iptusers/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - ipt
+      description: 搜索ipt用户列表，带分页
+      summary: 搜索ipt用户列表
+      operationId: queryUsersByIptId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: iptId
+        in: path
+        description:  iptId
+        required: true
+        type: integer
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysIptUserVo'
+
+  /sys/user/select/{orgId}/orgusers/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - org
+      description: 搜索org用户列表，带分页
+      summary: 搜索org用户列表
+      operationId: queryUsersByOrg
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: orgId
+        in: path
+        description:  组织id
+        required: true
+        type: integer
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysOrgSelectUserVo'
+
+  /sys/org/user/tree:
+    get:
+      tags:
+      - org
+      description: 获取组织用户列表树形
+      summary: 获取组织用户列表树形
+      operationId: queryOrgUserTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysOrgUserTreeVo'
+
+  /sys/user/{userId}/info:
+    get:
+      tags:
+      - user
+      description: 获取用户信息
+      summary: 获取用户信息
+      operationId: queryUserInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: userId
+        in: path
+        description: 用户id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserInfoVo'
+
+  /sys/user/all:
+    get:
+      tags:
+      - user
+      description: 所有用户列表
+      summary: 用户列表
+      operationId: queryAllUsers
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysAllUserVo'
+
+  /sys/user/add:
+    post:
+      tags:
+      - user
+      description: 增加用户
+      summary: 增加用户
+      operationId: addUsers
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysUserAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserInfoVo'
+
+  /sys/user/addBatch:
+    post:
+      tags:
+      - user
+      description: 批量增加用户
+      summary: 批量增加用户
+      operationId: addBatchUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/SysUserAddBatchFrom'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/user/update:
+    put:
+      tags:
+      - user
+      description: 修改用户
+      summary: 修改用户
+      operationId: updateUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysUserUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserInfoVo'
+
+  /sys/user/delete:
+    delete:
+      tags:
+      - user
+      description: 删除用户
+      summary: 删除用户
+      operationId: deleteUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/user/{userId}/project/info:
+    get:
+      tags:
+      - user
+      description: 获取用户信息
+      summary: 获取用户信息
+      operationId: getUserProjectInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: userId
+        in: path
+        description: 用户id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserInfoVo'
+
+  /sys/user/reset/password:
+    post:
+      tags:
+      - user
+      description: 重置密码
+      summary: 重置密码
+      operationId: resetPassword
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 用户id
+        required: true
+        schema:
+          $ref: '#/definitions/idVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/user/validate/password:
+    put:
+      tags:
+      - user
+      description: 修改密码
+      summary: 修改密码
+      operationId: updatePassWord
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 用户id
+        required: true
+        schema:
+          $ref: '#/definitions/SysUpdatePassWordForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/user/lock:
+    post:
+      tags:
+      - user
+      description: 锁定用户
+      summary: 锁定用户
+      operationId: lockUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/idVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/user/unlock:
+    post:
+      tags:
+      - user
+      description: 解锁用户
+      summary: 解锁用户
+      operationId: unlockUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/idVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/ipt/tree:
+    get:
+      tags:
+      - ipt
+      description: 获取全部IPT列表树形
+      summary: 获取全部IPT列表树形
+      operationId: queryAllIpts
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysIptVo'
+
+
+  /sys/ipt/search:
+    get:
+      tags:
+      - ipt
+      description: 搜索ipt
+      summary: 搜索ipt
+      operationId: queryIptsBySearch
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysIptVo'
+
+  /sys/ipt/{iptId}/info:
+    get:
+      tags:
+      - ipt
+      description: 获取IPT信息
+      summary: 获取IPT信息
+      operationId: queryIptInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: iptId
+        in: path
+        description: IPT Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysIptInfoVo'
+  #
+  #  /sys/ipt/{iptId}/importOrg:
+  #    post:
+  #      tags:
+  #      - sys
+  #      description: IPT节点下从组织导入
+  #      summary: IPT节点下从组织导入
+  #      operationId: importFromOrg
+  #      parameters:
+  #      - name: Authorization
+  #        in: header
+  #        description: token
+  #        type: string
+  #        required: true
+  #      - name: iptId
+  #        in: path
+  #        description: IPT Id
+  #        required: true
+  #        type: integer
+  #      - in: body
+  #        name: body
+  #        description: 对象
+  #        required: true
+  #        schema:
+  #          $ref: '#/definitions/IptOrgImportAddVo'
+  #      responses:
+  #        200:
+  #          description: 操作
+  #          schema:
+  #            $ref: '#/definitions/ApiResult'
+
+  /sys/ipt/add:
+    post:
+      tags:
+      - ipt
+      description: 增加IPT
+      summary: 增加IPT
+      operationId: addIpt
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysIptAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysIptVo'
+
+  /sys/ipt/update:
+    put:
+      tags:
+      - ipt
+      description: 编辑IPT
+      summary: 编辑IPT
+      operationId: updateIpt
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysIptUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUpdateIptVo'
+
+  /sys/ipt/delete:
+    delete:
+      tags:
+      - ipt
+      description: 删除IPT
+      summary: 删除IPT
+      operationId: deleteIpt
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /sys/ipt/{iptId}/user/delete:
+    delete:
+      tags:
+      - ipt
+      description: 删除ipt用户
+      summary: 删除ipt用户
+      operationId: deleteIptUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - name: iptId
+        in: path
+        description:  iptId
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 删除的用户id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/ipt/{iptId}/user/add:
+    post:
+      tags:
+      - ipt
+      description: IPT分配用户
+      summary: IPT分配用户
+      operationId: addIptUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: iptId
+        in: path
+        description: iptid
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysUserIptAddVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/tmm/{isopen}:
+    get:
+      tags:
+      - tmm
+      description: 三员授权管理开启
+      summary: 三员授权管理开启
+      operationId: openTmmAuth
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: isopen
+        in: path
+        description: 开启=1，关闭=0
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/tmm/audit/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - tmm
+      description: 操作日志
+      summary: 操作日志
+      operationId: queryOperationAudit
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: searcher
+        in: query
+        description: 搜索条件
+        required: false
+        type: string
+      - name: thisTime
+        in: query
+        description: 1:本年 2：本月 3：本周  4：本日
+        required: true
+        type: integer
+      - name: startTime
+        in: query
+        description: 开始日期
+        required: false
+        type: string
+      - name: endTime
+        in: query
+        description: 结束日期
+        required: false
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysOperationAuditVo'
+
+  /sys/tmm/ipaccess/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - tmm
+      description: 获取IP访问列表
+      summary: 获取IP访问列表
+      operationId: queryIPAccessList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysIPAccessVo'
+
+  /sys/tmm/ipaccess/add:
+    post:
+      tags:
+      - tmm
+      description: 增加IP访问
+      summary: 增加IP访问
+      operationId: addIPAccess
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysIPAccessAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysIPAccessPo'
+
+  /sys/tmm/ipaccess/update:
+    put:
+      tags:
+      - tmm
+      description: 编辑IP访问
+      summary: 编辑IP访问
+      operationId: updateIPAccessRuleess
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysIPAccessUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/tmm/ipaccess/delete:
+    delete:
+      tags:
+      - tmm
+      description: 删除IP访问设置
+      summary: 删除IP访问设置
+      operationId: deleteIPAccess
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/tmm/pwdrule/info:
+    get:
+      tags:
+      - tmm
+      description: 获取密码设置
+      summary: 获取密码设置
+      operationId: queryPwdRuleAll
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysPwdRuleVo'
+
+  /sys/tmm/pwdrule/update:
+    put:
+      tags:
+      - tmm
+      description: 密码规则设置
+      summary: 密码规则设置
+      operationId: updatePasswordRule
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/SysPwdRuleUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysPwdRuleVo'
+
+  /sys/wfconf/{id}/list:
+    get:
+      tags:
+      - wf
+      description: 流程业务列表
+      summary: 流程业务列表
+      operationId: queryWfconfList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 业务id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WfconfListVo'
+
+  /sys/wfconf/{id}:
+    delete:
+      tags:
+      - wf
+      description: 删除流程业务
+      summary: 删除流程业务
+      operationId: deleteWfcon
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 流程定义id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/wfconf/add:
+    post:
+      tags:
+      - wf
+      description: 新增流程业务
+      summary: 新增流程业务
+      operationId: addWfcon
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/WfconfAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WfconfVo'
+
+  /sys/wfconf/{id}/info:
+    get:
+      tags:
+      - wf
+      description: 流程业务信息
+      summary: 流程业务信息
+      operationId: queryWfconInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 流程定义id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WfconfVo'
+
+  /sys/wfconf/update:
+    put:
+      tags:
+      - wf
+      description: 更新流程业务
+      summary: 更新流程业务
+      operationId: updateWfconInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/WfconfUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WfconfVo'
+
+  /sys/wfconf/bizvar/add:
+    post:
+      tags:
+      - wf
+      description: 业务变量分配
+      summary: 业务变量分配
+      operationId: addWfconBizvar
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/WfconfBizvarAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/wfconf/{id}/set/list:
+    get:
+      tags:
+      - wf
+      description: 流程设置列表
+      summary: 流程设置列表
+      operationId: queryWfSetList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 业务id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WfconfSetListVo'
+
+  /sys/wftype/list:
+    get:
+      tags:
+      - wf
+      description: 流程业务定义列表
+      summary: 流程业务定义列表
+      operationId: queryWftypeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WftypeVo'
+
+  /sys/wftype/{id}:
+    delete:
+      tags:
+      - wf
+      description: 删除流程业务定义
+      summary: 删除流程业务定义
+      operationId: deleteWftype
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 流程业务定义id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/wftype/add:
+    post:
+      tags:
+      - wf
+      description: 新增流程业务定义
+      summary: 新增流程业务定义
+      operationId: addWftype
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/WftypeAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WftypeVo'
+
+  /sys/wftype/{id}/info:
+    get:
+      tags:
+      - wf
+      description: 流程业务定义信息
+      summary: 流程业务定义信息
+      operationId: queryWftypeInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 流程业务定义id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WftypeVo'
+
+  /sys/wftype/update:
+    put:
+      tags:
+      - wf
+      description: 更新流程业务定义
+      summary: 更新流程业务定义
+      operationId: updateWftypeInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/WftypeUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/WftypeVo'
+
+  /sys/bizvar/{id}/list:
+    get:
+      tags:
+      - wf
+      description: 流程变量定义列表
+      summary: 流程变量定义列表
+      operationId: queryBizvarList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 目录id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BizvarListVo'
+
+  /sys/bizvar/{id}:
+    delete:
+      tags:
+      - wf
+      description: 删除流程变量定义
+      summary: 删除流程变量定义
+      operationId: deleteBizvar
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 流程变量定义id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/bizvar/add:
+    post:
+      tags:
+      - wf
+      description: 新增流程变量定义
+      summary: 新增流程变量定义
+      operationId: addBizvar
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BizvarAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BizvarVo'
+
+  /sys/bizvar/{id}/info:
+    get:
+      tags:
+      - wf
+      description: 流程变量定义信息
+      summary: 流程变量定义信息
+      operationId: queryBizvarInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 流程变量定义id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BizvarVo'
+
+  /sys/bizvar/update:
+    put:
+      tags:
+      - wf
+      description: 更新流程变量定义
+      summary: 更新流程变量定义
+      operationId: updateBizvarInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BizvarUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BizvarVo'
+
+  /sys/projectteam/{id}:
+    get:
+      tags:
+      - projectteam
+      summary: 查询项目团队基本信息
+      operationId: getProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        type: integer
+        description: id
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ProjectTeamVo'
+
+  /sys/projectteam:
+    post:
+      tags:
+      - projectteam
+      summary: 增加项目团队
+      operationId: addProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ProjectTeamAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ProjectTeamVo'
+    put:
+      tags:
+      - projectteam
+      summary: 修改项目团队
+      operationId: updateProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ProjectTeamUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ProjectTeamVo'
+
+  /sys/projectteam/delete:
+    delete:
+      tags:
+      - projectteam
+      summary: 删除项目团队
+      operationId: deleteProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/projectteam/{bizType}/{bizId}/tree:
+    get:
+      tags:
+      - projectteam
+      summary: 查询项目团队树形
+      operationId: queryProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: bizType
+        description: 所属业务类型
+        required: true
+        type: string
+      - in: path
+        name: bizId
+        description: 所属业务id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ProjectTeamVo'
+
+  /sys/section/tree/{projectId}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 查询标段树形信息
+      operationId: querySectionTreeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: projectId
+        description: 项目ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/SectionTreeVo'
+
+  /sys/section/info/{id}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 获取项目团队信息
+      operationId: getSectionById
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 团队ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/SectionVo'
+
+  /sys/section/details/{id}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 查询标段的详细信息（包含标段相关的监理单位,施工单位，业主代表）
+      operationId: getSectionDetailsBySectionId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 标段ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/SectionVo'
+
+  /sys/section/constructionControlUnit/list/{cuId}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 根据项目团队ID（施工标ID）查询项目团队VO（所属监理单位信息）
+      operationId: queryConstructionControlUnitByConstructionUnitId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: cuId
+        description: 施工标ID（项目团队ID）
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/SectionTreeVo'
+
+  /sys/section/constructionUnit/list/{ccuId}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 根据项目团队ID（监理标ID）查询项目团队VO（所管施工单位信息）
+      operationId: queryCuListByCcuId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: ccuId
+        description: 监理标ID（项目团队ID）
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/SectionTreeVo'
+
+  /sys/section/check/owner/{projectId}/{userId}:
+    post:
+      tags:
+      - projectteamsection
+      summary: 验证用户是否是该项目下的业主代表
+      operationId: checkOwner
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: projectId
+        description: 项目ID
+        required: true
+        type: integer
+      - in: path
+        name: userId
+        description: 用户个ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/section/project/tree/{projectId}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 查询项目团队树形-包含项目信息
+      operationId: queryProjectTeamTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: projectId
+        description: 项目ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ProjectTeamVo'
+
+  /sys/section/user/list/{projectId}/{userId}:
+    get:
+      tags:
+      - projectteamsection
+      summary: 获取用户所属项目有关的团队内的相关信息
+      operationId: queryProjectTeamUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: projectId
+        description: 项目id
+        required: true
+        type: integer
+      - in: path
+        name: userId
+        description: 用户id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProjectTeamUserVo'
+
+  /sys/section/owner/list/{projectId}/{userId}:
+    post:
+      tags:
+      - projectteamsection
+      summary: 获取用户所属标段有关的专业相关的业主信息
+      operationId: queryOwnerList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: projectId
+        description: 项目id
+        required: true
+        type: integer
+      - in: path
+        name: userId
+        description: 用户id
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: orgIds
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProjectTeamUserVo'
+
+  /sys/projectteam/{teamId}/info:
+    get:
+      tags:
+        - projectteam
+      summary: 获取项目团队明细
+      operationId: getProjectTeamById
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: path
+          name: teamId
+          description: id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ProjectTeamVo'
+
+  /sys/projectteam/{teamId}/user/list:
+    get:
+      tags:
+      - projectteam
+      summary: 查询项目团队成员列表
+      operationId: queryProjectTeam1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: teamId
+        description: 团队id
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProjectTeamUserVo'
+
+  /sys/projectteam/{teamId}/user/assign:
+    post:
+      tags:
+      - projectteam
+      summary: 分配用户
+      operationId: assignUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/ProjectTeamAssignUserForm'
+      - in: path
+        name: teamId
+        description: 团队id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/projectteam/user/delete:
+    delete:
+      tags:
+      - projectteam
+      summary: 删除项目团队下用户
+      operationId: deleteUsers
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: ids
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/projectteam/{teamId}/user/{userId}/update:
+    put:
+      tags:
+      - projectteam
+      summary: 修改用户角色
+      operationId: updateUserRole
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          description: 修改后的角色id集合
+          type: array
+          items:
+            type: integer
+      - in: path
+        name: teamId
+        description: 团队id
+        required: true
+        type: integer
+      - in: path
+        name: userId
+        description: 用户id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/projectteam/{dataSource}/{bizType}/{bizId}/{parentId}/import:
+    post:
+      tags:
+      - projectteam
+      summary: 导入项目团队
+      operationId: importProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: dataSource
+        description: 数据来源(org/projectteam/ipt)
+        required: true
+        type: string
+      - in: path
+        name: bizType
+        description: 业务对象类型
+        required: true
+        type: string
+      - in: path
+        name: bizId
+        description: 业务对象id
+        required: true
+        type: integer
+      - in: path
+        name: parentId
+        description: 父节点id(根节点传入0)
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ProjectTeamImportForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/projectteam/{sourceBizType}/{sourceBizId}/{targetBizType}/{targetBizId}/copy:
+    post:
+      tags:
+      - projectteam
+      summary: 复制项目团队
+      operationId: copyProjectTeam
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: sourceBizType
+        description: 源项目团队业务对象类型(project/prepa)
+        required: true
+        type: string
+      - in: path
+        name: sourceBizId
+        description: 源项目团队业务对象Id
+        required: true
+        type: integer
+      - in: path
+        name: targetBizType
+        description: 目标项目团队业务对象类型(project/prepa)
+        required: true
+        type: string
+      - in: path
+        name: targetBizId
+        description: 目标项目团队业务对象Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/recv/{pageSize}/{currentPageNum}/{title}:
+    get:
+      tags:
+      - message
+      description: 获取收件箱列表
+      summary: 获取收件箱列表
+      operationId: queryMsgRecvList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: title
+        in: path
+        description: title
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageRecvVo'
+
+  /sys/message/recv/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - message
+      description: 获取收件箱列表
+      summary: 获取收件箱列表
+      operationId: queryMsgRecvListOnly
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageRecvVo'
+
+  /sys/message/send/{pageSize}/{currentPageNum}/{title}:
+    get:
+      tags:
+      - message
+      description: 获取发件箱列表
+      summary: 获取发件箱列表
+      operationId: queryMsgSendList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: title
+        in: path
+        description: title
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageSendVo'
+
+  /sys/message/send/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - message
+      description: 获取发件箱列表
+      summary: 获取发件箱列表
+      operationId: queryMsgSendListOnly
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageSendVo'
+
+  /sys/message/collect/{pageSize}/{currentPageNum}/{title}:
+    get:
+      tags:
+      - message
+      description: 获取重要消息列表
+      summary: 获取重要消息列表
+      operationId: queryMsgCollectList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: title
+        in: path
+        description: title
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageCollectVo'
+
+  /sys/message/collect/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - message
+      description: 获取重要消息列表
+      summary: 获取重要消息列表
+      operationId: queryMsgCollectListOnly
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageCollectVo'
+
+  /sys/message/deleted/{pageSize}/{currentPageNum}/{title}:
+    get:
+      tags:
+      - message
+      description: 获取已删除消息列表
+      summary: 获取已删除消息列表
+      operationId: queryMsgDeletedList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: title
+        in: path
+        description: title
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageDeletedVo'
+
+  /sys/message/deleted/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - message
+      description: 获取已删除消息列表
+      summary: 获取已删除消息列表
+      operationId: queryMsgDeletedListOnly
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageDeletedVo'
+
+  /sys/message/drafts/{pageSize}/{currentPageNum}/{title}:
+    get:
+      tags:
+      - message
+      description: 获取草稿箱列表
+      summary: 获取草稿箱列表
+      operationId: queryMsgDraftsList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: title
+        in: path
+        description: title
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageDraftsVo'
+
+  /sys/message/drafts/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - message
+      description: 获取草稿箱列表
+      summary: 获取草稿箱列表
+      operationId: queryMsgDraftsListOnly
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MessageDraftsVo'
+
+  /sys/message/{messageId}/view:
+    get:
+      tags:
+      - message
+      description: 获取邮件信息
+      summary: 获取邮件信息
+      operationId: queryMsgInfoById
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: messageId
+        in: path
+        description: 邮件Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/MessageViewVo'
+
+  /sys/message/read:
+    put:
+      tags:
+      - message
+      description: 设置为已读
+      summary: 设置为已读
+      operationId: updateMessageUserReadStatus
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: messageIds
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/{id}/{mailType}/collect:
+    put:
+      tags:
+      - message
+      description: 收藏
+      summary: 收藏
+      operationId: updateMessageCollectToOne
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: integer
+      - name: mailType
+        in: path
+        description: mailType(发件箱sendMessage/收件箱recvMessage)
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/{id}/{mailType}/cancleCollect:
+    put:
+      tags:
+      - message
+      description: 取消收藏
+      summary: 取消收藏
+      operationId: updateMessageCollectToZero
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: integer
+      - name: mailType
+        in: path
+        description: mailType(发件箱sendMessage/收件箱recvMessage)
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/recv/delete:
+    put:
+      tags:
+      - message
+      description: 收件箱删除
+      summary: 收件箱删除
+      operationId: updateMessageUserDelToOne
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: messageIds
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/send/delete:
+    put:
+      tags:
+      - message
+      description: 发件箱删除
+      summary: 发件箱删除
+      operationId: updateMessageDelToOne
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: messageIds
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/write:
+    post:
+      tags:
+      - message
+      description: 转发消息/新增/回复
+      summary: 转发消息/新增/回复
+      operationId: addPrepa
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/MessageAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/drafts/add:
+    post:
+      tags:
+      - message
+      description: 保存为草稿箱
+      summary: 保存为草稿箱
+      operationId: addMessageDrafts
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/MessageAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/drafts/update:
+    put:
+      tags:
+      - message
+      description: 编辑草稿箱
+      summary: 编辑草稿箱
+      operationId: updatePrepa
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/MessageDraftsUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/drafts/delete:
+    put:
+      tags:
+      - message
+      description: 删除草稿箱
+      summary: 删除草稿箱
+      operationId: deleteMessageDraftsByIds
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: messageIds
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/cancleDel:
+    put:
+      tags:
+      - message
+      description: 还原已删除
+      summary: 还原已删除
+      operationId: updateMessageDelToZero
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象,type(发件箱sendMessage/收件箱recvMessage)
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/IdTypeForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/delete:
+    delete:
+      tags:
+      - message
+      description: 清除已删除
+      summary: 清除已删除
+      operationId: deleteEpsCprtm
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 消息ids
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/message/num:
+    get:
+      tags:
+      - message
+      description: 统计消息数
+      summary: 统计消息数
+      operationId: getMessageNum
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysMessageNumVo'
+
+  /sys/message/mine/newest/list:
+    post:
+      tags:
+      - message
+      description: 我的消息(右上角图标下拉展示)
+      summary: 我的消息(右上角图标下拉展示)
+      operationId: queryMyMessageList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MyNewestMessageVo'
+
+  /sys/message/home/{pageSize}/{currentPageNum}/list:
+    post:
+      tags:
+      - message
+      description: 我的消息(首页)
+      summary: 我的消息(首页)
+      operationId: queryMyNewEstMessageList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - name: body
+        in: body
+        description: 查询条件
+        required: true
+        schema:
+          $ref: '#/definitions/MyMessageSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MyMessageVo'
+
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  UserVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  MessageTypeVo:
+    properties:
+      id:
+        type: string
+        description: id
+      name:
+        type: string
+        description: name
+
+  IdTypeForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      type:
+        type: string
+        description: 类型(发件箱sendMessage/收件箱recvMessage)
+
+  DocForMessageVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      messageId:
+        type: integer
+        description: 邮件ID
+      fileName:
+        type: string
+        description: 文件名称
+      fileType:
+        type: string
+        description: 文件类型
+      size:
+        type: integer
+        description: size
+      groupName:
+        type: string
+        description: groupName
+      remoteFileName:
+        type: string
+        description: remoteFileName
+      fileUrl:
+        type: string
+        description: fileUrl
+
+  StatusVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  DictionaryVo:
+    properties:
+      id:
+        type: string
+        description: id
+      name:
+        type: string
+        description: name
+
+  MessageDraftsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      title:
+        type: string
+        description: 标题
+      content:
+        type: string
+        description: 内容
+      parentId:
+        type: integer
+        description: parentId
+      optType:
+        type: integer
+        description: 转发/回复
+      claimDealType:
+        type: string
+        description: 需要回复类型（INXXBEFOREHF--在...之前回复，INXXBEFOREPZ--在...之前批准，INXXBEFORETYJ--在...之前提意见，INXXBEFOREXGTJ--在...之前修改并提交，INXXBEFORETJBJ--在...之前提交并报价，INXXBEFOREJF--于...之前根据图纸制造并交付，INXXBEFOREZBJZ--于...之前招标截至，INXXBEFOREGZSD--于...之前告知收到）
+      claimDealTime:
+        type: string
+        description: 需要回复时间
+      recvUser:
+        type: array
+        items:
+          type: integer
+          description: 收件人
+      copyUser:
+        type: array
+        items:
+          type: integer
+          description: 抄送人
+      fileIds:
+        type: array
+        items:
+          type: integer
+          description: 附件
+
+
+  MessageAddForm:
+    properties:
+      title:
+        type: string
+        description: 标题
+      content:
+        type: string
+        description: 内容
+      parentId:
+        type: integer
+        description: parentId
+      optType:
+        type: integer
+        description: 转发/回复
+      claimDealType:
+        type: string
+        description: 需要回复类型（INXXBEFOREHF--在...之前回复，INXXBEFOREPZ--在...之前批准，INXXBEFORETYJ--在...之前提意见，INXXBEFOREXGTJ--在...之前修改并提交，INXXBEFORETJBJ--在...之前提交并报价，INXXBEFOREJF--于...之前根据图纸制造并交付，INXXBEFOREZBJZ--于...之前招标截至，INXXBEFOREGZSD--于...之前告知收到）
+      claimDealTime:
+        type: string
+        description: 需要回复时间
+      recvUser:
+        type: array
+        items:
+          type: integer
+          description: 收件人
+      copyUser:
+        type: array
+        items:
+          type: integer
+          description: 抄送人
+      fileIds:
+        type: array
+        items:
+          type: integer
+          description: 附件
+
+
+  MsgSearchForm:
+    properties:
+      title:
+        type: string
+        description: 标题
+
+  MessageViewVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      title:
+        type: string
+        description: 标题
+      content:
+        type: string
+        description: 内容
+      sendTime:
+        type: string
+        description: 发送时间
+      sendUser:
+        description: 发件人
+        $ref: '#/definitions/UserVo'
+      recvUser:
+        description: 收件人
+        type: array
+        items:
+          $ref: '#/definitions/UserVo'
+      parentId:
+        type: integer
+        description: 转发/回复的消息信息
+      optType:
+        type: integer
+        description: 转发/回复
+      files:
+        type: array
+        items:
+          $ref: '#/definitions/DocForMessageVo'
+          description: files
+
+  MessageDraftsVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      title:
+        type: string
+        description: 标题
+      recvUser:
+        description: 收件人
+        type: array
+        items:
+          $ref: '#/definitions/UserVo'
+      type:
+        description: 消息类型
+        $ref: '#/definitions/MessageTypeVo'
+      claimDealType:
+        description: 需要回复
+        $ref: '#/definitions/MessageTypeVo'
+      creatTime:
+        type: string
+        description: 创建时间
+      collect:
+        description: 是否收藏(0/1)
+        $ref: '#/definitions/StatusVo'
+
+  MessageRecvVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      title:
+        type: string
+        description: 标题
+      sendTime:
+        type: string
+        description: 发送时间
+      realStatus:
+        description: 已读未读
+        $ref: '#/definitions/StatusVo'
+      sendUser:
+        description: 发件人
+        $ref: '#/definitions/UserVo'
+      type:
+        description: 消息类型
+        $ref: '#/definitions/MessageTypeVo'
+      source:
+        description: 消息来源（0用户/1系统）
+        $ref: '#/definitions/StatusVo'
+      claimDealType:
+        description: 需要回复
+        $ref: '#/definitions/MessageTypeVo'
+      collect:
+        description: 是否关注（0/1）
+        $ref: '#/definitions/StatusVo'
+
+  MessageSendVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      title:
+        type: string
+        description: 标题
+      sendTime:
+        type: string
+        description: 发送时间
+      recvUser:
+        description: 收件人
+        type: array
+        items:
+          $ref: '#/definitions/UserVo'
+      type:
+        description: 消息类型
+        $ref: '#/definitions/MessageTypeVo'
+      claimDealType:
+        description: 需要回复
+        $ref: '#/definitions/MessageTypeVo'
+      collect:
+        description: 是否关注（0/1）
+        $ref: '#/definitions/StatusVo'
+
+  MessageCollectVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      sid:
+        type: integer
+        description: 收件id
+      messageUserId:
+        type: integer
+        description: wsd_sys_message_user的ID
+      title:
+        type: string
+        description: 标题
+      sendTime:
+        type: string
+        description: 发送时间
+      sendUser:
+        description: 发件人
+        $ref: '#/definitions/UserVo'
+      recvUser:
+        description: 收件人
+        $ref: '#/definitions/UserVo'
+      source:
+        description: 消息来源（0用户/1系统）
+        $ref: '#/definitions/StatusVo'
+      type:
+        description: 消息类型
+        $ref: '#/definitions/MessageTypeVo'
+      claimDealType:
+        description: 需要回复
+        $ref: '#/definitions/MessageTypeVo'
+      collect:
+        description: 是否关注（0/1）
+        $ref: '#/definitions/StatusVo'
+
+  MessageDeletedVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      sid:
+        type: integer
+        description: 收件id
+      title:
+        type: string
+        description: 标题
+      sendTime:
+        type: string
+        description: 发送时间
+      sendUser:
+        description: 发件人
+        $ref: '#/definitions/UserVo'
+      recvUser:
+        description: 收件人
+        $ref: '#/definitions/UserVo'
+      source:
+        description: 消息来源（0用户/1系统）
+        $ref: '#/definitions/StatusVo'
+      type:
+        description: 消息类型
+        $ref: '#/definitions/MessageTypeVo'
+      claimDealType:
+        description: 需要回复
+        $ref: '#/definitions/MessageTypeVo'
+
+  SysUserLoginVo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      isOpen:
+        type: integer
+        description: 三员管理状态（0：未开启  1：开启）
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuGroupVo:
+    properties:
+      groupCode:
+        type: string
+        description: 分组code
+      lables:
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuLableVo'
+        description: 页签
+
+  SysMenuLableVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      parentCode:
+        type: string
+        description: 父节点编码
+      menuType:
+        type: integer
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      image:
+        type: string
+        description: 菜单图标
+      i18n:
+        type: string
+        description: 国际化
+      url:
+        type: string
+        description: 菜单链接
+
+  SysMenuAddForm:
+    properties:
+      parentId:
+        type: integer
+        description: 父id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: integer
+        description: 菜单类型(1:组件  2：菜单  3：页签)
+      shortCode:
+        type: string
+        description: 菜单简码
+      image:
+        type: string
+        description: 菜单图标
+      url:
+        type: string
+        description: 菜单链接
+      sort:
+        type: integer
+        description: 显示顺序
+      i18n:
+        type: string
+        description: 国际化
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+
+  SysMenuUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: integer
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      image:
+        type: string
+        description: 菜单图标
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      sort:
+        type: integer
+        description: 显示顺序
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+
+  SysRolePo:
+    properties:
+      id:
+        type: integer
+        description: 角色Id
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+      creatTime:
+        type: string
+        description: 角色创建时间
+
+  SysFavoritesReturnVo:
+    properties:
+      content:
+        type: array
+        description: 返回内容
+        items:
+          type: String
+
+  AcmLogger:
+    properties:
+      module:
+        type: string
+        description: 模块名称
+      title:
+        type: string
+        description: 操作标题
+      content:
+        type: string
+        description: 操作内容
+
+  SysFavoritesVo:
+    properties:
+      id:
+        type: integer
+        description: Id
+      menuId:
+        type: integer
+        description: 菜单id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuType:
+        type: integer
+        description: 菜单类型
+
+  SysFavoritesAddForm:
+    properties:
+      bizType:
+        type: string
+        description: 菜单类型
+      bizs:
+        type: array
+        description: 收藏内容
+        items:
+          type: string
+
+  SysFavoritesForm:
+    properties:
+      bizType:
+        type: integer
+        description: 菜单类型
+
+  SysRoleVo:
+    properties:
+      id:
+        type: integer
+        description: 角色Id
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+
+  SysRoleAddForm:
+    properties:
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+
+  SysRoleUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 角色Id
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  SysMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 菜单类型(1:组件 2:菜单  3:分组 4:模块)
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      group:
+        type: integer
+        description: 组
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 跟新时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+      children:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuPo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      group:
+        type: integer
+        description: 组
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: integer
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      image:
+        type: string
+        description: 菜单图标
+      i18n:
+        type: string
+        description: 国际化
+      url:
+        type: string
+        description: 菜单链接
+      sort:
+        type: integer
+        description: 显示顺序
+      creatTime:
+        type: string
+        description: 创建时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 2：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 2：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 2：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 2：未激活）
+
+  SysMenuFuncVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      menuName:
+        type: string
+        description: 菜单名称
+      funcId:
+        type: integer
+        description: 功能权限Id
+      funcName:
+        type: string
+        description: 功能权限名称
+
+  SysAuthMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: integer
+        description: 菜单编码
+      check:
+        type: integer
+        description: 标记 (1： 已分配  0 ：未分配)
+      children:
+        type: array
+        description: 子菜单
+        items:
+          $ref: '#/definitions/SysAuthMenuVo'
+      funcList:
+        type: array
+        description: 功能列表
+        items:
+          $ref: '#/definitions/SysAuthFuncVo'
+
+  SysAuthFuncVo:
+    properties:
+      id:
+        type: integer
+        description: 功能id
+      funcName:
+        type: string
+        description: 功能名称
+      funcCode:
+        type: string
+        description: 功能代码
+      check:
+        type: integer
+        description: 标记 (1： 已分配  0 ：未分配)
+
+  SysOrgInfoVo:
+    properties:
+      id:
+        type: integer
+        description: 组织Id
+      orgName:
+        type: string
+        description: 组织名称
+      orgCode:
+        type: string
+        description: 组织编码
+      parentName:
+        type: string
+        description: 父组织
+      orgType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 组织类型（0：公司 1：部门）
+      orgLevel:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 组织等级
+      status:
+        type: object
+        $ref: '#/definitions/statusVo'
+        description: 组织状态（有效|无效）
+      grogLoc:
+        type: string
+        description: 所属地域
+      orgAddress:
+        type: string
+        description: 组织地址
+      zipCode:
+        type: string
+        description: 邮编
+      orgContract:
+        type: string
+        description: 联系人
+      contractNum:
+        type: string
+        description: 联系电话
+      orgEmail:
+        type: string
+        description: 电子邮箱
+      webAddress:
+        type: string
+        description: 网站地址
+      effectDate:
+        type: string
+        description: 生效日期
+      invalidDate:
+        type: string
+        description: 失效日期
+
+  SysOrgPo:
+    properties:
+      id:
+        type: integer
+        description: 组织Id
+      orgName:
+        type: string
+        description: 组织名称
+      orgCode:
+        type: string
+        description: 组织编码
+      remark:
+        type: string
+        description: 备注
+      orgType:
+        type: string
+        description: 组织类型（0：公司 1：部门）
+      orgLevel:
+        type: integer
+        description: 组织等级
+      status:
+        type: string
+        description: 组织状态
+      grogLoc:
+        type: string
+        description: 所属地域
+      orgAddress:
+        type: string
+        description: 组织地址
+      zipCode:
+        type: string
+        description: 邮编
+      orgContract:
+        type: string
+        description: 联系人
+      contractNum:
+        type: string
+        description: 联系电话
+      orgEmail:
+        type: string
+        description: 电子邮箱
+      webAddress:
+        type: string
+        description: 网站地址
+      effectDate:
+        type: string
+        description: 生效日期
+      invalidDate:
+        type: string
+        description: 失效日期
+      parentId:
+        type: integer
+        description: 父Id
+
+  SysOrgVo:
+    properties:
+      id:
+        type: integer
+        description: 组织Id
+      orgName:
+        type: string
+        description: 组织名称
+      children:
+        description: 子组织
+        type: array
+        items:
+          $ref: '#/definitions/SysOrgVo'
+
+  SysUserAddForm:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 :0：女)
+      level:
+        type: string
+        description: 密级（0：非密  1：保密）
+      cardType:
+        type: string
+        description: 证件类型
+      cardNum:
+        type: string
+        description: 证件号码
+      staffStatus:
+        type: integer
+        description: 人员状态（0：离职  1：在岗）
+      entryDate:
+        type: string
+        description: 入职日期
+      quitDate:
+        type: string
+        description: 离职日期
+      roles:
+        type: array
+        description: 角色Id
+        items:
+          type: integer
+      orgId:
+        type: integer
+        description: 组织Id
+      position:
+        type: string
+        description: 职位
+      professional:
+        type: string
+        description: 专业
+
+  SysUserAddBatchFrom:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 邮箱
+      password:
+        type: string
+        description: 密码
+      sex:
+        type: integer
+        description: 用户性别(1:男 :0：女)
+      roles:
+        type: array
+        description: 角色Id
+        items:
+          type: integer
+      orgId:
+        type: integer
+        description: 组织Id
+
+  SysUserUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 用户id
+      actuName:
+        type: string
+        description: 用户真实名
+      userName:
+        type: string
+        description: 用户名
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 2：女)
+      level:
+        type: string
+        description: 密级（0：非密  1：保密）
+      cardType:
+        type: string
+        description: 证件类型
+      cardNum:
+        type: string
+        description: 证件号码
+      staffStatus:
+        type: integer
+        description: 人员状态(0:离职  1：在岗)
+      entryDate:
+        type: string
+        description: 入职日期
+      quitDate:
+        type: string
+        description: 离职日期
+      roles:
+        type: array
+        description: 角色Id
+        items:
+          type: integer
+      orgId:
+        type: integer
+        description: 组织Id
+      position:
+        type: string
+        description: 职位
+      professional:
+        type: string
+        description: 专业
+
+  SysOrgSelectUserVo:
+    properties:
+      id:
+        type: integer
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      status:
+        type: string
+        description: 用户状态
+      staffStatus:
+        type: string
+        description: 员工状态
+      sex:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 性别（0:女 | 1：男）
+      retRole:
+        type: string
+        description: 角色名称
+
+  SysUserVo:
+    properties:
+      id:
+        type: integer
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      visits:
+        type: integer
+        description: 访问次数
+      status:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 用户状态（0：锁定 | 1：正常）
+      staffStatus:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 员工状态（0:离职 | 1：在岗）
+      sex:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 性别（0:女 | 1：男）
+      lastloginTime:
+        type: string
+        description: 最后登录时间
+      retRole:
+        type: string
+        description: 角色名称
+      position:
+        type: string
+        description: 职位
+      professional:
+        type: string
+        description: 专业
+
+  SysAllUserVo:
+    properties:
+      id:
+        type: integer
+        description: 用户Id
+      actuName:
+        type: string
+        description: 用户真实名
+
+  SysIptUserVo:
+    properties:
+      id:
+        type: integer
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      sex:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 性别（0:女 | 1：男）
+      role:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 角色名称
+
+  SysUserInfoVo:
+    properties:
+      id:
+        type: integer
+        description: 用户id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      phone:
+        type: string
+        description: 用户电话
+      sort:
+        type: integer
+        description: 排序
+      birth:
+        type: string
+        description: 用户生日
+      level:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 密级（0:非密 | 1：保密）
+      cardType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 证件类型
+      cardNum:
+        type: string
+        description: 证件号码
+      status:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 用户状态（0：锁定 | 1：正常）
+      staffStatus:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 员工状态（0:离职 | 1：在岗）
+      sex:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 性别（0:女 | 1：男）
+      entryDate:
+        type: string
+        description: 入职日期
+      quitDate:
+        type: string
+        description: 离职日期
+      roles:
+        type: array
+        description: 角色Id
+        items:
+          $ref: '#/definitions/SysRoleVo'
+      org:
+        type: array
+        description: 组织Id
+        items:
+          $ref: '#/definitions/GeneralVo'
+      projectVo:
+        type: array
+        description: 用户项目信息
+        items:
+          $ref: '#/definitions/SysUserProjectInfoVo'
+      position:
+        type: string
+        description: 职位
+      professional:
+        type: string
+        description: 专业
+
+  SysUserProjectInfoVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id
+      projectName:
+        type: string
+        description: 项目名称
+      orgName:
+        type: string
+        description: 部门名称
+      roleName:
+        type: string
+        description: 角色名称
+
+  SysUserPo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      remark:
+        type: string
+        description: 备注
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 2：女)
+      cardType:
+        type: string
+        description: 证件类型
+      cardNum:
+        type: string
+        description: 证件号码
+      staffStatus:
+        type: string
+        description: 人员状态
+      entryDate:
+        type: string
+        description: 入职日期
+      quitDate:
+        type: string
+        description: 离职日期
+      orgId:
+        type: integer
+        description: 组织Id
+      roles:
+        description: 用户角色
+        type: array
+        items:
+          $ref: '#/definitions/SysRolePo'
+      orgs:
+        type: array
+        description: 用户所属组织
+        items:
+          $ref: '#/definitions/SysOrgPo'
+      position:
+        type: string
+        description: 职位
+      professional:
+        type: string
+        description: 专业
+
+  SysAddAuthForm:
+    type: array
+    items:
+      $ref: '#/definitions/SysRoleAuthVo'
+      description: 修改的权限
+
+
+  SysAuthAddForm:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单id
+      funcName:
+        type: string
+        description: 功能名称
+      funcCode:
+        type: string
+        description: 功能代码
+      shortCode:
+        type: string
+        description: 简码
+      del:
+        type: integer
+        description: 激活标识(0 ：激活 | 1：未激活)
+
+  SysI18nAddForm:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单id
+      shortCode:
+        type: string
+        description: 简码
+      code:
+        type: string
+        description: 国际化代码
+      i18nRelationForms:
+        type: array
+        items:
+          $ref: '#/definitions/I18nRelationForm'
+
+  I18nRelationForm:
+    properties:
+      i18nCode:
+        type: string
+        description: 语种代码
+      i18nValue:
+        type: string
+        description: 国际化值
+
+
+  SysAuthUpdateForm:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单id
+      funcName:
+        type: string
+        description: 功能名称
+      funcCode:
+        type: string
+        description: 功能代码
+      shortCode:
+        type: string
+        description: 简码
+      del:
+        type: integer
+        description: 激活标识(0 ：激活 | 1：未激活)
+
+  SysFuncVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      funcName:
+        type: string
+        description: 功能名称
+      funcCode:
+        type: string
+        description: 功能代码
+      shortCode:
+        type: string
+        description: 简码
+      del:
+        type: object
+        $ref: "#/definitions/GeneralVo"
+        description: 激活标识(0 ：激活 | 1：未激活)
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 更新时间
+
+  SysI18nVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      menuId:
+        type: integer
+        description: 所属模块
+      code:
+        type: string
+        description: 代码
+      shortCode:
+        type: string
+        description: 简码
+      sysI18nRelationVoList:
+        description: 语种和值
+        type: array
+        items:
+          $ref: '#/definitions/SysI18nRelationVo'
+
+  SysI18nRelationVo:
+    properties:
+      i18nId:
+        type: integer
+        description: 关联id
+      i18nCodeVo:
+        $ref: "#/definitions/DictionaryVo"
+        description: 语种
+      i18nValue:
+        type: string
+        description: 国际化值
+
+  SysRoleAuthPo:
+    properties:
+      roleId:
+        type: integer
+        description: 角色 Id
+      resCode:
+        type: string
+        description: 菜单或功能代码
+      resType:
+        type: string
+        description: 菜单|类型
+
+  SysRoleAuthVo:
+    properties:
+      resCode:
+        type: string
+        description: 菜单或功能代码
+      resType:
+        type: string
+        description: 菜单|类型
+
+
+  SysOrgUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 组织id
+      orgCode:
+        type: string
+        description: 机构代码
+      orgName:
+        type: string
+        description: 机构名称
+      orgType:
+        type: integer
+        description: 组织类型（0：公司 1：部门）
+      status:
+        type: integer
+        description: 组织状态
+      orgLevel:
+        type: string
+        description: 组织级别
+      grogLoc:
+        type: string
+        description: 所属地域
+      orgAddress:
+        type: string
+        description: 组织地址
+      zipCode:
+        type: string
+        description: 邮编
+      orgContract:
+        type: string
+        description: 联系人
+      contractNum:
+        type: string
+        description: 联系电话
+      orgEmail:
+        type: string
+        description: 电子邮箱
+      webAddress:
+        type: string
+        description: 网站地址
+      effectDate:
+        type: string
+        description: 生效日期
+      invalidDate:
+        type: string
+        description: 失效日期
+      parentId:
+        type: integer
+        description: 父Id
+      remark:
+        type: string
+        description: 备注
+
+  SysOrgAddForm:
+    properties:
+      orgCode:
+        type: string
+        description: 机构代码
+      orgName:
+        type: string
+        description: 机构名称
+      orgType:
+        type: integer
+        description: 组织类型（0：公司 1：部门）
+      status:
+        type: integer
+        description: 组织状态
+      orgLevel:
+        type: string
+        description: 组织级别
+      grogLoc:
+        type: string
+        description: 所属地域
+      orgAddress:
+        type: string
+        description: 组织地址
+      zipCode:
+        type: string
+        description: 邮编
+      orgContract:
+        type: string
+        description: 联系人
+      contractNum:
+        type: string
+        description: 联系电话
+      orgEmail:
+        type: string
+        description: 电子邮箱
+      webAddress:
+        type: string
+        description: 网站地址
+      effectDate:
+        type: string
+        description: 生效日期
+      invalidDate:
+        type: string
+        description: 失效日期
+      parentId:
+        type: integer
+        description: 父Id
+      remark:
+        type: string
+        description: 备注
+
+  SysIptPo:
+    properties:
+      id:
+        type: integer
+        description: IPT Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      projectId:
+        type: integer
+        description: 项目id
+      del:
+        type: integer
+        description: 删除标识（1：删除，0：未删除）
+      remark:
+        type: string
+        description: IPT描述
+      parentId:
+        type: integer
+        description: 父Id
+
+  SysIptVo:
+    properties:
+      id:
+        type: integer
+        description: IPT Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      remark:
+        type: string
+        description: IPT描述
+      parentId:
+        type: integer
+        description: 父Id
+      level:
+        type: string
+        description: 等级
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/SysIptVo'
+
+  SysUpdateIptVo:
+    properties:
+      id:
+        type: integer
+        description: IPT Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      remark:
+        type: string
+        description: IPT描述
+      level:
+        type: string
+        description: 等级
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/SysIptVo'
+
+  SysIptInfoVo:
+    properties:
+      id:
+        type: integer
+        description: IPT Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      remark:
+        type: string
+        description: IPT描述
+      parent:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 父Id
+      level:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+
+  SysIptAddForm:
+    properties:
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      parentId:
+        type: integer
+        description: 父id
+      remark:
+        type: string
+        description: IPT描述
+      level:
+        type: string
+        description: 等级
+      sort:
+        type: integer
+        description: 排序
+
+  SysIptUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      parentId:
+        type: integer
+        description: 父id
+      remark:
+        type: string
+        description: IPT描述
+      level:
+        type: string
+        description: 等级
+      sort:
+        type: integer
+        description: 排序
+
+  ProjectIptImportAddVo:
+    properties:
+      projId:
+        type: integer
+        description: 项目Id
+      userFlag:
+        type: boolean
+        description: 导入用户标识
+      ipts:
+        type: array
+        description: ipt
+        items:
+          $ref: '#/definitions/ProjectIptSelectVo'
+
+  ProjectIptSelectVo:
+    properties:
+      iptId:
+        type: integer
+        description: IPT Id
+      parentId:
+        type: integer
+        description: 父Id
+      roleIds:
+        type: string
+        description: 角色Id,多个以逗号隔开
+      leafFlag:
+        type: boolean
+        description: 视图选择叶标识，true=导入本节点下全部子孙节点，false=导入本节点
+      topFlag:
+        type: boolean
+        description: 视图选择最上层标识
+
+
+  IptOrgImportAddVo:
+    properties:
+      userFlag:
+        type: boolean
+        description: 导入用户标识
+      orgs:
+        type: array
+        items:
+          $ref: '#/definitions/IptOrgSelectVo'
+
+  IptOrgSelectVo:
+    properties:
+      orgId:
+        type: integer
+        description: 组织Id
+      parentId:
+        type: integer
+        description: 父Id
+      roleIds:
+        type: string
+        description: 角色Id,多个以逗号隔开
+      leafFlag:
+        type: boolean
+        description: 视图选择叶标识，true=导入本节点下全部子孙节点，false=导入本节点
+      topFlag:
+        type: boolean
+        description: 视图选择最上层标识
+
+  SysUserIptAddVo:
+    type: array
+    description: 用户数组
+    items:
+      $ref: '#/definitions/SysUserIptAddForm'
+
+
+  SysUserIptAddForm:
+    properties:
+      userId:
+        type: integer
+        description: 父Id
+      roleIds:
+        type: array
+        items:
+          type: integer
+          description: 角色Id
+
+  LoggerAuthPo:
+    properties:
+      id:
+        type: integer
+        description: id
+      loggerType:
+        type: string
+        description: 模块名
+      moduleName:
+        type: string
+        description: 模块名
+      operationName:
+        type: string
+        description: 操作说明
+      operationResult:
+        type: string
+        description: 操作结果
+      create_time:
+        type: string
+        description: 创建时间
+      creator:
+        type: string
+        description: 创建者
+      ip_address:
+        type: string
+        description: 访问IP
+
+  AuditLogSearchVo:
+    properties:
+      startTime:
+        type: string
+        description: 开始日期
+      endTime:
+        type: string
+        description: 结束日期
+      searcher:
+        type: string
+        description: 查询条件
+      thisTime:
+        type: integer
+        description: 1:本年 2：本月 3：本周  4：本日
+
+  SysIPAccessPo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      startIP:
+        type: string
+        description: 起始IP
+      endIP:
+        type: string
+        description: 结束IP
+      accessRule:
+        type: integer
+        description: 1=允许访问; 2=禁止访问
+      remark:
+        type: string
+        description: 备注
+
+  SysIPAccessVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      startIP:
+        type: string
+        description: 起始IP
+      endIP:
+        type: string
+        description: 结束IP
+      accessRule:
+        type: integer
+        description: 1=允许访问; 0=禁止访问
+      isEffect:
+        type: integer
+        description: 1=生效; 0=失效
+      remark:
+        type: string
+        description: 备注
+
+  SysIPAccessAddForm:
+    properties:
+      startIP:
+        type: string
+        description: 起始IP
+      endIP:
+        type: string
+        description: 结束IP
+      accessRule:
+        type: integer
+        description: 1=允许访问; 0=禁止访问
+      isEffect:
+        type: integer
+        description: 1=生效; 0=失效
+      remark:
+        type: string
+        description: 备注
+
+  SysIPAccessUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      startIP:
+        type: string
+        description: 起始IP
+      endIP:
+        type: string
+        description: 结束IP
+      accessRule:
+        type: integer
+        description: 1=允许访问; 0=禁止访问
+      isEffect:
+        type: integer
+        description: 1=生效; 0=失效
+      remark:
+        type: string
+        description: 备注
+
+  SysPwdRuleUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      cycle:
+        type: integer
+        description: 修改周期（天）
+      length:
+        type: integer
+        description: 密码长度（位）
+      errorNumber:
+        type: integer
+        description: 错误次数（次）
+      lockTime:
+        type: integer
+        description: 锁定时长（分钟）
+
+  SysPwdRulePo:
+    properties:
+      cycle:
+        type: integer
+        description: 修改周期（天）
+      length:
+        type: integer
+        description: 密码长度（位）
+      errorNumber:
+        type: integer
+        description: 错误次数（次）
+      lockTime:
+        type: integer
+        description: 锁定时长（分钟）
+
+  SysPwdRuleVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      cycle:
+        type: integer
+        description: 修改周期（天）
+      length:
+        type: integer
+        description: 密码长度（位）
+      errorNumber:
+        type: integer
+        description: 错误次数（次）
+      lockTime:
+        type: integer
+        description: 锁定时长（分钟）
+
+
+  ProjectPo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      userId:
+        type: integer
+        description: 用户Id
+      obs_id:
+        type: integer
+        description: IPT Id
+      currencyId:
+        type: integer
+        description: 货币Id
+      projId:
+        type: integer
+        description: 项目Id
+      caln_id:
+        type: integer
+        description: 日历Id
+      projCode:
+        type: string
+        description: 项目代码
+      projName:
+        type: integer
+        description: 项目名称
+      targtStart:
+        type: string
+        description: 期望开始
+      targtEnd:
+        type: string
+        description: 期望结束
+
+  ProjectAddVo:
+    properties:
+      userId:
+        type: integer
+        description: 用户Id
+      obs_id:
+        type: integer
+        description: IPT Id
+      currencyId:
+        type: integer
+        description: 货币Id
+      projId:
+        type: integer
+        description: 项目Id
+      caln_id:
+        type: integer
+        description: 日历Id
+      projCode:
+        type: string
+        description: 项目代码
+      projName:
+        type: integer
+        description: 项目名称
+      targtStart:
+        type: string
+        description: 期望开始
+      targtEnd:
+        type: string
+        description: 期望结束
+
+
+  IptUserVo:
+    description: 递归树形
+    properties:
+      iptId:
+        type: integer
+        description: wbs Id
+      iptName:
+        type: integer
+        description: task Id
+      ipts:
+        description: 子IPT列表
+        type: array
+        items:
+          $ref: '#/definitions/IptUserVo'
+      users:
+        description: IPT下的用户列表
+        type: array
+        items:
+          $ref: '#/definitions/SysUserPo'
+
+  WfconfListVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程业务id
+      processdefNames:
+        type: string
+        description: 流程业务名称
+      planLevelNames:
+        type: string
+        description: 计划级别
+      projectNames:
+        type: string
+        description: 项目
+      iptNames:
+        type: string
+        description: 部门
+      classifyNames:
+        type: string
+        description: 分类码
+
+  WfconfVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程业务id
+      processdef:
+        type: object
+        description: 流程业务
+        $ref: '#/definitions/ProcessdefVo'
+      gbType:
+        type: object
+        description: 分类码类型
+        $ref: '#/definitions/GbTypeVo'
+      planLevel:
+        type: object
+        description: 计划级别
+        $ref: '#/definitions/PlanLevelVo'
+      projects:
+        type: object
+        description: 项目
+        $ref: '#/definitions/ProjectVo'
+      ipts:
+        type: object
+        description: 部门
+        $ref: '#/definitions/IptVo'
+      classifys:
+        type: object
+        description: 分类码
+        $ref: '#/definitions/ClassifyVo'
+
+  ProcessdefVo:
+    type: object
+    properties:
+      processdefId:
+        type: integer
+        description: 流程业务id
+      processdefName:
+        type: string
+        description: 流程业务名称
+
+  GbTypeVo:
+    type: object
+    properties:
+      gbTypeId:
+        type: integer
+        description: 分类码类型id
+      gbTypeName:
+        type: string
+        description: 分类码类型名称
+
+  PlanLevelVo:
+    type: object
+    properties:
+      planLevelId:
+        type: integer
+        description: 计划级别id
+      planLevelName:
+        type: string
+        description: 计划级别名称
+
+  ProjectVo:
+    type: object
+    properties:
+      projectIds:
+        type: string
+        description: 项目id(多个逗号分开)
+      projectNames:
+        type: string
+        description: 项目名称(多个逗号分开)
+
+  IptVo:
+    type: object
+    properties:
+      iptIds:
+        type: string
+        description: 部门id(多个逗号分开)
+      iptNames:
+        type: string
+        description: 部门名称(多个逗号分开)
+
+  ClassifyVo:
+    type: object
+    properties:
+      classifyIds:
+        type: string
+        description: 分类码id(多个逗号分开)
+      classifyNames:
+        type: string
+        description: 分类码名称(多个逗号分开)
+
+  WfconfAddForm:
+    type: object
+    properties:
+      processdefId:
+        type: integer
+        description: 流程业务
+      gbtypeId:
+        type: integer
+        description: 分类码类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      projectIds:
+        type: string
+        description: 项目
+      iptIds:
+        type: string
+        description: 部门
+      classifyIds:
+        type: string
+        description: 分类码
+
+  WfconfUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程业务id
+      processdefId:
+        type: integer
+        description: 流程业务
+      gbtypeId:
+        type: integer
+        description: 分类码类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      projectIds:
+        type: string
+        description: 项目
+      iptIds:
+        type: string
+        description: 部门
+      classifyIds:
+        type: string
+        description: 分类码
+
+  WfconfBizvarAddForm:
+    type: object
+    properties:
+      bizVarId:
+        type: integer
+        description: 流程变量定义Id
+      processdefId:
+        type: integer
+        description: 流程业务id
+
+  WfconfSetListVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 业务Id
+      edit:
+        type: integer
+        description: 编辑
+      del:
+        type: integer
+        description: 删除
+      terminate:
+        type: integer
+        description: 终止
+      agency:
+        type: integer
+        description: 协办
+      cooperation:
+        type: integer
+        description: 代办
+      bowfcreatermsg:
+        type: integer
+        description: 提醒流程发起
+      partData:
+        type: integer
+        description: 只看到权限内的数据
+      agreeTitle:
+        type: string
+        description: 提交名称
+      selectPrat:
+        type: string
+        description: 选择参与者规则
+      defaultPrat:
+        type: string
+        description: 默认参与者规则
+      assignPrat:
+        type: string
+        description: 指定参与者规则
+
+  WftypeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程业务定义Id
+      modeCode:
+        type: integer
+        description: 模块代码
+      wfCode:
+        type: integer
+        description: 业务代码
+      wfName:
+        type: string
+        description: 业务名称
+      wfUrl:
+        type: string
+        description: 表单地址
+      wfEvents:
+        type: string
+        description: 流程事件
+      formModeCode:
+        type: string
+        description: 表单模块代码
+
+  WftypeAddForm:
+    type: object
+    properties:
+      modeCode:
+        type: integer
+        description: 模块代码
+      wfCode:
+        type: integer
+        description: 业务代码
+      wfName:
+        type: string
+        description: 业务名称
+      wfUrl:
+        type: string
+        description: 表单地址
+      wfEvents:
+        type: string
+        description: 流程事件
+      formModeCode:
+        type: string
+        description: 表单模块代码
+
+  WftypeUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程业务定义Id
+      modeCode:
+        type: integer
+        description: 模块代码
+      wfCode:
+        type: integer
+        description: 业务代码
+      wfName:
+        type: string
+        description: 业务名称
+      wfUrl:
+        type: string
+        description: 表单地址
+      wfEvents:
+        type: string
+        description: 流程事件
+      formModeCode:
+        type: string
+        description: 表单模块代码
+
+  BizvarListVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程变量定义Id
+      title:
+        type: integer
+        description: 流程业务变量
+      xpath:
+        type: integer
+        description: xpath
+      tableName:
+        type: string
+        description: 表名
+      tableTitle:
+        type: string
+        description: 表显示名称
+      fieldName:
+        type: string
+        description: 字段名
+      fieldTitle:
+        type: string
+        description: 字段显示名称
+      fieldType:
+        type: string
+        description: 字段类型
+
+  BizvarVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程变量定义Id
+      title:
+        type: integer
+        description: 流程业务变量
+      xpath:
+        type: integer
+        description: xpath
+      tableName:
+        type: string
+        description: 表名
+      tableTitle:
+        type: string
+        description: 表显示名称
+      fieldName:
+        type: string
+        description: 字段名
+      fieldTitle:
+        type: string
+        description: 字段显示名称
+      fieldType:
+        type: string
+        description: 字段类型
+      sql:
+        type: string
+        description: 自定义sql
+
+  BizvarAddForm:
+    type: object
+    properties:
+      title:
+        type: integer
+        description: 流程业务变量
+      xpath:
+        type: integer
+        description: xpath
+      tableName:
+        type: string
+        description: 表名
+      tableTitle:
+        type: string
+        description: 表显示名称
+      fieldName:
+        type: string
+        description: 字段名
+      fieldTitle:
+        type: string
+        description: 字段显示名称
+      fieldType:
+        type: string
+        description: 字段类型
+      sql:
+        type: string
+        description: 自定义sql
+
+  SysOperationAuditVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      loggerTaype:
+        type: string
+        description: 日志类型
+      applicationName:
+        type: string
+        description: 应用名称
+      moduleName:
+        type: string
+        description: 模块名称
+      operationName:
+        type: string
+        description: 操作名称
+      operationResult:
+        type: string
+        description: 操作结果
+      operationTime:
+        type: string
+        description: 操作时间
+      operationUser:
+        type: string
+        description: 操作人
+      exception:
+        type: string
+        description: 异常信息
+      operationDesc:
+        type: string
+        description: 操作描述
+      ipAddress:
+        type: string
+        description: 访问ip地址
+
+  BizvarUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 流程变量定义Id
+      title:
+        type: integer
+        description: 流程业务变量
+      xpath:
+        type: integer
+        description: xpath
+      tableName:
+        type: string
+        description: 表名
+      tableTitle:
+        type: string
+        description: 表显示名称
+      fieldName:
+        type: string
+        description: 字段名
+      fieldTitle:
+        type: string
+        description: 字段显示名称
+      fieldType:
+        type: string
+        description: 字段类型
+      sql:
+        type: string
+        description: 自定义sql
+
+  SysOrgSeachers:
+    type: object
+    properties:
+      seacher:
+        type: string
+        description: 查询条件
+
+  SysUpdatePassWordForm:
+    type: object
+    properties:
+      oldPassWord:
+        type: string
+        description: 旧密码
+      newPassWord:
+        type: string
+        description: 新密码
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  statusVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  searchVo:
+    type: object
+    properties:
+      searcher:
+        type: string
+        description: 搜索条件
+
+  SysUserSearchForm:
+    type: object
+    properties:
+      searcher:
+        type: string
+        description: 搜索条件
+
+  SysOrgUserSearchForm:
+    type: object
+    properties:
+      searcher:
+        type: string
+        description: 搜索条件
+
+  SysIptUserSearchForm:
+    type: object
+    properties:
+      searcher:
+        type: string
+        description: 搜索条件
+
+  SysSearchIptForm:
+    type: object
+    properties:
+      searcher:
+        type: string
+        description: 搜索条件
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  idVo:
+    type: array
+    items:
+      type: integer
+      description: id
+
+  menuTabVo:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单id
+
+
+  ProjectTeamAddForm:
+    description: 增加项目团队Form
+    properties:
+      bizType:
+        type: string
+        description: 业务对象类型(prepa/project)
+      bizId:
+        type: integer
+        description: 业务对象id
+      teamCode:
+        type: string
+        description: 代码
+      teamName:
+        type: string
+        description: 名称
+      parentId:
+        type: integer
+        description: 父节点id
+      extendedColumn1:
+          type: string
+          description: 扩展字段1
+      extendedColumn2:
+          type: string
+          description: 扩展字段2
+      extendedColumn3:
+          type: string
+          description: 扩展字段3
+      extendedColumn4:
+          type: string
+          description: 扩展字段4
+      extendedColumn5:
+          type: string
+          description: 扩展字段5
+
+  ProjectTeamUpdateForm:
+    description: 修改项目团队form
+    properties:
+      id:
+        type: integer
+        description: id
+      teamCode:
+        type: string
+        description: 代码
+      teamName:
+        type: string
+        description: 名称
+      extendedColumn1:
+        type: string
+        description: 扩展字段1
+      extendedColumn2:
+        type: string
+        description: 扩展字段2
+      extendedColumn3:
+        type: string
+        description: 扩展字段3
+      extendedColumn4:
+        type: string
+        description: 扩展字段3
+      extendedColumn5:
+        type: string
+        description: 扩展字段5
+
+  ProjectTeamVo:
+    description: 项目团队Vo
+    properties:
+      id:
+        type: integer
+        description: id
+      bizType:
+        type: string
+        description: 业务对象类型(prepa/project)
+      bizId:
+        type: integer
+        description: 业务对象id
+      teamCode:
+        type: string
+        description: 代码
+      teamName:
+        type: string
+        description: 名称
+      parentId:
+        type: integer
+        description: 父节点id
+      children:
+        items:
+          $ref: '#/definitions/ProjectTeamVo'
+
+  ProjectTeamUserVo:
+    description: 项目团队成员
+    properties:
+      id:
+        type: integer
+        description: id
+      teamId:
+        type: integer
+        description: teamId
+      teamCode:
+        type: string
+        description: 团队代码
+      teamName:
+        type: string
+        description: 团队名称
+      user:
+        $ref: '#/definitions/GeneralVo'
+      roles:
+        type: array
+        items:
+          $ref: '#/definitions/GeneralVo'
+      position:
+        type: string
+        description: 职位
+      professional:
+        type: string
+        description: 专业
+      status:
+        type: array
+        description: 状态
+        items:
+          $ref: '#/definitions/GeneralVo'
+      sex:
+        type: array
+        description: 性别
+        items:
+          $ref: '#/definitions/GeneralVo'
+      userType:
+        type: string
+        description: 类型
+      staffStatus:
+        type: array
+        description: 员工状态
+        items:
+          $ref: '#/definitions/GeneralVo'
+      phone:
+        type: string
+        description: 手机号
+      birth:
+        type: string
+        description: 生日
+      email:
+        type: string
+        description: email
+      cardType:
+        type: string
+        description: 证件类型
+      cardNum:
+        type: string
+        description: 证件号码
+      level:
+        type: array
+        description: 密级
+        items:
+          $ref: '#/definitions/GeneralVo'
+
+
+  ProjectTeamAssignUserForm:
+    description: 项目团队分配用户Form
+    properties:
+      userId:
+        type: integer
+        description: userId
+      roleIds:
+        description: 角色id
+        type: array
+        items:
+          type: integer
+
+  ProjectTeamImportForm:
+    description: 导入项目团队
+    properties:
+      ids:
+        description: 部门id/iptId
+        type: array
+        items:
+          type: integer
+      userFlag:
+        type: boolean
+        description: 是否导入用户
+
+  SysOrgUserTreeVo:
+    properties:
+      name:
+        type: integer
+        description: 名称
+      code:
+        type: string
+        description: 编码
+      type:
+        type: string
+        description: ( user  用户  org：组织)
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父id
+      children:
+        description: 子节点
+        type: array
+        items:
+          $ref: '#/definitions/SysOrgUserTreeVo'
+      roleId:
+        description: 用户角色
+        type: integer
+
+  MyMessageSearchForm:
+    properties:
+      title:
+        type: string
+        description: 消息名称
+      startTime:
+        type: string
+        description: 开始时间
+      endTime:
+        type: string
+        description: 结束时间
+
+  SysMessageNumVo:
+    properties:
+      unreadNum:
+        type: integer
+        description: 未读消息数
+      deletedNum:
+        type: integer
+        description: deletedNum
+
+  MyMessageVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      title:
+        type: string
+        description: 标题
+      type:
+        description: 消息类型
+        $ref: '#/definitions/MessageTypeVo'
+      recvUser:
+        description: 接收人
+        $ref: '#/definitions/UserVo'
+      sendUser:
+        description: 发送人
+        $ref: '#/definitions/UserVo'
+      sendTime:
+        type: string
+        description: 发送时间
+      claimDealType:
+        description: 需要回复类型
+        $ref: '#/definitions/MessageTypeVo'
+      realStatus:
+        description: 是否已读
+        $ref: '#/definitions/GeneralVo'
+
+  MyNewestMessageVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      title:
+        type: string
+        description: 标题
+      sendUser:
+        description: 发送人
+        $ref: '#/definitions/UserVo'
+      recvTime:
+        type: string
+        description: 接收时间
+      duration:
+        type: integer
+        description: 相隔时长
+
+  SectionTreeVo:
+    description: 标段TreeVo
+    properties:
+      id:
+        type: integer
+        description: ID
+      code:
+        type: string
+        description: 代码/编码
+      name:
+        type: string
+        description: 名称
+      typeCode:
+        type: string
+        description: 类型代码
+      typeName:
+        type: string
+        description: 类型名称
+      parentId:
+        type: integer
+        description: 父节点ID
+      projectId:
+        type: integer
+        description: 项目ID
+      children:
+        items:
+          $ref: '#/definitions/SectionTreeVo'
+
+  SectionVo:
+    description: SectionVo
+    properties:
+      id:
+        type: integer
+        description: ID
+      code:
+        type: string
+        description: 代码/编码
+      name:
+        type: string
+        description: 名称
+      typeCode:
+        type: string
+        description: 类型代码
+      typeName:
+        type: string
+        description: 类型名称
+      parentId:
+        type: integer
+        description: 父节点ID
+      projectId:
+        type: integer
+        description: 项目ID
+      type:
+        type: string
+        description: 类型(org:单位,section:标段)
+      children:
+        items:
+          $ref: '#/definitions/SectionVo'
+
+
+
+

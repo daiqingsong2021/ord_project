@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.MenuMapper">
+    <select id="queryMenuNameByCode" parameterType="java.lang.String" resultType="java.lang.String">
+      select m.menu_name from wsd_sys_menu m
+      where m.menu_code = #{menuCode} limit 1
+    </select>
+    <select id="selectMenuByAuthorityId">
+    </select>
+    <select id="selectAuthorityMenuByUserId">
+    </select>
+    <select id="selectAuthoritySystemByUserId">
+    </select>
+
+
+    <select id="selectMenuBySearch" resultType="java.lang.Integer">
+        select m.id from wsd_sys_menu m
+        <where>
+            <if test="search.searcher != null and search.searcher != ''">
+                (m.menu_name like concat('%',#{search.searcher},'%')
+                or
+                m.menu_code like concat('%',#{search.searcher},'%'))
+            </if>
+        </where>
+        order by m.sort_num asc
+    </select>
+    <select id="selectMenuByPid" resultMap="menuVoTreeResultMap">
+        select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.i18n,
+            m.creat_time,m.menu_type,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then '模块' end) as menu_type_name
+        from wsd_sys_menu m  where  m.active = 1
+    </select>
+
+    <select id="selectMenuVoList" resultMap="menuVoResultMap">
+          select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,m.group_name,
+            m.creat_time,m.menu_type,m.menu_local,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m order by m.parent_id,m.sort_num asc
+    </select>
+
+    <select id="selectSubjectTemplateGroup" resultMap="menuVoResultMap">
+          select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,m.group_name,
+            m.creat_time,m.menu_type,m.menu_local,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m where m.menu_type = 1 order by m.parent_id,m.sort_num asc
+    </select>
+
+    <select id="selectSubjectTemplateMenu" resultMap="menuVoResultMap">
+          select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,m.group_name,
+            m.creat_time,m.menu_type,m.menu_local,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m where (m.menu_code like concat(#{menuCode},'-%')) and m.is_menu = 1 order by m.parent_id,m.sort_num asc
+    </select>
+
+    <select id="selectMenuVoMenuList" resultMap="menuVoResultMap">
+          select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,
+            m.creat_time,m.menu_type,m.menu_local,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m
+        where m.menu_type = 1 or m.menu_type = 2
+    </select>
+
+    <select id="selectMenuVoMenuListByMenuId" resultMap="menuVoResultMap">
+          select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,
+            m.creat_time,m.menu_type,m.menu_local,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m
+        where m.menu_type = 1 or m.menu_type = 2 and m.id in (getChildList(#{menuId}))
+    </select>
+
+    <select id="selectParentMenuByMenuId" resultMap="authALLResultMap">
+          select m.id,m.parent_id,m.menu_code,m.menu_name
+        from wsd_sys_menu m
+        where m.menu_type = 1 or m.menu_type = 2 and m.id in (getChildList(#{menuId}))
+    </select>
+
+    <select id="selectMenuVoByMenuCode" resultMap="menuVoResultMap">
+        select
+        m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,
+        m.creat_time,m.menu_type,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单' when 3 then '模块'
+        when 4 then '分组'
+        end) as menu_type_name
+        from wsd_sys_menu m where m.active = 1 and m.menu_code in
+        <foreach collection="codes" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectMenuVoById" resultMap="menuVoResultMap">
+         select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,m.sort_num,m.menu_desc,u.user_name,m.group_name,
+            m.creat_time,m.menu_type,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m left join wsd_sys_user u on m.creator = u.id   where m.id = #{menuId}
+    </select>
+
+
+    <select id="selectMenuVoByCode" resultMap="menuVoResultMap">
+         select m.id,m.parent_id,m.menu_code,m.menu_name,m.active,m.url,m.hidden,m.share_,m.is_menu,m.image,m.short_code,m.i18n,m.sort_num,m.menu_desc,u.user_name,
+            m.creat_time,m.menu_type,m.last_upd_time,(case m.menu_type when 1 then '组件' when 2 then '菜单'  when 3 then  '模块' when 4 then '分组' end) as menu_type_name
+        from wsd_sys_menu m left join wsd_sys_user u on m.creator = u.id
+        where m.menu_code = #{menuCode }
+    </select>
+
+    <sql id="menuLableVo">
+                SELECT  e.id, e.menu_code,e.menu_name,e.url,e.is_menu, e.image,e.short_code, e.i18n,e.menu_type,m.menu_code parentCode
+                FROM
+	              wsd_sys_menu m left join wsd_sys_menu e on m.id = e.parent_id
+    </sql>
+
+    <select id="selectMenuTabs" resultMap="menulabelVoResultMap">
+        <include refid="menuLableVo"></include>
+        WHERE
+          m.menu_code = #{menuCode}  and e.active = 1
+        ORDER BY
+            e.sort_num asc
+    </select>
+
+    <select id="selectGroupMenus" resultMap="menulabelVoResultMap" parameterType="java.util.List">
+        <include refid="menuLableVo"></include>
+        WHERE
+           e.active = 1 and m.menu_code in
+        <foreach collection="codes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY
+            e.sort_num asc
+    </select>
+
+    <select id="selectAuthMenuVoList" resultMap="authALLResultMap">
+        SELECT m.id,m.parent_id,m.menu_code,m.menu_name
+        from wsd_sys_menu m
+            where m.active = 1 and (m.menu_type = 1 or (m.menu_type = 2 and m.is_menu = 1))
+    </select>
+
+    <resultMap id="authALLResultMap" type="com.wisdom.acm.sys.vo.SysAuthMenuVo">
+        <id property="id" column="id"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_name" property="menuName"/>
+    </resultMap>
+
+    <resultMap id="menuVoTreeResultMap" type="com.wisdom.acm.sys.vo.SysMenuVo">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="active" property="active"/>
+        <result column="hidden" property="hidden"/>
+        <result column="share_" property="share"/>
+        <result column="url" property="url"/>
+        <result column="i18n" property="i18n"/>
+        <result column="is_menu" property="isMenu"/>
+        <result column="creat_time" property="creatTime"/>
+        <result column="last_upd_time" property="lastUpdTime"/>
+        <association property="menuType" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="menu_type" property="id"/>
+            <result column="menu_type_name" property="name"/>
+        </association>
+        <collection column="id" property="children" ofType="com.wisdom.acm.sys.vo.SysMenuVo" select="selectMenuByPid"/>
+    </resultMap>
+
+    <resultMap id="menulabelVoResultMap" type="com.wisdom.acm.sys.vo.SysMenuLableVo">
+        <id column="id" property="id"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="url" property="url"/>
+        <result column="i18n" property="i18n"/>
+        <result column="image" property="image"/>
+        <result column="short_code" property="shortCode"/>
+        <result column="menu_type" property="menuType"/>
+        <result column="parentCode" property="parentCode"/>
+    </resultMap>
+
+    <resultMap id="menuVoResultMap" type="com.wisdom.acm.sys.vo.SysMenuVo">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="menu_local" property="menuLocal"/>
+        <result column="active" property="active"/>
+        <result column="hidden" property="hidden"/>
+        <result column="url" property="url"/>
+        <result column="i18n" property="i18n"/>
+        <result column="sort_num" property="sort"/>
+        <result column="menu_group" property="group"/>
+        <result column="menu_desc" property="menuDesc"/>
+        <result column="user_name" property="creator"/>
+        <result column="image" property="image"/>
+        <result column="short_code" property="shortCode"/>
+        <result column="share_" property="share"/>
+        <result column="is_menu" property="isMenu"/>
+        <result column="creat_time" property="creatTime"/>
+        <result column="last_upd_time" property="lastUpdTime"/>
+        <result column="group_name" property="groupName"/>
+        <association property="menuType" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="menu_type" property="id"/>
+            <result column="menu_type_name" property="name"/>
+        </association>
+    </resultMap>
+
+</mapper>

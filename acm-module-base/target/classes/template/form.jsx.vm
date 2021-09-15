@@ -1,0 +1,158 @@
+import React, {Component} from 'react'
+import style from './style.less'
+import {Form, Row, Col, Input, Button, Icon, Select, DatePicker} from 'antd';
+import intl from 'react-intl-universal'
+const locales = {
+    "en-US": require('../../../../api/language/en-US.json'),
+    "zh-CN": require('../../../../api/language/zh-CN.json')
+}
+const FormItem = Form.Item;
+class MenuInfo extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            initDone: false,
+            info: {
+                name: '个人中心',
+                showName: '个人中心',
+                code: '2001',
+                showOrder: 2,
+                code2: '项目代码',
+                url: 'htpps://baidu.com',
+                code3: '2002',
+                hide: 'WSD',
+                desc: '个人中心描述',
+                type: ['模块1', '模块2', '模块3'],
+                icon: ['icon1', 'icon2', 'icon3'],
+                template: ['模版1', '模版2', '模版3'],
+                width: ''
+            }
+        }
+    }
+
+    componentDidMount() {
+        this.loadLocales();
+        console.log('加载')
+        this.setState({
+            width: this.props.width
+        })
+    }
+
+    loadLocales() {
+        intl.init({
+            currentLocale: 'en-US',
+            locales,
+        })
+            .then(() => {
+                // After loading CLDR locale data, start to render
+                this.setState({initDone: true});
+            });
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        alert(1)
+        this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+            }
+        });
+    }
+
+    render() {
+        const {
+            getFieldDecorator, getFieldsError, getFieldError, isFieldTouched,
+        } = this.props.form;
+        const formItemLayout = {
+            labelCol: {
+                xs: {span: 24},
+                sm: {span: 8},
+            },
+            wrapperCol: {
+                xs: {span: 24},
+                sm: {span: 16},
+            },
+        };
+        return (
+            <div className={style.main}>
+                <h2>{intl.get('wbs.add.name')}</h2>
+                <Form onSubmit={this.handleSubmit}>
+                <div className={style.content}>
+                    #if("$!{columns.size()}"!="0")
+                    <Row gutter={24} type="flex">
+                        #foreach($column in $columns)
+                            #if($column.riqi == 1)
+                                <Col span={11}>
+                                    <Form.Item>
+                                        <div className={style.list}>
+                                            <label>{intl.get('$column.title')}</label>
+                                            {getFieldDecorator('$column.key', {
+                                                initialValue: this.state.info.$column.key,
+                                                rules: [{
+                                                    required: true,
+                                                    message: intl.get('wsd.i18n.message.enter') + intl.get('$column.title'),
+                                                }],
+                                            })(
+                                                <DatePicker/>
+                                            )}
+                                        </div>
+                                    </Form.Item>
+                                </Col>
+                                #elseif($column.xiala == 1)<Col span={11}>
+                                <Form.Item>
+                                    <div className={style.list}>
+                                        <label>{intl.get('$column.title')}</label>
+                                        {getFieldDecorator('$column.key', {
+                                            initialValue: this.state.info.$column.key,
+                                            rules: [{
+                                                required: true,
+                                                message: intl.get('wsd.i18n.message.enter') + intl.get('$column.title'),
+                                            }],
+                                        })(
+                                            <Select>
+                                                <Option value="模块1">模块1</Option>
+                                            </Select>
+                                        )}
+                                    </div>
+                                </Form.Item>
+                                </Col>
+                            #else                       <Col span={11}>
+                                <Form.Item>
+                                    <div className={style.list}>
+                                        <label>{intl.get('$column.title')}</label>
+                                        {getFieldDecorator('$column.key', {
+                                            initialValue: this.state.info.$column.key,
+                                            rules: [{
+                                                required: true,
+                                                message: intl.get('wsd.i18n.message.enter') + intl.get('$column.title'),
+                                            }],
+                                        })(
+                                            <Input/>
+                                        )}
+                                    </div>
+                                </Form.Item>
+                            </Col>
+                            #end
+                            #set($r = $velocityCount % 2)
+                            #if($r == 0 && $velocityCount!=$!{columns.size()})
+                            </Row></br>
+                            <Row gutter={24}>#end #end
+                    </Row> #end
+                    <Row gutter={24}>
+                        <Col span={3} offset={3}>
+                            <Button onClick={this.handleSubmit} type="primary">保存</Button>
+                        </Col>
+                        <Col span={3} offset={1}>
+                            <Button>取消</Button>
+                        </Col>
+                    </Row>
+            </div>
+
+    </Form>
+    <
+        /div>
+    )
+    }
+}
+const MenuInfos = Form.create()(MenuInfo);
+export default MenuInfos

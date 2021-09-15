@@ -1,0 +1,5 @@
+alter table wsd_base_tmpltask add permile_temp number;
+update wsd_base_tmpltask set permile_temp=plan_level,plan_level=null;
+alter table wsd_base_tmpltask modify (plan_level varchar2(100));
+update wsd_base_tmpltask set plan_level=to_char(permile_temp),permile_temp=null;
+alter table wsd_base_tmpltask drop column permile_temp;

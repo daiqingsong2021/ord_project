@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.UserIptRoleMapper">
+
+    <select id="queryUserIptRoleRelationByIptIds" resultType="com.wisdom.acm.sys.po.SysUserIptRolePo">
+        select r.ipt_id iptId,r.user_id userId,r.role_id roleId from wsd_sys_useript_role r where r.ipt_id in
+        <foreach collection="iptIds" separator="," open="(" index="index" item="item" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryUserIptRoleRelationByUserIds" resultType="com.wisdom.acm.sys.vo.SysUserIptRoleVo">
+        select r.ipt_id iptId,r.user_id userId,r.role_id roleId,o.role_name roleName from wsd_sys_useript_role r
+        left join wsd_sys_role o on o.id = r.role_id
+         where r.ipt_id = #{iptId} and r.user_id in
+        <foreach collection="userIds" separator="," open="(" index="index" item="item" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectUserIptRoleExistRelation" resultType="com.wisdom.acm.sys.po.SysUserIptRolePo">
+        select r.ipt_id iptId,r.user_id userId,r.role_id roleId from wsd_sys_useript_role r
+         where r.ipt_id = #{iptId}
+        and r.user_id = #{userId} and r.role_id = #{roleId}
+    </select>
+
+    <delete id="deleteIptUserRoleRelationByIpts" parameterType="java.util.List">
+        delete from wsd_sys_useript_role where ipt_id in
+        <foreach collection="iptIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="selectUserIptRoleRelationByRoleIds" parameterType="java.util.List">
+        delete from wsd_sys_useript_role where role_id in
+        <foreach collection="roleIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteIptUserRoleByUserIdAndIptId" >
+        delete from wsd_sys_useript_role where ipt_id = #{iptId} and user_id in
+        <foreach collection="userIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserIptRelationByUserIds" >
+        delete from wsd_sys_useript_role where user_id in
+        <foreach collection="userIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

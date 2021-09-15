@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.UserLevelMapper">
+
+    <resultMap id="resultUserLevelMap" type="com.wisdom.acm.sys.vo.UserLevelVo">
+        <id property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="name" column="actu_name"/>
+
+        <association property="level" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="level_"/>
+            <result property="name" column="dict_name"/>
+        </association>
+
+        <association property="department" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="org_id"/>
+            <result property="name" column="department"/>
+        </association>
+
+    </resultMap>
+
+    <select id="selectUserLevelList" resultMap="resultUserLevelMap">
+        select
+            u.id,
+            u.user_name,
+            u.actu_name,
+            u.level_,
+            uo.org_id,
+            o.org_name as department,
+            d.dict_name
+        from
+            wsd_sys_user u
+        left join wsd_sys_userorg uo on u.id = uo.user_id
+            inner join wsd_sys_org o on uo.org_id = o.id and o.biz_type is null and o.biz_id is null
+            left join wsd_base_dict d on u.level_ = d.dict_code and d.type_code = 'comm.secutylevel'
+        where 1=1
+            <if test="searchForm.level != '' and searchForm.level != null">
+               and u.level_ = #{searchForm.level}
+            </if>
+            <if test="searchForm.departmentId != '' and searchForm.departmentId != null">
+                and uo.org_id = #{searchForm.departmentId}
+            </if>
+            <if test="searchForm.name != null and searchForm.name != ''">
+                and (u.user_name like concat('%',#{searchForm.name},'%')
+                    or
+                    u.actu_name like concat('%',#{searchForm.name},'%'))
+            </if>
+    </select>
+</mapper>

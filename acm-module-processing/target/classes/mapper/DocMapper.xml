@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.processing.mapper.report.DocMapper">
+    <update id="updateFileStatus">
+        update wsd_doc t set t.status='RELEASE' where t.id = #{fileId}
+    </update>
+</mapper>

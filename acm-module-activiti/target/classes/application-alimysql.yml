@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    name: test #JNDI数据源的name，查找时用：java:comp/env/jdbc/TestDB
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:xe}?autoReconnect=true&useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=Asia/Shanghai
+    jdbc-url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:xe}?autoReconnect=true&useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: xe #数据库用户名
+    password: reFHRExe08*$1                               #wisdom.1234 #数据库密码   acm_cloud
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 20 #连接池的最大数据库连接数。设为0表示无限制。
+    initialSize: 1
+    maxWait: 60000 #从池中取连接的最大等待毫秒数(60秒)，单位ms
+    minIdle: 1 #最大空闲数，数据库连接的最大空闲时间。超过空闲时间，数据库连接将被标记为不可用，然后被释放。设为0表示无限制。
+    timeBetweenEvictionRunsMillis: 60000 #每(60秒)运行一次空闲连接回收器
+    minEvictableIdleTimeMillis: 300000 #池中的连接空闲(300秒)后被回收
+    validationQuery: select 'x' #验证使用的SQL语句
+    testWhileIdle: true #指明连接是否被空闲连接回收器(如果有)进行检验.如果检测失败,则连接将被从池中去除.
+    testOnBorrow: false #借出连接时不要测试，否则很影响性能
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+    #hikari:
+    pool-name: DatebookHikariCP #指定连接池名字.
+    minimum-idle: 1 #最小空闲连接数量
+    maximum-pool-size: 20 #连接池中允许的最大连接数。缺省值：10；推荐的公式：((core_count * 2) + effective_spindle_count)
+    idle-timeout: 300000 #空闲连接存活最大时间，默认600000（10分钟）
+    max-lifetime: 1800000 #一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired），缺省:30分钟，建议设置比数据库超时时长少30秒，参考MySQL wait_timeout参数（show variables like '%timeout%';）
+    connection-timeout: 30000 #一个连接idle状态的最大时长（毫秒），超时则被释放（retired），缺省:10分钟
+    connection-test-query: SELECT 1 #验证使用的SQL语句
+    #leak-detection-threshold: 300000 #使用Hikari connection pool时，多少毫秒检测一次连接泄露.
+    #min-evictable-idle-time-millis: 300000 #指定一个空闲连接最少空闲多久后可被清除.
+
+mybatis:
+  basepackage: com.wisdom.acm.activiti.mapper
+  mapper-locations: classpath*:mapper/**/Mysql/*MapperMysql.xml,classpath*:mapper/**/*Mapper.xml
+  configuration:
+    jdbc-type-for-null: varchar

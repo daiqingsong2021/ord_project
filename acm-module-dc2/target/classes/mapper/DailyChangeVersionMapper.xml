@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.DailyChangeVersionMapper">
+    <resultMap id="dailyChanegVersionVo" type="com.wisdom.acm.dc2.vo.DailyChangeVersionVo">
+        <result property="id" column="id"/>
+        <result property="moudleRecordId" column="moudle_record_id" />
+        <result property="moudleName" column="moudle_name"/>
+        <result property="modifyRemark" column="modify_remark"/>
+        <result property="modifyContent" column="modify_content"/>
+        <result property="creatTime" column="CREAT_TIME"/>
+        <association property="createrVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="creator"/>
+            <result property="name" column="ACTU_NAME"/>
+        </association>
+    </resultMap>
+
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="dailyChanegVersionVo">
+        SELECT
+        a.*,u.ACTU_NAME as ACTU_NAME
+        FROM  odr_modle_daily_change a
+        LEFT JOIN wsd_sys_user u ON a.CREATOR = u.ID
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="moudleRecordId != null and moudleRecordId != '' ">
+                AND a.moudle_record_id =#{moudleRecordId}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  <= ]]> str_to_date(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  >= ]]> str_to_date(#{startTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.CREAT_TIME asc
+    </select>
+
+</mapper>
+

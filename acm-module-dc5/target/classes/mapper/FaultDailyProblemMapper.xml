@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc5.mapper.FaultDailyProblemMapper">
+
+    <select id="selectFaultDailyProblemByParams" parameterType="java.util.Map" resultType="com.wisdom.acm.dc5.vo.FaultDailyProblemVo">
+        select a.id,a.fault_id as faultId,a.PROBLEM_DESC as problemDesc,a.creator as recorder,
+        c.ACTU_NAME as recorderName,a.RECORD_TIME as recordTime,a.problem_Status as problemStatus,
+        a.problem_reason as problemReason,a.problem_remark as remark,a.deal_detail as dealDetail
+        from odr_fault_daily_problem a
+        LEFT JOIN wsd_sys_user c on a.creator=c.id
+        where 1=1
+        <if test="faultId != null and faultId != '' ">
+            AND a.fault_id =#{faultId}
+        </if>
+        <if test="id != null and id != '' ">
+            AND a.id = #{id}
+        </if>
+        <if test="ids != null and ids != '' ">
+            AND a.id in
+            <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="faultIdList != null and faultIdList.size()>0 ">
+            AND a.fault_id in
+            <foreach collection="faultIdList" item="item"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by a.id desc
+    </select>
+
+    <delete id="deleteFaultDailyProblemDealByProblemIds" parameterType="java.util.Map">
+        DELETE FROM odr_fault_daily_problem_deal
+        where problem_id in
+        <foreach collection="problemIdList" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>
+

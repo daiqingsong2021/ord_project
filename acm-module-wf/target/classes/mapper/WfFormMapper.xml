@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.wf.mapper.WfFormMapper">
+    <select id="selectTaskVoByProcInstIds" resultMap="MyUnFinishTaskVo">
+        select f.id,f.title,f.proc_inst_id,f.type_code,f.remark,f.creator,
+        t.id as type_id,t.type_name,u.user_name,u.actu_name,r.org_id,o.org_name
+        from wsd_wf_form f
+        left join wsd_wf_biztype t on t.type_code = f.type_code
+        left join wsd_sys_user u on u.id = f.creator
+        left join wsd_sys_userorg r on r.user_id = u.id and r.main_org = 1
+        left join wsd_sys_org o on o.id = r.org_id
+        where f.proc_inst_id in
+        <foreach collection="procInstIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <resultMap id="MyUnFinishTaskVo" type="com.wisdom.base.common.vo.wf.MyUnFinishTaskVo">
+        <result column="id" property="id" />
+        <result column="proc_inst_id" property="procInstId" />
+        <result column="title" property="procInstName" />
+        <result column="remark" property="remark" />
+        <association property="startUser" javaType="com.wisdom.base.common.vo.sys.UserVo">
+            <result column="creator" property="id" />
+            <result column="user_name" property="code" />
+            <result column="actu_name" property="name" />
+        </association>
+        <association property="startUserOrg" javaType="com.wisdom.base.common.vo.sys.OrgVo">
+            <result column="org_id" property="id" />
+            <result column="org_name" property="name" />
+        </association>
+        <association property="bizType" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="type_id" property="id" />
+            <result column="type_code" property="code" />
+            <result column="type_name" property="name" />
+        </association>
+    </resultMap>
+</mapper>

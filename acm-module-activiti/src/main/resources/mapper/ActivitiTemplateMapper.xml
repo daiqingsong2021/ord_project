@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.activiti.mapper.ActivitiTemplateMapper">
+	<select id="queryTemplateByActivitiId" resultType="com.wisdom.acm.activiti.po.ActivitiTemplatePo">
+		select id,activiti_id activitiId,screen_code screenCode from szxm_activiti_screen
+		where activiti_id = #{activitiId}
+	</select>
+
+	<insert id="insertTemplate" parameterType="com.wisdom.acm.activiti.po.ActivitiTemplatePo">
+		insert into szxm_activiti_screen (id,activiti_id ,screen_code) values (#{activitiTemplatePo.id}, #{activitiTemplatePo.activitiId}, #{activitiTemplatePo.screenCode})
+	</insert>
+
+	<delete id="deleteByActivitiId" parameterType="java.lang.String">
+		delete from  szxm_activiti_screen where activiti_id = #{activitiId}
+	</delete>
+	<select id="queryActivitiByIds" parameterType="java.util.List" resultType="com.wisdom.acm.activiti.po.ActivitiTemplatePo">
+		select p.activiti_id activitiId, p.screen_code screenCode from szxm_activiti_screen p
+		<where>
+			p.activiti_id IN
+			<foreach collection="activitiIds" item="activitiId" open="(" close=")"
+					 separator=",">
+				#{activitiId}
+			</foreach>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,39 @@
+
+<div class="modal" ng-controller="KisBpmConditionExpressionPopupCtrl">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close()">&times;</button>
+    <h2 translate>PROPERTY.SEQUENCEFLOW.CONDITION.TITLE</h2><span>后续活动( {{targetResourceId}} )</span>
+    <div>运算符： >, >=, ==, <, <=, !, &&, ||, (, )</div>
+    <div>方法：equals 返回类型 Boolean, 例：${expr.equals(变量, '指定值')}</div>
+    <div>方法：equalsIgnoreCase 返回类型 Boolean, 例：${expr.equalsIgnoreCase(变量, '指定值')}</div>
+    <div>方法：contains 返回类型 Boolean, 例：${expr.contains(变量, '指定值')}</div>
+    <div>方法：startsWith 返回类型 Boolean, 例：${expr.startsWith(变量, '指定值')}</div>
+    <div>方法：endsWith 返回类型 Boolean, 例：${expr.endsWith(变量, '指定值')}</div>
+    <div>方法：matches 返回类型 Boolean, 例：${expr.matches(变量, '指定值')}</div>
+    <div>方法：split 返回类型 Boolean, 例：${expr.split(变量, '分隔符', '指定值')}</div>
+    <div>方法：indexOf 返回类型 Integer, 例：${expr.indexOf(变量, '指定值') == 0}</div>
+    <div>方法：lastIndexOf 返回类型 Integer, 例：${expr.lastIndexOf(变量, '指定值') == 1}</div>
+</div>
+<div class="modal-body">
+    <div class="detail-group clearfix">
+        <div class="form-group clearfix">
+            <div class="col-xs-12">
+                <label class="col-xs-3">{{'PROPERTY.SEQUENCEFLOW.CONDITION.STATIC' | translate}}
+                    </br>
+                    <a ng-click="getNextActivityIdExpression()" ng-style="{cursor: 'pointer'}">(前驱指定)</a>
+                </label>
+                <div class="col-xs-9">
+                    <textarea class="form-control" ng-model="conditionExpression.value" style="width:90%; height:100%; max-width: 100%; max-height: 100%; min-height: 100px"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="close()" class="btn btn-primary" translate>ACTION.CANCEL</button>
+        <button ng-click="save()" class="btn btn-primary" translate>ACTION.SAVE</button>
+    </div>
+</div>
+</div>
+</div>

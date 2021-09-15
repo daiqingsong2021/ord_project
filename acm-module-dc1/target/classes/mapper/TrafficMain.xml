@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc1.mapper.TrafficMainMapper">
+    <delete id="delTrafficMainByDates" parameterType="java.lang.String">
+        DELETE FROM odr_traffic_main
+        <where>
+            record_time IN
+            <foreach collection="recordTimes" item="date" open="(" close=")"
+                     separator=",">
+                #{date}
+            </foreach>
+        </where>
+    </delete>
+
+    <resultMap id="TrafficMainVo" type="com.wisdom.acm.dc1.vo.TrafficMainVo">
+        <id property="id" column="id"/>
+        <result property="creatTime" column="creatTime"/>
+        <result property="sortNum" column="sortNum"/>
+        <result property="creator" column="creator"/>
+
+        <result property="recordTime" column="recordTime"/>
+        <result property="trafficVolumeToday" column="trafficVolumeToday"/>
+
+        <result property="trafficVolumeMonth" column="trafficVolumeMonth"/>
+        <result property="trafficVolumeMonthAverage" column="trafficVolumeMonthAverage"/>
+        <result property="trafficVolumeYear" column="trafficVolumeYear"/>
+        <result property="trafficVolumeYearAverage" column="trafficVolumeYearAverage"/>
+        <result property="trafficVolumeOpen" column="trafficVolumeOpen"/>
+        <result property="trafficVolumeOpenAverage" column="trafficVolumeOpenAverage"/>
+        <result property="reportMan" column="reportMan"/>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+            <result property="name" column="status_name"/>
+        </association>
+    </resultMap>
+    <select id="queryTrafficMainByDate" parameterType="java.util.Map" resultMap="TrafficMainVo">
+        SELECT
+            a.id AS id,a.status as status FROM odr_traffic_main a
+        <where>
+            <if test="recordTime != null and recordTime != '' ">
+                AND a.record_time=#{recordTime}
+            </if>
+        </where>
+            order by a.creat_time desc
+    </select>
+
+    <select id="getFlowTrafficMainList" parameterType="java.util.Map" resultMap="TrafficMainVo">
+        SELECT
+        U.ACTU_NAME as reportMan,
+        a.id AS id,
+        a.creat_time AS creatTime,
+        a.sort_num AS sortNum,
+        a.creator AS creator,
+        a.record_time as recordTime,
+        a.status as status,
+        a.traffic_volume_today as trafficVolumeToday,
+        a.traffic_volume_month AS trafficVolumeMonth,
+        a.traffic_volume_month_average AS trafficVolumeMonthAverage,
+        a.traffic_volume_year AS trafficVolumeYear,
+        a.traffic_volume_year_average AS trafficVolumeYearAverage,
+        a.traffic_volume_open AS trafficVolumeOpen,
+        a.traffic_volume_open_average AS trafficVolumeOpenAverage
+        FROM       odr_traffic_main a
+        LEFT JOIN wsd_sys_user U ON U.id = a.CREATOR
+        <where>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.creat_time desc
+    </select>
+
+    <select id="queryTrafficMainList" parameterType="java.util.Map" resultMap="TrafficMainVo">
+        SELECT
+        U.ACTU_NAME as reportMan,
+        a.id AS id,
+        a.creat_time AS creatTime,
+        a.sort_num AS sortNum,
+        a.creator AS creator,
+        a.record_time as recordTime,
+        a.status as status,
+        a.traffic_volume_today as trafficVolumeToday,
+        a.traffic_volume_month AS trafficVolumeMonth,
+        a.traffic_volume_month_average AS trafficVolumeMonthAverage,
+        a.traffic_volume_year AS trafficVolumeYear,
+        a.traffic_volume_year_average AS trafficVolumeYearAverage,
+        a.traffic_volume_open AS trafficVolumeOpen,
+        a.traffic_volume_open_average AS trafficVolumeOpenAverage
+        FROM       odr_traffic_main a
+        LEFT JOIN wsd_sys_user U ON U.id = a.CREATOR
+        <where>
+            <if test="startTime != null and startTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  <= ]]> str_to_date(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  >= ]]> str_to_date(#{startTime},'%Y-%m-%d')
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status=#{status}
+            </if>
+        </where>
+        order by a.record_time desc
+    </select>
+</mapper>

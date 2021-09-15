@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.pfe.StationMapper">
+
+    <resultMap id="resultStation" type="com.wisdom.acm.szxm.vo.pfe.StationVo">
+        <id property="id" column="id"/>
+        <id property="projectId" column="project_id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="remark" column="remark"/>
+        <association property="stationType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result property="id" column="station_type"/>
+            <result property="name" column="station_type_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectByProjectId" parameterType="java.util.Map" resultMap="resultStation">
+        select s.id,s.name,s.code,s.project_id,s.station_type,d.dict_name station_type_name,s.remark from wsd_pfe_station s
+        left join wsd_base_dict d on s.station_type = d.dict_code and d.type_code = 'proj.station.type'
+        where s.project_id =#{projectId}
+        order by s.CREAT_TIME asc
+    </select>
+
+    <select id = "selectOneByCode" resultType="java.lang.Integer">
+          select s.id  from wsd_pfe_station s where s.code = #{code} and s.project_id = #{projectId}
+    </select>
+
+    <select id = "selectOneByCodeAndId" resultType="java.lang.Integer">
+        select s.id from wsd_pfe_station s where s.code = #{code} and s.id != #{id} and s.project_id = #{projectId}
+    </select>
+</mapper>
+

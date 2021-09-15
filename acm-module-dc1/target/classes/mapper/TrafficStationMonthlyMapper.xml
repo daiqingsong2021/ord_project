@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc1.mapper.TrafficStationMonthlyMapper">
+    <delete id="delTrafficStationMonthlyByDates" parameterType="java.lang.String">
+        DELETE FROM odr_traffic_station_monthly a
+        <where>
+            <if test="yearMonth != null and yearMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{yearMonth}
+            </if>
+        </where>
+    </delete>
+    <update id="updateTrafficStationMonthlyPoList">
+        update odr_traffic_station_monthly t
+        set t.arrival_volume = #{arrivalVolume},t.arrival_volume_average = #{arrivalVolumeAverage},
+            t.outbound_volume = #{outboundVolume},t.outbound_volume_average = #{outboundVolumeAverage},
+            t.total_volume = #{totalVolume},t.last_upd_time=now()
+        <where>
+            <if test="line !=null and line != ''">
+                and t.line=#{line}
+            </if>
+            <if test="recordTime !=null and recordTime != '' ">
+                and t.record_time=#{recordTime}
+            </if>
+            <if test="station !=null and station != '' ">
+                and t.station=#{station}
+            </if>
+        </where>
+    </update>
+    <resultMap id="TrafficStationMonthlyVo" type="com.wisdom.acm.dc1.vo.TrafficStationMonthlyVo">
+        <id property="id" column="id"/>
+        <result property="sortNum" column="sortNum"/>
+        <result property="creatTime" column="creatTime"/>
+        <result property="creator" column="creator"/>
+        <result property="recordTime" column="recordTime"/>
+        <result property="line" column="line"/>
+        <result property="linePeriod" column="linePeriod"/>
+        <result property="station" column="station"/>
+        <result property="arrivalVolume" column="arrivalVolume"/>
+        <result property="arrivalVolumeAverage" column="arrivalVolumeAverage"/>
+        <result property="outboundVolume" column="outboundVolume"/>
+        <result property="outboundVolumeAverage" column="outboundVolumeAverage"/>
+        <result property="totalVolume" column="totalVolume"/>
+        <result property="stationNum" column="stationNum"/>
+    </resultMap>
+    <select id="queryTrafficStationMonthly" parameterType="java.util.Map" resultMap="TrafficStationMonthlyVo">
+        	SELECT
+                       a.id AS id,
+                       a.sort_num AS sortNum,
+                       a.creat_time AS creatTime,
+                       a.creator AS creator,
+                       a.record_time AS recordTime,
+                       a.line AS line,
+                       a.line_period AS linePeriod,
+                       a.station AS station,
+                       a.arrival_volume AS  arrivalVolume,
+                       a.arrival_volume_average AS  arrivalVolumeAverage,
+                       a.outbound_volume AS  outboundVolume,
+                       a.outbound_volume_average AS  outboundVolumeAverage,
+                       a.total_volume AS  totalVolume,
+                       a.station_num AS  stationNum
+        FROM odr_traffic_station_monthly a
+        <where>
+            <if test="yearMonth != null and yearMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{yearMonth}
+            </if>
+        </where>
+    </select>
+</mapper>

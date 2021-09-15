@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.IPAccRuleMapper">
+
+    <select id="selectIPAccessAll" resultMap="resultIpaccMap">
+        select p.id,p.start_ip,p.end_ip,p.access_rule, p.remark,p.is_effect
+        from wsd_sys_ipaccess p
+        order by p.creat_time desc
+    </select>
+
+    <select id="selectIPAccByIsEffect" resultMap="resultIpaccMap">
+        select p.id,p.start_ip,p.end_ip,p.access_rule, p.remark,p.is_effect
+        from wsd_sys_ipaccess p where p.access_rule = 0 and p.is_effect = 1
+        order by p.sort_num asc
+    </select>
+
+    <resultMap id="resultIpaccMap" type="com.wisdom.acm.sys.vo.SysIPAccessVo">
+        <id column="id" property="id"/>
+        <result column="start_ip" property="startIP"/>
+        <result column="end_ip" property="endIP"/>
+        <result column="remark" property="remark"/>
+        <result column="access_rule" property="accessRule"/>
+        <result column="is_effect" property="isEffect"/>
+    </resultMap>
+
+    <select id="getOne" resultMap="resultIpaccMap">
+         select p.id,p.start_ip,p.end_ip,p.access_rule,(case p.access_rule when '0' then '禁止访问' when '1' then '允许访问' end) as rule_name,p.remark
+        from wsd_sys_ipaccess p  where p.id = #{IPAccId}
+        order by p.sort_num asc
+
+    </select>
+
+    <select id="selectIPAccessByStartIpAndEndIp" resultMap="resultIpaccMap">
+         select p.id,p.start_ip,p.end_ip,p.access_rule,(case p.access_rule when '0' then '禁止访问' when '1' then '允许访问' end) as rule_name,p.remark
+        from wsd_sys_ipaccess p where p.start_ip = #{startIp} and p.end_ip = #{endIp}
+        order by p.sort_num asc
+    </select>
+
+</mapper>

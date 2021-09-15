@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.PeopleEntryMapper">
+
+    <resultMap id="peopleEntryVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleEntryVo">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="code" column="code"/>
+        <result property="peoNums" column="peo_nums"/>
+        <result property="entryTime" column="ENTRY_TIME"/>
+        <result property="orgName" column="org_name"/>
+        <result property="projInfoId" column="PROJ_INFO_ID"/>
+        <result property="creater" column="creater"/>
+        <result property="createTime" column="creat_time"/>
+        <result property="projInfoId" column="PROJ_INFO_ID"/>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type"/>
+            <result property="name" column="type_name"/>
+        </association>
+        <association property="peoEntryTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="PEO_ENTRY_TYPE"/>
+            <result property="name" column="PEO_ENTRY_TYPE_NAME"/>
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+        </association>
+        <association property="orgTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="org_type"/>
+            <result property="name" column="org_type_name"/>
+        </association>
+        <association property="orgCategoryVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="org_category"/>
+            <result property="name" column="org_category_name"/>
+        </association>
+    </resultMap>
+
+
+    <resultMap id="peopleSectionEntryVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleEntryVo">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="code" column="code"/>
+        <result property="peoNums" column="peo_nums"/>
+        <result property="entryTime" column="ENTRY_TIME"/>
+        <result property="orgName" column="org_name"/>
+        <result property="projInfoId" column="PROJ_INFO_ID"/>
+        <result property="creater" column="creater"/>
+        <result property="createTime" column="creat_time"/>
+        <result property="projInfoId" column="PROJ_INFO_ID"/>
+        <result property="userName" column="USERNAME"/>
+        <result property="userId" column="USERID"/>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type"/>
+            <result property="name" column="type_name"/>
+        </association>
+        <association property="peoEntryTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="PEO_ENTRY_TYPE"/>
+            <result property="name" column="PEO_ENTRY_TYPE_NAME"/>
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+        </association>
+
+    </resultMap>
+
+    <delete id="deletePeopEntryDetByeIds" parameterType="java.util.List">
+        DELETE FROM szxm_rygl_people_entrydetail
+        <where>
+            entry_id IN
+            <foreach collection="peopleEntryIds" item="id" open="(" close=")"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+    <select id="selectPeopleEntry" parameterType="java.util.Map" resultMap="peopleEntryVo">
+        select a.*,(case a.type when '0' then '进场' when '1' then '退场' end) as type_name,
+        (case a.peo_entry_type when '0' then '普通人员' when '1' then '管理人员' else '' end) as PEO_ENTRY_TYPE_NAME,
+        u.ACTU_NAME as creater,
+        case when t.peo_nums=null then 0 esle t.peo_nums end as peo_nums,
+        pj.org_type,dt.dict_name as org_type_name,
+        pj.org_category,dt1.dict_name as org_category_name
+        from Szxm_Rygl_People_Entry a
+        left join wsd_sys_user u on u.id=a.creator
+        left join szxm_rygl_projinfo pj on pj.id=a.proj_info_id
+        left join wsd_base_dict dt on pj.org_type = dt.dict_code and dt.TYPE_CODE = 'base.org.type'
+        left join wsd_base_dict dt1 on pj.org_category = dt1.dict_code and dt1.TYPE_CODE = 'base.org.classification'
+        left join (select t.entry_id,count(t.id) peo_nums
+        from szxm_rygl_people_entrydetail t group by t.entry_id
+        ) t on t.entry_id = a.id
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="type != null and type != '' ">
+                AND a.type = #{type}
+            </if>
+            <if test="peoEntryType != null and peoEntryType != '' ">
+                AND a.peo_entry_type = #{peoEntryType}
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="code != null and code != '' ">
+                AND a.code = #{code}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.entry_time <![CDATA[  <= ]]> to_date(#{endTime},'yyyy-MM-dd')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.entry_time <![CDATA[  >= ]]> to_date(#{startTime},'yyyy-MM-dd')
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="ids != null">
+                AND a.id IN
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+    <select id="queryPeopleEntryCount" resultType="java.lang.Integer">
+        select count(*) from szxm_rygl_people_entry
+        where to_date(to_char(CREAT_TIME,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[ > ]]>
+        to_date(to_char((ENTRY_TIME+7),'yyyy-mm-dd'), 'yyyy-mm-dd')
+        and creat_time <![CDATA[ < ]]> to_date((select concat(to_char(sysdate,'yyyy-MM'), '-25') endday from
+        dual),'yyyy-mm-dd')
+        and creat_time <![CDATA[ >= ]]> to_date((select concat(to_char(ADD_MONTHS(sysdate,-1),'yyyy-MM'), '-25') endday
+        from dual),'yyyy-mm-dd')
+        <if test="sectionId != null and sectionId != '' ">
+            AND section_id =#{sectionId}
+        </if>
+        group by section_id
+    </select>
+
+    <select id="selectSectionPeopleEntry" parameterType="java.util.Map" resultMap="peopleSectionEntryVo">
+        select a.*,(case a.type when '0' then '进场' when '1' then '退场' end) as type_name
+        ,d.name as userName,d.id as userId
+        from Szxm_Rygl_People_Entry a
+        Left Join szxm_rygl_people_entrydetail d On a.id=d.entry_id
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.proj_info_id =#{projInfoId}
+            </if>
+            <if test="userId != null and userId != '' ">
+                AND d.id = #{userId}
+            </if>
+
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+</mapper>
+

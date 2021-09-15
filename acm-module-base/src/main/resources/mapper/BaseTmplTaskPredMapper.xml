@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseTmplTaskPredMapper">
+       <resultMap id="baseTmplTaskPredVoMap" type="com.wisdom.acm.base.vo.tmpltask.BaseTmplTaskPredVo" >
+        <id column="id" property="id" />
+        <result column="task_name" property="taskName" />
+        <result column="task_code" property="taskCode" />
+        <result column="relation_type" property="relationType" />
+        <result column="lag_qty" property="lagQty" />
+    </resultMap>
+
+    <select id="selectTmplTaskPredListByTmplId" resultMap="baseTmplTaskPredVoMap">
+      select a.id,a.task_id,a.pred_task_id,b.task_code,b.task_name,a.relation_type,a.lag_qty from wsd_base_tmpltaskpred a
+      inner join wsd_base_tmpltask b on a.pred_task_id = b.id where b.tmpl_id = #{tmplId}
+    </select>
+
+    <select id="selectTmplTaskPredList" resultMap="baseTmplTaskPredVoMap">
+      select a.id,b.task_code,b.task_name,a.relation_type,a.lag_qty from wsd_base_tmpltaskpred a
+      inner join wsd_base_tmpltask b on a.pred_task_id = b.id where a.task_id = #{taskId}
+    </select>
+
+    <select id="selectTmplTaskFllowList" resultMap="baseTmplTaskPredVoMap">
+      select a.id,b.task_code,b.task_name,a.relation_type,a.lag_qty from wsd_base_tmpltaskpred a
+      inner join wsd_base_tmpltask b on a.task_id = b.id where a.pred_task_id = #{taskId}
+    </select>
+
+    <select id="queryTmpltaskTreeListByTwoIds" resultMap="baseTmplTaskPredVoMap">
+      select a.id,b.task_code,b.task_name,a.relation_type,a.lag_qty from wsd_base_tmpltaskpred a
+      inner join wsd_base_tmpltask b on a.pred_task_id = b.id
+      where a.pred_task_id = #{predTaskId} and a.task_id = #{taskId}
+    </select>
+
+    <select id="queryFollowTmpltaskTreeListByTwoIds" resultMap="baseTmplTaskPredVoMap">
+      select a.id,b.task_code,b.task_name,a.relation_type,a.lag_qty from wsd_base_tmpltaskpred a
+      inner join wsd_base_tmpltask b on a.task_id = b.id
+      where a.pred_task_id = #{predTaskId} and a.task_id = #{taskId}
+    </select>
+
+    <select id="queryTmplTaskPredById" parameterType="int" resultMap="baseTmplTaskPredVoMap">
+        select a.id,b.task_code,b.task_name,a.relation_type,a.lag_qty from wsd_base_tmpltaskpred a
+        inner join wsd_base_tmpltask b on a.task_id = b.id
+        where a.id = #{value}
+    </select>
+</mapper>

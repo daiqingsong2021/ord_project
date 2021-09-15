@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.processing.mapper.report.FineDailyReportMapper">
+    <resultMap id="dailyReportVo" type="com.wisdom.acm.processing.vo.report.FineDailyReportVo">
+        <id property="id" column="id"/>
+        <result property="initMan" column="initMan"/>
+        <result property="reportName" column="reportName"/>
+        <result property="line" column="line"/>
+        <result property="reportType" column="reportType"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="creator" column="creator"/>
+        <result property="reviewStatus" column="reviewStatus"/>
+        <result property="description" column="description"/>
+        <result property="fileId" column="fileId"/>
+        <result property="creatTime" column="creatTime"/>
+        <result property="reviewor" column="reviewor"/>
+        <result property="sortNum" column="sortNum"/>
+        <association property="reportTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="reportType"/>
+            <result property="name" column="reportType_name"/>
+        </association>
+        <association property="reviewStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="reviewStatus"/>
+            <result property="name" column="reviewStatus_name"/>
+        </association>
+    </resultMap>
+    <select id="getFineDailyReportList" parameterType="java.util.Map" resultMap="dailyReportVo">
+        SELECT
+                ifnull(U.ACTU_NAME,'维护员') as initMan,
+                s.ACTU_NAME as reviewor,
+                a.CREATOR,
+                a.id AS id,
+                a.report_name AS reportName,
+                a.line AS line,
+                a.report_type AS reportType,
+                a.reviewer as reviewer,
+                a.review_status as reviewStatus,
+                a.description AS description,
+                a.creat_time AS creatTime,
+                a.sort_num AS sortNum
+        FROM    fine_daily_report a
+        LEFT JOIN wsd_sys_user U ON U.id = a.CREATOR
+        LEFT JOIN wsd_sys_user s ON s.id = a.REVIEWER
+        <where>
+            <if test="reportType != null and reportType != '' ">
+                AND a.report_type=#{reportType}
+            </if>
+            <if test="reviewStatus != null and reviewStatus != '' ">
+                AND a.review_status=#{reviewStatus}
+            </if>
+            <if test="lines != null ">
+                AND a.line IN
+                <foreach collection="lines" item="item" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.report_name <![CDATA[  <= ]]> str_to_date(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.report_name <![CDATA[  >= ]]> str_to_date(#{startTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.creat_time desc
+    </select>
+    <select id="getFlowFineDailyReports" parameterType="java.util.Map" resultMap="dailyReportVo">
+        SELECT
+                ifnull(U.ACTU_NAME,'维护员') as initMan,
+                s.ACTU_NAME as reviewor,
+                a.CREATOR,
+                a.id AS id,
+                a.report_name AS reportName,
+                a.line AS line,
+                a.report_type AS reportType,
+                a.reviewer as reviewer,
+                a.review_status as reviewStatus,
+                a.description AS description,
+                a.creat_time AS creatTime,
+                a.sort_num AS sortNum
+        FROM       fine_daily_report a
+        LEFT JOIN wsd_sys_user U ON U.id = a.CREATOR
+        LEFT JOIN wsd_sys_user s ON s.id = a.REVIEWER
+        <where>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.creat_time desc
+    </select>
+</mapper>

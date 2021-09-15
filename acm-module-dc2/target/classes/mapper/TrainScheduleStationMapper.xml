@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.TrainScheduleStationMapper">
+
+    <resultMap id="trainScheduleStationVo" type="com.wisdom.acm.dc2.vo.TrainScheduleStationVo">
+        <result property="id" column="id"/>
+        <result property="lineType" column="LINE_TYPE"/>
+        <result property="typeCode" column="TYPE_CODE"/>
+        <result property="typeName" column="TYPE_NAME"/>
+        <result property="period" column="PERIOD"/>
+        <result property="startStation" column="START_STATION"/>
+        <result property="endStation" column="END_STATION"/>
+        <result property="inStation" column="IN_STATION"/>
+        <result property="coloumns" column="COLOUMNS"/>
+        <result property="remark" column="REMARK"/>
+        <result property="mileage" column="MILEAGE"/>
+        <result property="line" column="LINE"/>
+        <result property="lineName" column="line_name"/>
+        <result property="scheduleCode" column="SCHEDULE_CODE"/>
+        <result property="scheduleId" column="SCHEDULE_ID"/>
+        <result property="relatinNumber" column="RELATION_NUMBER"/>
+        <result property="rowType" column="row_Type"/>
+    </resultMap>
+
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="trainScheduleStationVo">
+        select a.*,dt.dict_name as line_name
+        from odr_train_schedule_station a
+        left join wsd_base_dict dt
+        on a.line = dt.dict_code and dt.TYPE_CODE = 'line'
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="scheduleId != null and scheduleId != '' ">
+                AND a.SCHEDULE_ID =#{scheduleId}
+            </if>
+            <if test="lineType != null and lineType != '' ">
+                AND a.LINE_TYPE =#{lineType}
+            </if>
+            <if test="checkScheduleCode != null and checkScheduleCode != '' ">
+                AND a.SCHEDULE_CODE =#{checkScheduleCode}
+            </if>
+            <if test="scheduleCode != null and scheduleCode != '' ">
+                AND a.SCHEDULE_CODE =#{scheduleCode}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="scheduleCode != null and scheduleCode != '' ">
+                and a.SCHEDULE_CODE like concat('%',#{scheduleCode},'%')
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+
+</mapper>
+

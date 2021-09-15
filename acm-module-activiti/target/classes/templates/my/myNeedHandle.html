@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<body>
+<!--导航-->
+<div th:include="include :: navbar"></div>
+<!--导航结束-->
+<!--编程基础-->
+<section id="course">
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="col-md-12">
+                <h2>个人任务</h2>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>任务名称</th>
+                        <th>创建时间</th>
+                        <th>认领操作</th>
+                        <th>审批操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(personalTask)}">
+                    <tr th:each="task : ${personalTask}">
+                        <td><span th:text="${task.name}"></span></td>
+                        <td><span th:if="${task.createTime}" th:text="${#dates.format(task.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                        <td><a href="javascript:void(0);" th:onclick="@{'javascript:claimTask(\'' + ${task.id} + '\', \'unclaimTask\')'}">取消认领</a></td>
+                        <td><a href="javascript:void(0);" th:onclick="@{'javascript:approvalTask(\'' + ${task.id} + '\', 1)'}">通过</a> |
+                            <a href="javascript:void(0);" th:onclick="@{'javascript:approvalTask(\'' + ${task.id} + '\', 0)'}">拒绝</a></td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="col-md-12">
+                <h2>可认领任务</h2>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>任务名称</th>
+                        <th>创建时间</th>
+                        <th>认领操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(claimTask)}">
+                    <tr th:each="task : ${claimTask}">
+                        <td><span th:text="${task.name}"></span></td>
+                        <td><span th:if="${task.createTime}" th:text="${#dates.format(task.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                        <td><a href="javascript:void(0);" th:onclick="@{'javascript:claimTask(\'' + ${task.id} + '\', \'claimTask\')'}">认领</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!--编程基础end-->
+
+<div th:include="include :: footer"></div>
+
+<script>
+    $(function () {
+        try {
+            /*导航跳转效果插件*/
+            /*$('.nav').singlePageNav({
+                offset:70
+            });
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }*/
+            var  lis = $(".navbar-nav li");
+            lis.removeClass("active");
+            lis.eq(4).addClass("active"); // 追加样式
+        } catch (e) {
+            console.log(e);
+        }
+    })
+
+    /**
+     * 审批任务
+     * @param taskId
+     * @param type
+     */
+    function approvalTask(taskId, type) {
+        var user = window.localStorage.getItem("user");
+        $.post("approvalTask", {userId: user, taskId: taskId, approval: (type == 1 ? "pass" : "")}, function (result) {
+            alert(result.message);
+            window.location.reload();
+        });
+    }
+
+    /**
+     * 任务认领
+     * @param taskId
+     * @param type
+     */
+    function claimTask(taskId, name) {
+        var user = window.localStorage.getItem("user");
+        $.post(name, {userId: user, taskId: taskId}, function (result) {
+            alert(result.message);
+            window.location.reload();
+        });
+    }
+
+</script>
+</body>
+</html>

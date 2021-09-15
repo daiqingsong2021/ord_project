@@ -1,0 +1,6052 @@
+swagger: '2.0'
+info:
+  title: ACM新产品API
+  description: 基础数据、文档管理、沟通管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: comu
+  description: 沟通管理
+- name: classify
+  description: 分类码
+- name: dict
+  description: 数据字典
+- name: calendar
+  description: 日历
+- name: currency
+  description: 货币
+- name: coderule
+  description: 编码规则
+- name: tmpltask
+  description: 计划模板
+- name: tmpldoc
+  description: 文档模板
+- name: tmpldelv
+  description: 交付物模板
+- name: set
+  description: 全局设置
+
+produces:
+- application/json
+paths:
+  /base/digitDirBo/{botype}/list:
+    get:
+      tags:
+      - dict
+      description: 根据业务对象类型查找业务对象
+      summary: 业务对象列表
+      operationId: queryBoListByBoType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: botype
+        description: 业务对象类型
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseBoVo'
+
+  /base/classify/bo/list:
+    get:
+      tags:
+      - classify
+      description: 分类码业务对象集合
+      summary: 分类码业务对象集合
+      operationId: queryClassifyTreeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseBoVo'
+
+  /base/classify/{classifyId}/value/tree:
+    get:
+      tags:
+      - classify
+      description: 获取分类码码值树形列表
+      summary: 获取分类码码值树形列表
+      operationId: queryClassifyValueList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: classifyId
+        in: path
+        description: 分类码id
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseClassifyTreeVo'
+
+  /base/classify/{boCode}/list:
+    get:
+      tags:
+      - classify
+      description: 根据业务对象查找分类码
+      summary: 分类码列表
+      operationId: queryClassifyTreeList1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: boCode
+        description: 业务对象代码
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyTreeVo'
+
+  /base/classify/{id}/info:
+    get:
+      tags:
+      - classify
+      description: 根据分类码/码值主键查找分类码/码值
+      summary: 根据分类码/码值主键查找分类码/码值
+      operationId: queryClassifyInfoById
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 分类码id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyVo'
+
+  /base/classify/add:
+    post:
+      tags:
+      - classify
+      description: 新增分类码
+      summary: 新增分类码
+      operationId: addClassify
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ClassifyAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyTreeVo'
+
+  /base/classify/value/add:
+    post:
+      tags:
+      - classify
+      description: 新增码值
+      summary: 新增分类码码值
+      operationId: addClassify1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ClassifyAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyTreeVo'
+
+  /base/classify/update:
+    put:
+      tags:
+      - classify
+      description: 修改分类码/码值
+      summary: 修改分类码/码值
+      operationId: updateClassify
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ClassifyUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyTreeVo'
+
+  /base/classify/delete:
+    delete:
+      tags:
+      - classify
+      description: 删除分类码/码值
+      summary: 删除分类码/码值
+      operationId: deleteClassify
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/classify/assign/{boCode}/{bizId}/list:
+    get:
+      tags:
+      - classify
+      description: 根据业务ID查找分类码页签数据列表
+      summary: 根据业务ID查找分类码页签数据列表
+      operationId: queryClassifyAssignList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: boCode
+        description: 业务代码
+        required: true
+        type: string
+      - in: path
+        name: bizId
+        description: 业务ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/classify/assign:
+    post:
+      tags:
+      - classify
+      description: 分配分类码
+      summary: 分配分类码
+      operationId: assignClassify
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ClassifyAssignForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyAssignVo'
+
+  /base/classify/assign/update:
+    post:
+      tags:
+      - classify
+      description: 修改码值
+      summary: 修改码值
+      operationId: updateClassify1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ClassifyUpdateAssignForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ClassifyAssignVo'
+
+  /base/classify/assign/delete:
+    delete:
+      tags:
+      - classify
+      description: 删除分类码分配
+      summary: 删除分类码分配
+      operationId: deleteClassifyAssign
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/dictType/{boCode}/list:
+    get:
+      tags:
+      - dict
+      description: 数据字典列表
+      summary: 数据字典列表
+      operationId: queryDictTypeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: boCode
+        description: 业务对象代码
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTypeVo'
+
+  /base/dictType/delete:
+    delete:
+      tags:
+      - dict
+      description: 删除数据字典信息
+      summary: 删除数据字典信息
+      operationId: deleteDictType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/dictType/add:
+    post:
+      tags:
+      - dict
+      description: 新增数据字典
+      summary: 新增数据字典
+      operationId: addDictType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseDictTypeAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTypeVo'
+
+  /base/dictType/{id}/info:
+    get:
+      tags:
+      - dict
+      description: 数据字典基本信息
+      summary: 数据字典基本信息
+      operationId: queryDictTypeInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 数据字典id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTypeVo'
+
+  /base/dictType/update:
+    put:
+      tags:
+      - dict
+      description: 更新数据字典基本信息
+      summary: 更新数据字典基本信息
+      operationId: updateDictType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseDictTypeUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTypeVo'
+
+  /base/dict/{dictTypeCode}/treeList:
+    get:
+      tags:
+      - dict
+      description: 根据数据字典代码字典码值列表
+      summary: 字典码值列表
+      operationId: queryDictTreeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: dictTypeCode
+        description: 数据字典代码
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTreeVo'
+
+  /base/dict/delete:
+    delete:
+      tags:
+      - dict
+      description: 删除字典码值
+      summary: 删除字典码值
+      operationId: deleteDict
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/dict/add:
+    post:
+      tags:
+      - dict
+      description: 新增字典码值
+      summary: 新增字典码值
+      operationId: addDict
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/DictAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTreeVo'
+
+  /base/dict/{id}/info:
+    get:
+      tags:
+      - dict
+      description: 字典码值基本信息
+      summary: 字典码值基本信息
+      operationId: queryDictInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 字典码值id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTreeVo'
+
+  /base/dict/update:
+    put:
+      tags:
+      - dict
+      description: 更新字典码值基本信息
+      summary: 更新字典码值基本信息
+      operationId: updateDict
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/DictUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseDictTreeVo'
+
+  /base/calendar/list:
+    get:
+      tags:
+      - calendar
+      description: 日历设置列表
+      summary: 日历设置列表
+      operationId: queryBaseCalendarList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCalendarVo'
+
+  /base/calendar/default/info:
+    get:
+      tags:
+      - calendar
+      description: 获取默认日历
+      summary: 获取默认日历
+      operationId: queryBaseDefaultCalendarInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCalendarInfoVo'
+
+  /base/calendar/{id}/default:
+    put:
+      tags:
+      - calendar
+      description: 设置默认日历
+      summary: 设置默认日历
+      operationId: setBaseDefaultCalendarInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 日历ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/calendar/delete:
+    delete:
+      tags:
+      - calendar
+      description: 删除日历设置信息
+      summary: 删除日历设置信息-可用逗号隔开删除多个
+      operationId: deleteBaseCurrency
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/calendar/add:
+    post:
+      tags:
+      - calendar
+      description: 新增日历
+      summary: 新增日历
+      operationId: addBaseCalendar
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCalendarVo'
+
+  /base/calendar/weekdays/update:
+    put:
+      tags:
+      - calendar
+      description: 修改日历标准周期
+      summary: 修改日历标准周期
+      operationId: addBaseCalendar1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCalendarWeekDaysUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/calendar/exceptions/update:
+    put:
+      tags:
+      - calendar
+      description: 修改日历个性设置
+      summary: 修改日历个性设置
+      operationId: addBaseCalendar11
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCalendarExceptionsUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/calendar/exceptions/{id}/{time}/cancle:
+    put:
+      tags:
+      - calendar
+      description: 取消日历个性设置
+      summary: 取消日历个性设置
+      operationId: cancleExceptions
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCalendarExceptionsUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/calendar/{id}/info:
+    get:
+      tags:
+      - calendar
+      description: 日历基本信息
+      summary: 日历基本信息
+      operationId: queryBaseCalendarInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 日历id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCalendarInfoVo'
+
+  /base/calendar/update:
+    put:
+      tags:
+      - calendar
+      description: 更新日历基本信息
+      summary: 更新日历基本信息
+      operationId: updateBaseCalendarInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCalendarUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCalendarVo'
+
+  /base/calendar/{id}/copy:
+    post:
+      tags:
+      - calendar
+      description: 复制日历
+      summary: 复制日历
+      operationId: copyCalendar
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 日历id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCalendarVo'
+
+
+
+  /base/currency/list:
+    get:
+      tags:
+      - currency
+      description: 货币设置列表
+      summary: 货币设置列表
+      operationId: queryBaseCurrencyList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+  /base/currency/defaultCurrency:
+    get:
+      tags:
+      - currency
+      description: 获取默认货币
+      summary: 获取默认货币
+      operationId: queryBaseDefaultCurrencyInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+  /base/currency/delete:
+    delete:
+      tags:
+      - currency
+      description: 删除货币设置信息
+      summary: 删除货币设置信息
+      operationId: deleteBaseCurrency1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/currency/add:
+    post:
+      tags:
+      - currency
+      description: 新增货币设置
+      summary: 新增货币设置
+      operationId: addBaseCurrency
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCurrencyAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+  /base/currency/{id}/info:
+    get:
+      tags:
+      - currency
+      description: 货币基本信息
+      summary: 货币基本信息
+      operationId: queryBaseCurrencyInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 货币id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+  /base/currency/update:
+    put:
+      tags:
+      - currency
+      description: 更新货币基本信息
+      summary: 更新货币基本信息
+      operationId: updateBaseCurrencyInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCurrencyUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+  /base/currency/{id}/setCurrencyBase:
+    put:
+      tags:
+      - currency
+      description: 设为基准货币
+      summary: 设为基准货币
+      operationId: updateCurrencyBase
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 货币id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/currency/{id}/copyCalendar:
+    post:
+      tags:
+      - currency
+      description: 复制货币设置信息
+      summary: 复制货币设置信息
+      operationId: copyCalendar1
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 日历Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+  /base/currency/{id}/getCalendarClndrData:
+    post:
+      tags:
+      - currency
+      description: 货币个性设置信息
+      summary: 货币个性设置信息
+      operationId: getCalendarClndrDataById
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 日历Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCurrencyVo'
+
+
+  /base/coderulebo/list:
+    get:
+      tags:
+      - coderule
+      description: 编码规则-业务对象列表
+      summary: 编码规则-业务对象列表
+      operationId: queryBaseCoderuleBoList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeBaseBoVo'
+
+  /base/coderulebo/{id}:
+    delete:
+      tags:
+      - coderule
+      description: 删除业务对象信息
+      summary: 删除业务对象信息
+      operationId: deleteBaseCodeBo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 业务对象id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/coderulebo/add:
+    post:
+      tags:
+      - coderule
+      description: 新增业务对象
+      summary: 新增业务对象
+      operationId: addBaseCodeBo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeBoAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeBaseBoVo'
+
+  /base/coderulebo/{id}/info:
+    get:
+      tags:
+      - coderule
+      description: 业务对象基本信息
+      summary: 业务对象基本信息
+      operationId: queryBaseCodeBoInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 业务对象id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeBaseBoVo'
+
+  /base/coderulebo/update:
+    put:
+      tags:
+      - coderule
+      description: 更新业务对象
+      summary: 更新业务对象
+      operationId: updateBaseCodeBo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeBoUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeBaseBoVo'
+
+  /base/coderule/delete:
+    delete:
+      tags:
+      - coderule
+      description: 删除规则信息-逗号隔开删除多条
+      summary: 删除规则信息-逗号隔开删除多条
+      operationId: deleteCoderule
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/coderule/add:
+    post:
+      tags:
+      - coderule
+      description: 新增规则
+      summary: 新增规则
+      operationId: addBaseCoderule
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeRuleAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleVo'
+
+  /base/coderule/{id}/info:
+    get:
+      tags:
+      - coderule
+      description: 规则基本信息
+      summary: 规则基本信息
+      operationId: queryBaseCoderuleInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 规则id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleVo'
+
+  /base/coderule/{boId}/list:
+    get:
+      tags:
+      - coderule
+      description: 规则信息列表
+      summary: 规则信息列表
+      operationId: queryBaseCoderuleList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: boId
+        description: boId
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BaseCodeRuleVo'
+
+  /base/coderule/update:
+    put:
+      tags:
+      - coderule
+      description: 更新规则信息
+      summary: 更新规则信息
+      operationId: updateBaseCoderule
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeRuleUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleVo'
+
+  /base/coderule/{ruleId}/check:
+    put:
+      tags:
+      - coderule
+      description: 校验规则信息
+      summary: 校验规则信息
+      operationId: updateBaseCoderuleStatus
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: ruleId
+        in: path
+        description: ruleId
+        type: integer
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ReturnMsgVo'
+
+  /base/coderulecell/{ruleId}/{position}/info:
+    get:
+      tags:
+      - coderule
+      description: 规则元素基本信息
+      summary: 规则元素基本信息
+      operationId: getBaseCoderuleCellInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: ruleId
+        description: 规则元素id
+        required: true
+        type: integer
+      - in: path
+        name: position
+        description: position
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleCellVo'
+
+  /base/coderulecell/add:
+    post:
+      tags:
+      - coderule
+      description: 新增规则元素
+      summary: 新增规则元素
+      operationId: addBaseCodeRuleCell
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeRuleCellAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleCellVo'
+
+  /base/coderulecell/update:
+    put:
+      tags:
+      - coderule
+      description: 更新规则元素信息
+      summary: 更新规则元素信息
+      operationId: updateBaseCodeRuleCell
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeRuleCellUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleCellVo'
+
+  /base/coderulecell/delete:
+    delete:
+      tags:
+      - coderule
+      description: 删除规则元素信息-
+      summary: 删除规则元素信息-逗号隔开删除多条
+      operationId: deleteBaseCodeRuleCell
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/coderuletype/{boId}/list:
+    get:
+      tags:
+      - coderule
+      description: 维护规则类型列表
+      summary: 维护规则类型列表
+      operationId: queryBaseCoderuleTypeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: boId
+        description: boId
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BaseCodeRuleTypeVo'
+
+  /base/coderuletype/{id}/info:
+    get:
+      tags:
+      - coderule
+      description: 维护规则类型信息
+      summary: 维护规则类型信息
+      operationId: queryBaseCoderuleTypeInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 维护规则id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleTypeVo'
+
+  /base/coderuletype/add:
+    post:
+      tags:
+      - coderule
+      description: 新增维护规则
+      summary: 新增维护规则
+      operationId: addBaseCodeRuleType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeRuleTypeAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleTypeVo'
+
+  /base/coderuletype/update:
+    put:
+      tags:
+      - coderule
+      description: 更新维护规则信息
+      summary: 更新维护规则信息
+      operationId: updateBaseCodeRuleType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseCodeRuleTypeUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseCodeRuleTypeVo'
+
+  /base/coderuletype/delete:
+    delete:
+      tags:
+      - coderule
+      description: 删除维护规则信息
+      summary: 删除维护规则信息-逗号隔开删除多条
+      operationId: deleteBaseCodeRuleType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/coderule/tables:
+    get:
+      tags:
+      - coderule
+      description: 查询表名
+      summary: 查询表名
+      operationId: querryTables
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SelectVo'
+
+  /base/coderule/{tableName}/fields:
+    get:
+      tags:
+      - coderule
+      description: 查询表的field
+      summary: 查询表的field
+      operationId: querryFieldsByTableName
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: tableName
+        in: path
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SelectVo'
+
+  /base/code/calculate:
+    get:
+      tags:
+      - coderule
+      description: 利用编码规则生成编码(参数 _bo_code 必填，其他条件根据业务对象视情况填写)
+      summary: 利用编码规则生成编码
+      operationId: calculateCode
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: _bo_code
+        in: query
+        description: 编码规则-业务对象代码
+        type: string
+        required: true
+      - name: id
+        in: query
+        description: 业务对象主键
+        type: integer
+        required: false
+      responses:
+        200:
+          description: 返回值
+          schema:
+              $ref: '#/definitions/BaseCodeResultVo'
+
+  /base/code/repeat/check:
+    get:
+      tags:
+      - coderule
+      description: 利用编码规则校验编码是否重复(参数 _bo_code 必填，其他条件根据业务对象视情况填写)
+      summary: 利用编码规则校验编码是否重复
+      operationId: checkCodeIsRepeat
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: _bo_code
+        in: query
+        description: 编码规则-业务对象代码
+        type: string
+        required: true
+      - name: id
+        in: query
+        description: 业务对象主键
+        type: integer
+        required: false
+      responses:
+        200:
+          description: 返回值
+          schema:
+            type: boolean
+            description: 是否重复:[false:不重复;true:重复]
+
+  /base/tmpltask/tree:
+    get:
+      tags:
+      - tmpltask
+      description: 计划模板列表
+      summary: 计划模板列表
+      operationId: queryBaseTmplplanTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanTreeVo'
+
+  /base/tmpltask/{tmplId}/delete:
+    delete:
+      tags:
+      - tmpltask
+      description: 删除计划模板
+      summary: 删除计划模板
+      operationId: deleteBaseTmplplan
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: tmplId
+        type: integer
+        description: 删除的计划模板id
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpltask/add:
+    post:
+      tags:
+      - tmpltask
+      description: 新增计划模板
+      summary: 新增计划模板
+      operationId: addBaseTmplplan
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmplplanAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanVo'
+
+
+  /base/tmpltask/{id}/info:
+    get:
+      tags:
+      - tmpltask
+      description: 计划模板信息
+      summary: 计划模板信息
+      operationId: queryBaseTmplplanInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 计划模板id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanVo'
+
+  /base/tmpltask/update:
+    put:
+      tags:
+      - tmpltask
+      description: 更新计划模板
+      summary: 更新计划模板
+      operationId: updateBaseTmplplan
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmplplanUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanVo'
+
+  /base/tmpltask/wbs/{wbsId}/delete:
+    delete:
+      tags:
+      - tmpltask
+      description: 删除计划模板WBS
+      summary: 删除计划模板WBS
+      operationId: deleteBaseTmplplanWbs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: tmplId
+        type: integer
+        description: 删除的id
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpltask/task/{taskId}/delete:
+    delete:
+      tags:
+      - tmpltask
+      description: 删除计划模板task
+      summary: 删除计划模板task
+      operationId: deleteBaseTmplplanTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: tmplId
+        type: integer
+        description: 删除的id
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpltask/wbs/add:
+    post:
+      tags:
+      - tmpltask
+      description: 新增计划模板WBS
+      summary: 新增计划模板WBS
+      operationId: addBaseTmplplanWbs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmplplanWbsAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanWbsVo'
+
+  /base/tmpltask/task/add:
+    post:
+      tags:
+      - tmpltask
+      description: 新增计划模板task
+      summary: 新增计划模板task
+      operationId: addBaseTmplplanTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmplplanTaskAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanTaskVo'
+
+  /base/tmpltask/wbs/{id}/info:
+    get:
+      tags:
+      - tmpltask
+      description: 计划模板Wbs信息
+      summary: 计划模板Wbs信息
+      operationId: queryBaseTmplplanWbsInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 计划模板id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanWbsVo'
+
+  /base/tmpltask/task/{id}/info:
+    get:
+      tags:
+      - tmpltask
+      description: 计划模板Task信息
+      summary: 计划模板Task信息
+      operationId: queryBaseTmplplanTaskInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 计划模板id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanTaskVo'
+
+  /base/tmpltask/wbs/update:
+    put:
+      tags:
+      - tmpltask
+      description: 更新计划模板WBS
+      summary: 更新计划模板WBS
+      operationId: updateBaseTmplplanWbs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmplplanWbsUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanWbsVo'
+
+  /base/tmpltask/task/update:
+    put:
+      tags:
+      - tmpltask
+      description: 更新计划模板task
+      summary: 更新计划模板task
+      operationId: updateBaseTmplplanTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmplplanTaskUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanTaskVo'
+
+  /base/tmpltask/{taskId}/relation/pred/list:
+    post:
+      tags:
+      - tmpltask
+      description: 紧前任务列表
+      summary: 紧前任务列表
+      operationId: queryBaseTmptaskpredList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 模板任务Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmptaskpredVo'
+
+  /base/tmpltask/{taskId}/relation/follow/list:
+    post:
+      tags:
+      - tmpltask
+      description: 后续任务列表
+      summary: 后续任务列表
+      operationId: queryBaseTmptaskpredList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 模板任务Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmptaskpredVo'
+
+  /base/tmpltask/{tmplId}/tree:
+    get:
+      tags:
+      - tmpltask
+      description: 计划模板列表
+      summary: 计划模板列表
+      operationId: queryBaseTmplplanTreeById
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: tmplId
+        description: 模板Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplplanTreeVo'
+
+  /base/tmpltask/relation/delete:
+    delete:
+      tags:
+      - tmpltask
+      description: 删除逻辑关系
+      summary: 删除逻辑关系
+      operationId: deleteBaseTmptaskpred
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpltask/{taskId}/relation/assign/pred/{predTaskId}:
+    post:
+      tags:
+      - tmpltask
+      description: 分配紧前任务
+      summary: 分配紧前任务
+      operationId: assignBaseTmptaskpred
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 任务Id
+        required: true
+        type: integer
+      - in: path
+        name: predTaskId
+        description: 紧前任务Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmptaskpredVo'
+
+  /base/tmpltask/{taskId}/relation/assign/follow/{followTaskId}:
+    post:
+      tags:
+      - tmpltask
+      description: 分配后续任务
+      summary: 分配后续任务
+      operationId: assignBaseTmptaskpred
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 任务Id
+        required: true
+        type: integer
+      - in: path
+        name: followTaskId
+        description: 后续任务Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmptaskpredVo'
+
+  /base/tmpltask/relation/update:
+    put:
+      tags:
+      - tmpltask
+      description: 修改逻辑关系
+      summary: 修改逻辑关系
+      operationId: updateBaseTmptaskpred
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmptaskpredUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmptaskpredVo'
+
+  /base/tmpltask/{taskId}/delv/list:
+    get:
+      tags:
+      - tmpltask
+      description: 查询交付清单列表
+      summary: 查询交付清单列表
+      operationId: selectTmpltaskDelvList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 任务Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplTaskDelvVo'
+
+  /base/tmpltask/delv/{id}/info:
+    get:
+      tags:
+      - tmpltask
+      description: 查询交付清单信息
+      summary: 查询交付清单信息
+      operationId: getTmpltaskDelvInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 交付清单Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplTaskDelvVo'
+
+  /base/tmpltask/{taskId}/delv/assign:
+    post:
+      tags:
+      - tmpltask
+      description: 分配交付物
+      summary: 分配交付物
+      operationId: assignTmpltaskDelv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 任务Id
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 交付物Id集合
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmplTaskDelvVo'
+
+  /base/tmpltask/delv/delete:
+    delete:
+      tags:
+      - tmpltask
+      description: 删除交付清单信息
+      summary: 删除交付清单信息
+      operationId: deleteTmpltaskDelvInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 交付清单id
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpldoc/list/{currentPageNum}/{pageSize}:
+    get:
+      tags:
+      - tmpldoc
+      description: 文档模板列表
+      summary: 文档模板列表
+      operationId: queryBaseTmpldocList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldocVo'
+
+  /base/tmpldoc/list:
+    get:
+      tags:
+        - tmpldoc
+      description: 文档模板列表
+      summary: 文档模板列表
+      operationId: queryBaseTmpldocList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldocVo'
+
+  /base/tmpldoc/list/{currentPageNum}/{pageSize}/{key}:
+    get:
+      tags:
+      - tmpldoc
+      description: 文档模板查询列表
+      summary: 文档模板查询列表
+      operationId: queryBaseTmpldocList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - in: path
+        name: key
+        description: 按标题或编号查询
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldocVo'
+
+  /base/tmpldoc/list/{key}:
+    get:
+      tags:
+        - tmpldoc
+      description: 文档模板查询列表
+      summary: 文档模板查询列表
+      operationId: queryBaseTmpldocList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: path
+          name: key
+          description: 按标题或编号查询
+          required: true
+          type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldocVo'
+
+  /base/tmpldoc/delete:
+    delete:
+      tags:
+      - tmpldoc
+      description: 删除文档模板
+      summary: 删除文档模板
+      operationId: deleteBaseTmpldoc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 文档模板id
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpldoc/add:
+    post:
+      tags:
+      - tmpldoc
+      description: 新增文档模板
+      summary: 新增文档模板
+      operationId: addBaseTmpldoc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldocAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldocVo'
+
+  /base/tmpldoc/{id}/info:
+    get:
+      tags:
+      - tmpldoc
+      description: 文档模板信息
+      summary: 文档模板信息
+      operationId: queryBaseTmpldocInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 文档模板id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldocVo'
+
+  /base/tmpldoc/update:
+    put:
+      tags:
+      - tmpldoc
+      description: 更新文档模板
+      summary: 更新文档模板
+      operationId: updateBaseTmpldoc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldocUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvVo'
+
+  /base/tmpldelv/tree:
+    get:
+      tags:
+      - tmpldelv
+      description: 交付物模板tree
+      summary: 交付物模板tree
+      operationId: queryBaseTmpldelvTypeTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvTreeVo'
+
+  /base/tmpldelv/{tmpldelvId}/tree:
+    get:
+      tags:
+      - tmpldelv
+      description: 交付物模板设置tree
+      summary: 交付物模板设置tree
+      operationId: queryBaseTmpldelvTypeTreeId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: tmpldelvId
+        description: 交付物模板id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvTreeVo'
+
+  /base/tmpldelv/list/{currentPageNum}/{pageSize}:
+    get:
+      tags:
+      - tmpldelv
+      description: 交付物模板列表
+      summary: 交付物模板列表
+      operationId: queryBaseTmpldelvTypeList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvTypeVo'
+
+  /base/tmpldelv/{id}/info:
+    get:
+      tags:
+      - tmpldelv
+      description: 交付物模板基本信息
+      summary: 交付物模板基本信息
+      operationId: queryBaseTmpldelvTypeInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 交付物id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvTypeVo'
+
+  /base/tmpldelv/{id}/pbs/info:
+    get:
+      tags:
+      - tmpldelv
+      description: 交付物模板PBS基本信息
+      summary: 交付物模板PBS基本信息
+      operationId: queryBaseTmpldelvPbsInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 交付物的id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvVo'
+
+  /base/tmpldelv/{id}/delv/info:
+    get:
+      tags:
+      - tmpldelv
+      description: 交付物模板交付物基本信息
+      summary: 交付物模板交付物基本信息
+      operationId: queryBaseTmpldelvDelvInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 交付物的id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvVo'
+
+  /base/tmpldelv/add:
+    post:
+      tags:
+      - tmpldelv
+      description: 新增交付物模板
+      summary: 新增交付物模板
+      operationId: addBaseTmpldelvType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldelvTypeAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvTypeVo'
+
+  /base/tmpldelv/update:
+    put:
+      tags:
+      - tmpldelv
+      description: 更新交付物模板
+      summary: 更新交付物模板
+      operationId: updateBaseTmpldelvType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldelvTypeUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvTypeVo'
+
+  /base/tmpldelv/delete:
+    delete:
+      tags:
+      - tmpldelv
+      description: 删除交付物模板
+      summary: 删除交付物模板
+      operationId: deleteBaseTmpldelvType
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 交付物模板id
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpldelv/pbs/delete:
+    delete:
+      tags:
+      - tmpldelv
+      description: 删除交付物模板PBS
+      summary: 删除交付物模板PBS
+      operationId: deleteBaseTmpldelvPbs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 文档模板id
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpldelv/delv/delete:
+    delete:
+      tags:
+      - tmpldelv
+      description: 删除交付物模板交付物
+      summary: 删除交付物模板交付物
+      operationId: deleteBaseTmpldelvDelv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 文档模板id
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/tmpldelv/pbs/update:
+    put:
+      tags:
+      - tmpldelv
+      description: 更新交付物模板PBS
+      summary: 更新交付物模板PBS
+      operationId: updateBaseTmpldelvPbs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldelvUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvVo'
+
+  /base/tmpldelv/delv/update:
+    put:
+      tags:
+      - tmpldelv
+      description: 更新交付物模板交付物
+      summary: 更新交付物模板交付物
+      operationId: updateBaseTmpldelvDelv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldelvUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvVo'
+
+  /base/tmpldelv/pbs/add:
+    post:
+      tags:
+      - tmpldelv
+      description: 新增交付物PBS
+      summary: 新增交付物PBS
+      operationId: addBaseTmpldelvPbs
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseTmpldelvPbsAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseTmpldelvPbsVo'
+
+  /base/tmpldelv/delv/add:
+    post:
+      tags:
+      - tmpldelv
+      description: 新增下级交付物
+      summary: 新增下级交付物
+      operationId: addBaseSubTmpldelvDelv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseSubTmpldelvAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseSubTmpldelvVo'
+
+  /comu/meeting/{id}/list/{currentPageNum}/{pageSize}:
+    post:
+      tags:
+      - comu
+      description: 会议管理列表
+      summary: 会议管理列表
+      operationId: queryComuMeetingList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description:  项目ID
+        required: true
+        type: integer
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 查询条件
+        required: true
+        schema:
+          $ref: '#/definitions/QueryForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ComuMeetVo'
+
+  /comu/meeting/{id}/release:
+    put:
+      tags:
+      - comu
+      description: 直接发布会议
+      summary: 直接发布会议
+      operationId: releaseMeeting
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 会议Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/meeting/{id}/release/approval:
+    put:
+      tags:
+      - comu
+      description: 发布审批会议
+      summary: 发布审批会议
+      operationId: releaseApprovalMeeting
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 会议Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/meeting/{id}/cancel:
+    put:
+      tags:
+      - comu
+      description: 取消发布会议
+      summary: 取消发布会议
+      operationId: cancelMeeting
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 会议Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/meeting/delete:
+    delete:
+      tags:
+      - comu
+      description: 删除会议信息
+      summary: 删除会议信息
+      operationId: deleteMeeting
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/meeting/{id}/add:
+    post:
+      tags:
+      - comu
+      description: 新增会议
+      summary: 新增会议
+      operationId: addComuMeet
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description:  项目ID
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ComuMeetAddForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ComuMeetVo'
+
+  /comu/meeting/{id}/info:
+    get:
+      tags:
+      - comu
+      description: 会议基本信息
+      summary: 会议基本信息
+      operationId: queryComuMeetInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: 会议id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ComuMeetVo'
+
+  /comu/meeting/update:
+    put:
+      tags:
+      - comu
+      description: 更新会议基本信息
+      summary: 更新会议基本信息
+      operationId: updateComuMeetInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ComuMeetUpdateForm'
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/ComuMeetVo'
+
+  #  /comu/meeting/{id}/releaseAppr:
+  #    put:
+  #      tags:
+  #      - comu
+  #      description: 发布审批项目会议
+  #      summary: 发布审批项目会议
+  #      operationId: releaseApprProjMeeting
+  #      parameters:
+  #      - name: Authorization
+  #        in: header
+  #        description: token
+  #        type: string
+  #        required: true
+  #      - name: id
+  #        in: path
+  #        description: 项目会议Id
+  #        required: true
+  #        type: integer
+  #      responses:
+  #        200:
+  #          description: 操作
+  #          schema:
+  #            $ref: '#/definitions/ApiResult'
+
+  /comu/meeting/{id}/action/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - comu
+      description: 获取会议行动项列表
+      summary: 获取会议行动项列表
+      operationId: queryProjMeetingActionDataList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目会议Id
+        required: true
+        type: integer
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CommMeetingActionVo'
+
+  /comu/meeting/action/delete:
+    delete:
+      tags:
+      - comu
+      description: 删除会议行动项
+      summary: 删除会议行动项
+      operationId: deleteMeetingAction
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/meeting/{id}/action/add:
+    post:
+      tags:
+      - comu
+      description: 增加会议行动项
+      summary: 增加会议行动项
+      operationId: addMeetingAction
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目会议ID
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/CommMeetingActionAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/CommMeetingActionVo'
+
+  /comu/meeting/action/{id}/info:
+    get:
+      tags:
+      - comu
+      description: 会议行动项信息
+      summary: 会议行动项信息
+      operationId: queryMeetingActionInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 会议行动项ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/CommMeetingActionVo'
+
+  /comu/meeting/action/update:
+    put:
+      tags:
+      - comu
+      description: 修改项目会议行动项
+      summary: 修改项目会议行动项
+      operationId: updateMeetingAction
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/CommMeetingActionUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/CommMeetingActionVo'
+
+  /comu/question/list/{pageSize}/{currentPageNum}:
+    post:
+      tags:
+      - comu
+      description: 获取问题列表
+      summary: 获取问题列表
+      operationId: queryQuestionDataList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 搜索条件
+        required: true
+        schema:
+          $ref: '#/definitions/ComuQuestionForm'
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ComuQuestionVo'
+
+  /comu/question/{id}/info:
+    get:
+      tags:
+      - comu
+      description: 获取问题信息
+      summary: 获取问题信息
+      operationId: queryQuestionInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ComuQuestionVo'
+
+  /comu/question/add:
+    post:
+      tags:
+      - comu
+      description: 增加项目问题
+      summary: 增加项目问题
+      operationId: addQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ComuQuestionAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ComuQuestionVo'
+
+  /comu/question/update:
+    put:
+      tags:
+      - comu
+      description: 修改项目问题
+      summary: 修改项目问题
+      operationId: updateQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ComuQuestionUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ComuQuestionVo'
+
+  /comu/question/delete:
+    delete:
+      tags:
+      - comu
+      description: 删除项目问题
+      summary: 删除项目问题
+      operationId: deleteQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/release:
+    put:
+      tags:
+      - comu
+      description: 发布项目问题
+      summary: 发布项目问题
+      operationId: releaseQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/cancel:
+    put:
+      tags:
+      - comu
+      description: 取消发布项目问题
+      summary: 取消发布项目问题
+      operationId: cancelQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/handle/list/{currentPageNum}/{pageSize}:
+    post:
+      tags:
+      - comu
+      description: 获取问题处理列表
+      summary: 获取问题处理列表
+      operationId: queryQuestionHandleDataList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ComuQueHandleVo'
+
+  /comu/question/{id}/handle/add:
+    post:
+      tags:
+      - comu
+      description: 增加问题处理
+      summary: 增加问题处理
+      operationId: addQuestionHanled
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题ID
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ComuQueHandleAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ComuQueHandleVo'
+
+  /comu/question/handle/update:
+    put:
+      tags:
+      - comu
+      description: 修改项目问题处理
+      summary: 修改项目问题处理
+      operationId: updateQuestionHanled
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/ComuQueHandleUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ComuQueHandleVo'
+
+  /comu/question/handle/delete:
+    delete:
+      tags:
+      - comu
+      description: 删除项目问题处理
+      summary: 删除项目问题处理
+      operationId: deleteQuestionHanled
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/solve:
+    put:
+      tags:
+      - comu
+      description: 解决项目问题
+      summary: 解决项目问题
+      operationId: solveProjQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/solveAppr:
+    put:
+      tags:
+      - comu
+      description: 解决审批项目问题
+      summary: 解决审批项目问题
+      operationId: solveApprProjQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/close:
+    put:
+      tags:
+      - comu
+      description: 关闭项目问题
+      summary: 关闭项目问题
+      operationId: closeProjQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /comu/question/{id}/closeAppr:
+    put:
+      tags:
+      - comu
+      description: 关闭审批项目问题
+      summary: 关闭审批项目问题
+      operationId: closeApprProjQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 项目问题Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/set/project/update:
+    post:
+      tags:
+      - set
+      description: 保存更新全局设置
+      summary: 保存更新全局设置
+      operationId: updateProject
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseSetProjectUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/set/doc/update:
+    post:
+      tags:
+      - set
+      description: 修改文档全局设置
+      summary: 修改文档全局设置
+      operationId: updateDoc
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseSetDocUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/set/time/update:
+    post:
+      tags:
+      - set
+      description: 修改时间设置
+      summary: 修改时间设置
+      operationId: updateTime
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/BaseSetTimeUdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /base/set/project/info:
+    get:
+      tags:
+      - set
+      description: 项目全局设置信息
+      summary: 项目全局设置信息
+      operationId: getProjectInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseSetProjectVo'
+
+  /base/set/doc/info:
+    get:
+      tags:
+      - set
+      description: 文档全局设置信息
+      summary: 文档全局设置信息
+      operationId: getDocInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseSetDocVo'
+
+  /base/set/time/info:
+    get:
+      tags:
+      - set
+      description: 时间全局设置信息
+      summary: 时间全局设置信息
+      operationId: getTimeInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseSetTimeVo'
+
+  /base/set/bo/list:
+    get:
+      tags:
+      - set
+      description: 业务编码
+      summary: 业务编码
+      operationId: queryBoList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/BaseSetBoVo'
+
+
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  BaseBoVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      boCode:
+        type: string
+        description: 业务对象代码
+      boName:
+        type: string
+        description: 业务对象名称
+
+
+  ClassifyTreeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      patentId:
+        type: integer
+        description: 分类码父节点
+      classifyCode:
+        type: string
+        description: 分类码代码
+      classifyName:
+        type: string
+        description: 分类码说明
+      classifyType:
+        type: integer
+        description: 分类码类型
+      boCode:
+        type: string
+        description: 业务对象代码
+      children:
+        type: array
+        description: 分类码子节点
+        items:
+          $ref: '#/definitions/ClassifyTreeVo'
+
+  BaseClassifyTreeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      patentId:
+        type: integer
+        description: 分类码父节点
+      classifyCode:
+        type: string
+        description: 分类码代码
+      classifyName:
+        type: string
+        description: 分类码名称
+      classifyType:
+        type: integer
+        description: 分类码类型
+      boCode:
+        type: string
+        description: 业务对象代码
+      children:
+        type: array
+        description: 分类码子节点
+        items:
+          $ref: '#/definitions/BaseClassifyTreeVo'
+
+  ClassifyAddForm:
+    type: object
+    properties:
+      parentId:
+        type: integer
+        description: 分类码父节点
+      classifyCode:
+        type: string
+        description: 分类码代码
+      classifyName:
+        type: string
+        description: 分类码说明
+      boCode:
+        type: string
+        description: 业务对象代码
+
+  ClassifyUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 分类码主键
+      classifyCode:
+        type: string
+        description: 分类码代码
+      classifyName:
+        type: string
+        description: 分类码说明
+
+  BaseDictTypeVo:
+    type: object
+    properties:
+      typeCode:
+        type: string
+        description: 字典类型代码
+      typeName:
+        type: string
+        description: 字典类型名称
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseDictTypeInfoVo:
+    type: object
+    properties:
+      typeCode:
+        type: string
+        description: 字典类型代码
+      typeName:
+        type: string
+        description: 字典类型名称
+      creator:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 创建人
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseDictTypeAddForm:
+    type: object
+    properties:
+      boCode:
+        type: string
+        description: 业务对象代码
+      typeName:
+        type: string
+        description: 字典类型名称
+      typeCode:
+        type: string
+        description: 字典类型代码
+
+  BaseDictTypeUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 字典类型id
+      typeCode:
+        type: string
+        description: 字典类型代码
+      typeName:
+        type: string
+        description: 字典类型名称
+
+  BaseDictTreeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 字典码值id
+      parentId:
+        type: integer
+        description: 字典码值父节点
+      dictCode:
+        type: string
+        description: 码值
+      dictName:
+        type: string
+        description: 字典名称
+      children:
+        type: array
+        description: 分类码子节点
+        items:
+          $ref: '#/definitions/BaseDictTreeVo'
+
+  DictAddForm:
+    type: object
+    properties:
+      dictCode:
+        type: string
+        description: 字典代码
+      parentId:
+        type: integer
+        description: 父id
+      dictName:
+        type: string
+        description: 字典名称
+      typeCode:
+        type: string
+        description: 字典类型代码
+      remark:
+        type: string
+        description: 说明
+
+  DictUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 字典码值id
+      dictCode:
+        type: string
+        description: 字典代码
+      dictName:
+        type: string
+        description: 字典名称
+      remark:
+        type: string
+        description: 说明
+
+  BaseCalendarVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 日历id
+      calName:
+        type: string
+        description: 日历名称
+      isDefault:
+        type: integer
+        description: 是否全局默认
+
+  BaseCalendarInfoVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 日历id
+      calName:
+        type: string
+        description: 日历名称
+      isDefault:
+        type: integer
+        description: 是否全局默认
+      dayHrCnt:
+        type: number
+        description: 每天工时
+      weekHrCnt:
+        type: number
+        description: 每周工时
+      monthHrCnt:
+        type: number
+        description: 每月工时
+      yearHrCnt:
+        type: number
+        description: 每年工时
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      exceptions:
+        type: array
+        items:
+          $ref: '#/definitions/BaseExceptionDayVo'
+      weekDays:
+        type: array
+        items:
+          $ref: '#/definitions/BaseWeekDayVo'
+
+  BaseCalendarUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 日历id
+      calName:
+        type: string
+        description: 日历名称
+
+  BaseCurrencyVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      currencyCode:
+        type: string
+        description: 货币代码
+      currencyName:
+        type: string
+        description: 货币名称
+      currencySymbol:
+        type: string
+        description: 货币符号
+      currencyBase:
+        type: integer
+        description: 基准货币
+      remark:
+        type: string
+        description: 备注
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseCurrencyAddForm:
+    type: object
+    properties:
+      currencyCode:
+        type: string
+        description: 货币代码
+      currencyName:
+        type: string
+        description: 货币名称
+      currencySymbol:
+        type: string
+        description: 货币符号
+
+  BaseCurrencyUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 货币id
+      currencyCode:
+        type: string
+        description: 货币代码
+      currencyName:
+        type: string
+        description: 货币名称
+      currencySymbol:
+        type: string
+        description: 货币符号
+      remark:
+        type: string
+        description: 备注
+
+  BaseTimePo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 时间id
+      timeName:
+        type: string
+        description: 名称
+      timeWh:
+        type: string
+        description: 工时单位
+      timeDrtn:
+        type: string
+        description: 工期单位
+      timeFormat:
+        type: string
+        description: 日期格式
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseTimeAddForm:
+    type: object
+    properties:
+      timeName:
+        type: string
+        description: 名称
+      timeWh:
+        type: string
+        description: 工时单位
+      timeDrtn:
+        type: string
+        description: 工期单位
+      timeFormat:
+        type: string
+        description: 日期格式
+
+  BaseTimeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      timeName:
+        type: string
+        description: 名称
+      timeWh:
+        type: string
+        description: 工时单位
+      timeDrtn:
+        type: string
+        description: 工期单位
+      timeFormat:
+        type: string
+        description: 日期格式
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseTimeUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 时间id
+      timeName:
+        type: string
+        description: 名称
+      timeWh:
+        type: string
+        description: 工时单位
+      timeDrtn:
+        type: string
+        description: 工期单位
+      timeFormat:
+        type: string
+        description: 日期格式
+
+  BaseCodeBoAddForm:
+    type: object
+    properties:
+      boCode:
+        type: string
+        description: 代码
+      boName:
+        type: string
+        description: 名称
+      tableName:
+        type: string
+        description: 表名
+      codeColumnName:
+        type: string
+        description: 代码字段
+      seqScope:
+        type: string
+        description: 流水号范围
+      assignColumnName:
+        type: string
+        description: 被分配字段
+
+  BaseCodeBoUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 业务对象id
+      boCode:
+        type: string
+        description: 代码
+      boName:
+        type: string
+        description: 名称
+      tableName:
+        type: string
+        description: 表名
+      codeColumnName:
+        type: string
+        description: 代码字段
+      seqScope:
+        type: string
+        description: 流水号范围
+      assignColumnName:
+        type: string
+        description: 被分配字段
+
+  BaseCodeBaseBoVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 业务对象id
+      boCode:
+        type: string
+        description: 代码
+      boName:
+        type: string
+        description: 名称
+      tableName:
+        type: string
+        description: 表名
+      codeColumnName:
+        type: string
+        description: 代码字段
+      seqScope:
+        type: string
+        description: 流水号范围
+      assignColumnName:
+        type: string
+        description: 被分配字段
+
+  BaseCodeRuleAddForm:
+    type: object
+    properties:
+      ruleBoId:
+        type: integer
+        description: boId
+      ruleName:
+        type: string
+        description: 名称
+      defaultFlag:
+        type: integer
+        description: 默认
+      modified:
+        type: integer
+        description: 能否修改
+
+  BaseCodeRuleCellUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      ruleTypeId:
+        type: integer
+        description: type_id
+      ruleCellName:
+        type: string
+        description: 名称
+      ruleType:
+        type: string
+        description: 类型
+      cellValue:
+        type: string
+        description: 值
+      maxLength:
+        type: integer
+        description: 固定长度
+      fillChar:
+        type: string
+        description: 填充字符
+      connector:
+        type: string
+        description: 连接符
+      seqMinValue:
+        type: integer
+        description: 流水号最小值
+      seqSteep:
+        type: integer
+        description: 流水号步长
+
+  BaseCodeRuleCellAddForm:
+    type: object
+    properties:
+      ruleId:
+        type: integer
+        description: wsd_base_coderule的id
+      ruleTypeId:
+        type: integer
+        description: wsd_base_coderule_type的id
+      position:
+        type: integer
+        description: 第X段
+      ruleCellName:
+        type: string
+        description: 名称
+      ruleType:
+        type: string
+        description: 类型
+      cellValue:
+        type: string
+        description: 值
+      maxLength:
+        type: integer
+        description: 固定长度
+      fillChar:
+        type: string
+        description: 填充字符
+      connector:
+        type: string
+        description: 连接符
+      seqMinValue:
+        type: integer
+        description: 流水号最小值
+      seqSteep:
+        type: integer
+        description: 流水号步长
+
+  ReturnMsgVo:
+    type: object
+    properties:
+      error:
+        type: string
+        description: 信息
+      status:
+        type: string
+        description: 状态
+
+  BaseCodeRuleCellVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      ruleTypeIdVo:
+        description: ruleTypeId
+        $ref: '#/definitions/GeneralVo'
+      ruleCellName:
+        type: string
+        description: 名称
+      ruleTypeVo:
+        $ref: '#/definitions/DictionaryVo'
+        description: 类型
+      cellValue:
+        type: string
+        description: 值
+      maxLength:
+        type: integer
+        description: 固定长度
+      fillChar:
+        type: string
+        description: 填充字符
+      connectorVo:
+        $ref: '#/definitions/DictionaryVo'
+        description: 连接符
+      seqMinValue:
+        type: integer
+        description: 流水号最小值
+      seqSteep:
+        type: integer
+        description: 流水号步长
+
+
+  BaseCodeRuleVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      status:
+        type: string
+        description: 状态
+      ruleName:
+        type: string
+        description: 名称
+      defaultFlag:
+        type: integer
+        description: 默认
+      modified:
+        type: integer
+        description: 能否修改
+      position1:
+        $ref: '#/definitions/GeneralVo'
+        description: 第1段
+      position2:
+        $ref: '#/definitions/GeneralVo'
+        description: 第2段
+      position3:
+        $ref: '#/definitions/GeneralVo'
+        description: 第3段
+      position4:
+        $ref: '#/definitions/GeneralVo'
+        description: 第4段
+      position5:
+        $ref: '#/definitions/GeneralVo'
+        description: 第5段
+      position6:
+        $ref: '#/definitions/GeneralVo'
+        description: 第6段
+      position7:
+        $ref: '#/definitions/GeneralVo'
+        description: 第7段
+
+  BaseCodeRuleUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      ruleName:
+        type: string
+        description: 名称
+      defaultFlag:
+        type: integer
+        description: 默认
+      modified:
+        type: integer
+        description: 能否修改
+
+  BaseCodeRuleTypeAddForm:
+    type: object
+    properties:
+      ruleBoId:
+        type: integer
+        description: boId
+      ruleTypeName:
+        type: string
+        description: 名称
+      attributeType:
+        type: string
+        description: 类型
+      typeSql:
+        type: string
+        description: sql
+      tableName:
+        type: string
+        description: 表名
+      columnName:
+        type: string
+        description: 字段名
+      foreignKey:
+        type: string
+        description: 关联字段
+      dictType:
+        type: string
+        description: 字典Type
+      dictBo:
+        type: string
+        description: 字典Bo
+
+  BaseCodeRuleTypeUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      ruleTypeName:
+        type: string
+        description: 名称
+      attributeType:
+        type: string
+        description: 类型
+      typeSql:
+        type: string
+        description: sql
+      tableName:
+        type: string
+        description: 表名
+      columnName:
+        type: string
+        description: 字段名
+      foreignKey:
+        type: string
+        description: 关联字段
+      dictType:
+        type: string
+        description: 字典Type
+      dictBo:
+        type: string
+        description: 字典Bo
+
+  BaseCodeRuleTypeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      ruleTypeName:
+        type: string
+        description: 名称
+      typeSql:
+        type: string
+        description: sql
+      tableName:
+        type: string
+        description: 表名
+      columnName:
+        type: string
+        description: 字段名
+      foreignKey:
+        type: string
+        description: 关联字段
+      dictTypeVo:
+        $ref: '#/definitions/GeneralVo'
+        description: dictTypeVo
+      dictBaseBoVo:
+        $ref: '#/definitions/GeneralVo'
+        description: dictTypeVo
+      attributeTypeVo:
+        $ref: '#/definitions/DictionaryVo'
+        description: dictTypeVo
+
+
+  SelectVo:
+    type: object
+    properties:
+      title:
+        type: string
+        description: title
+      value:
+        type: string
+        description: value
+
+  BaseTmplplanTreeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      tmplId:
+        type: integer
+        description: 计划模板id
+      parentId:
+        type: integer
+        description: 父id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: string
+        description: 计划工期
+      planQty:
+        type: string
+        description: 计划工时
+      type:
+        type: string
+        description: 类型(tmpl、wbs、task)
+      planType:
+        type: string
+        $ref: '#/definitions/DictionaryVo'
+        description: 计划类型
+      planLevel:
+        type: string
+        $ref: '#/definitions/DictionaryVo'
+        description: 计划级别
+      isFeedback:
+        type: integer
+        description: 是否WBS反馈
+      controlAccount:
+        type: integer
+        description: 是否控制账户
+      taskType:
+        description: 作业类型
+        $ref: '#/definitions/DictionaryVo'
+      drtnType:
+        description: 工期类型
+        $ref: '#/definitions/DictionaryVo'
+      remark:
+        type: string
+        description: 备注
+      children:
+        description: 子菜单
+        type: array
+        items:
+          $ref: '#/definitions/BaseTmplplanTreeVo'
+
+  BaseTmplplanVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 计划模板id
+      tmplName:
+        type: string
+        description: 名称
+      isGlobal:
+        type: integer
+        description: 是否全局
+      type:
+        type: string
+        description: 类型
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseTmplplanAddForm:
+    type: object
+    properties:
+      tmplName:
+        type: string
+        description: 名称
+      isGlobal:
+        type: integer
+        description: 是否全局
+
+  BaseTmplplanUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 模板id
+      tmplName:
+        type: string
+        description: 名称
+      isGlobal:
+        type: integer
+        description: 是否全局
+
+
+  BaseTmplplanWbsAddForm:
+    type: object
+    properties:
+      tmplId:
+        type: integer
+        description: 模板id
+      parentId:
+        type: integer
+        description: 父id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      isFeedback:
+        type: integer
+        description: WBS反馈
+      controlAccount:
+        type: integer
+        description: 控制账户
+      remark:
+        type: string
+        description: 备注
+
+  BaseTmplplanWbsVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      tmplId:
+        type: integer
+        description: 模板id
+      parentId:
+        type: integer
+        description: 父id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      isFeedback:
+        type: integer
+        description: WBS反馈
+      controlAccount:
+        type: integer
+        description: 控制账户
+      type:
+        type: string
+        description: 类型
+      remark:
+        type: string
+        description: 备注
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseTmplplanWbsUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      isFeedback:
+        type: integer
+        description: WBS反馈
+      controlAccount:
+        type: integer
+        description: 控制账户
+      remark:
+        type: string
+        description: 备注
+
+  BaseTmplplanTaskAddForm:
+    type: object
+    properties:
+      tmplId:
+        type: integer
+        description: 模板id
+      parentId:
+        type: integer
+        description: 父id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      taskType:
+        type: string
+        description: 作业类型
+      drtnType:
+        type: string
+        description: 工期类型
+      remark:
+        type: string
+        description: 备注
+
+  BaseTmplplanTaskVo:
+    type: object
+    properties:
+      parentId:
+        type: integer
+        description: 父id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      taskType:
+        type: string
+        description: 作业类型
+      drtnType:
+        type: string
+        description: 工期类型
+      type:
+        type: string
+        description: 类型
+      remark:
+        type: string
+        description: 备注
+
+  BaseTmplplanTaskUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 计划模板id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: integer
+        description: 计划级别
+      taskType:
+        type: string
+        description: 作业类型
+      drtnType:
+        type: string
+        description: 工期类型
+      remark:
+        type: string
+        description: 备注
+
+  BaseTmpldocAddForm:
+    type: object
+    properties:
+      docTitle:
+        type: string
+        description: 标题
+      docNum:
+        type: string
+        description: 编号
+      docVersion:
+        type: string
+        description: 版本号
+      docObject:
+        type: string
+        description: 所属业务对象
+      fileId:
+        type: integer
+        description: 文件id
+      secutyLevel:
+        type: string
+        description: 密级
+      author:
+        type: string
+        description: 作者
+      docClassify:
+        type: string
+        description: 文档类别
+      profession:
+        type: string
+        description: 文档专业
+
+
+  BaseTmpldocVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 文档模板id
+      docTitle:
+        type: string
+        description: 标题
+      docNum:
+        type: string
+        description: 编号
+      docVersion:
+        type: string
+        description: 版本号
+      docObject:
+        type: string
+        description: 所属业务对象
+      isUsing:
+        type: integer
+        description: 是否启用
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      attachs:
+        type: string
+        description: 附件
+      secutyLevel:
+        type: string
+        description: 密级
+      author:
+        type: string
+        description: 作者
+      docClassify:
+        description: 文档类别
+        $ref: '#/definitions/DictionaryVo'
+      profession:
+        description: 文档专业
+        $ref: '#/definitions/DictionaryVo'
+
+
+  BaseTmpldocUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 文档模板id
+      docTitle:
+        type: string
+        description: 标题
+      docNum:
+        type: string
+        description: 编号
+      docVersion:
+        type: string
+        description: 版本号
+      docObject:
+        type: string
+        description: 所属业务对象
+      fileId:
+        type: integer
+        description: 文件id
+      secutyLevel:
+        type: string
+        description: 密级
+      author:
+        type: string
+        description: 作者
+      docClassify:
+        type: string
+        description: 文档类别
+      profession:
+        type: string
+        description: 文档专业
+
+  BaseTmpldelvVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 交付物模板id
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvVersion:
+        type: string
+        description: 版本号
+      delvType:
+        type: string
+        description: 项目类型
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      delvDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvTypeAddForm:
+    type: object
+    properties:
+      typeTitle:
+        type: string
+        description: 标题
+      typeNum:
+        type: string
+        description: 编号
+      typeVersion:
+        type: string
+        description: 版本号
+      typeType:
+        type: string
+        description: 项目类型
+      typeDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvTypeUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 交付物模板id
+      typeTitle:
+        type: string
+        description: 标题
+      typeNum:
+        type: string
+        description: 编号
+      typeVersion:
+        type: string
+        description: 版本号
+      typeType:
+        type: string
+        description: 项目类型
+      typeDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvAddForm:
+    type: object
+    properties:
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvVersion:
+        type: string
+        description: 版本号
+      delvType:
+        type: string
+        description: 项目类型
+      delvDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 交付物模板id
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvType:
+        type: string
+        description: 类别
+      delvDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvPbsAddForm:
+    type: object
+    properties:
+      typeId:
+        type: integer
+        description: 交付物模板ID
+      parentId:
+        type: integer
+        description: 父ID
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvType:
+        type: string
+        description: 类别
+      delvDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvTypeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      typeTitle:
+        type: string
+        description: 标题
+      typeNum:
+        type: string
+        description: 编号
+      typeVersion:
+        type: string
+        description: 版本号
+      typeType:
+        $ref: '#/definitions/DictionaryVo'
+        description: 项目类型
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      typeDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvTreeVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      typeId:
+        type: integer
+        description: 交付物模板id
+      parentId:
+        type: integer
+        description: 父id
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvVersion:
+        type: string
+        description: 版本号
+      type:
+        type: string
+        description: 是否是PBS
+      delvType:
+        $ref: '#/definitions/DictionaryVo'
+        description: 项目类型
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      typeDesc:
+        type: string
+        description: 备注
+
+  BaseTmpldelvPbsVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父id
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvType:
+        type: string
+        description: 类别
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  BaseSubTmpldelvAddForm:
+    type: object
+    properties:
+      typeId:
+        type: integer
+        description: 交付物模板ID
+      parentId:
+        type: integer
+        description: 父ID
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvType:
+        type: string
+        description: 类别
+      delvDesc:
+        type: string
+        description: 备注
+
+  BaseSubTmpldelvVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父id
+      delvTitle:
+        type: string
+        description: 标题
+      delvNum:
+        type: string
+        description: 编号
+      delvType:
+        type: string
+        description: 类别
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  ComuMeetVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 会议id
+      title:
+        type: string
+        description: 会议标题
+      meetingType:
+        type: string
+        description: 会议类型
+      projectId:
+        type: integer
+        description: 所属项目id
+      meetingAddress:
+        type: string
+        description: 会议地点
+      meetingUser:
+        type: string
+        description: 主持人
+      meetingTime:
+        type: string
+        description: 会议日期
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      meetingRemark:
+        type: string
+        description: 会议内容说明
+
+  ComuMeetAddForm:
+    type: object
+    properties:
+      title:
+        type: string
+        description: 会议标题
+      meetingType:
+        type: string
+        description: 会议类型
+      projectId:
+        type: integer
+        description: 所属项目id
+      meetingAddress:
+        type: string
+        description: 会议地点
+      meetingUser:
+        type: string
+        description: 主持人
+      meetingTime:
+        type: string
+        description: 会议日期
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+      meetingRemark:
+        type: string
+        description: 会议内容说明
+
+  ComuMeetUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 会议id
+      title:
+        type: string
+        description: 会议标题
+      meetingType:
+        type: string
+        description: 会议类型
+      projectId:
+        type: integer
+        description: 所属项目id
+      meetingAddress:
+        type: string
+        description: 会议地点
+      meetingUser:
+        type: string
+        description: 主持人
+      meetingTime:
+        type: string
+        description: 会议日期
+      meetingRemark:
+        type: string
+        description: 会议内容说明
+
+  QueryForm:
+    type: object
+    properties:
+      search:
+        type: string
+        description: 搜索
+
+  ComuQuestionVo:
+    properties:
+      id:
+        type: integer
+        description: 项目问题Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: 计划Id
+      title:
+        type: string
+        description: 问题标题
+      questionType:
+        type: string
+        description: 问题类型
+      questionPriority:
+        type: string
+        description: 优先级
+      org:
+        type: object
+        description: 责任主体
+        $ref: '#/definitions/OrgVo'
+      user:
+        type: object
+        description: '责任人'
+        $ref: '#/definitions/UserVo'
+      questionRemark:
+        type: string
+        description: 问题描述
+      questionHandle:
+        type: string
+        description: 处理要求
+      creator:
+        description: '创建人'
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  ComuQuestionAddForm:
+    properties:
+      taskId:
+        type: integer
+        description: 计划Id
+      title:
+        type: string
+        description: 问题标题
+      questionType:
+        type: string
+        description: 问题类型
+      questionPriority:
+        type: string
+        description: 优先级
+      org:
+        type: integer
+        description: 责任主体
+      userId:
+        type: integer
+        description: '责任人'
+      questionRemark:
+        type: string
+        description: 问题描述
+      questionHandle:
+        type: string
+        description: 处理要求
+
+  ComuQuestionUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 项目问题Id
+      taskId:
+        type: integer
+        description: 计划Id
+      title:
+        type: string
+        description: 问题标题
+      questionType:
+        type: string
+        description: 问题类型
+      questionPriority:
+        type: string
+        description: 优先级
+      orgId:
+        type: integer
+        description: 责任主体
+      userId:
+        type: integer
+        description: '责任人'
+      questionRemark:
+        type: string
+        description: 问题描述
+      questionHandle:
+        type: string
+        description: 处理要求
+
+  ComuQuestionForm:
+    properties:
+      title:
+        type: string
+        description: 问题标题
+
+  ComuQueHandleVo:
+    properties:
+      id:
+        type: integer
+        description: 处理记录Id
+      questionId:
+        type: integer
+        description: 项目问题Id
+      handleRemark:
+        type: string
+        description: 问题处理
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建日期
+
+  ComuQueHandleAddForm:
+    properties:
+      questionId:
+        type: integer
+        description: 项目问题Id
+      handleRemark:
+        type: string
+        description: 问题处理
+
+  ComuQueHandleUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 处理记录Id
+      handleRemark:
+        type: string
+        description: 问题处理
+
+  CommMeetingActionVo:
+    properties:
+      id:
+        type: integer
+        description: 行动项Id
+      meetingId:
+        type: integer
+        description: 项目会议Id
+      org:
+        description: '责任单位'
+        $ref: '#/definitions/OrgVo'
+      user:
+        type: string
+        description: '责任人'
+        $ref: '#/definitions/UserVo'
+      actionName:
+        type: string
+        description: 行动项名称
+      actionCode:
+        type: string
+        description: 行动项代码
+      planStartTime:
+        type: integer
+        description: 计划开始时间
+      planEndTime:
+        type: integer
+        description: 计划完成时间
+      remark:
+        type: string
+        description: 备注
+      taskId:
+        type: integer
+        description: 关联WBS/任务
+      definedId:
+        type: integer
+        description: 关联计划
+      projectId:
+        type: integer
+        description: 关联项目
+
+  CommMeetingActionAddForm:
+    properties:
+      actionName:
+        type: string
+        description: 行动项名称
+      actionCode:
+        type: string
+        description: 行动项代码
+      planStartTime:
+        type: integer
+        description: 计划开始时间
+      planEndTime:
+        type: integer
+        description: 计划完成时间
+      orgId:
+        type: integer
+        description: '责任单位'
+      userId:
+        type: integer
+        description: '责任人'
+
+  CommMeetingActionUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 行动项Id
+      orgId:
+        type: string
+        description: '责任单位'
+      userId:
+        type: integer
+        description: '责任人'
+      actionName:
+        type: string
+        description: 行动项名称
+      actionCode:
+        type: string
+        description: 行动项代码
+      planStartTime:
+        type: integer
+        description: 计划开始时间
+      planEndTime:
+        type: integer
+        description: 计划完成时间
+
+  OrgVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  UserVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  BaseTmptaskpredVo:
+    properties:
+      id:
+        type: integer
+        description: 处理记录Id
+      taskCode:
+        type: string
+        description: 代码
+      taskName:
+        type: string
+        description: 名称
+      relationType:
+        type: string
+        description: 关系类型
+      lagQty:
+        type: integer
+        description: 延迟
+
+  BaseTmptaskpredForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 处理记录Id
+      taskTopId:
+        type: integer
+        description: 计划模板Id
+      taskId:
+        type: integer
+        description: 任务
+      predTaskId:
+        type: integer
+        description: 紧前任务
+      relationType:
+        type: string
+        description: 关系类型
+      lagQty:
+        type: integer
+        description: 延迟
+
+  BaseTmptaskpredUpdateForm:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 处理记录Id
+      relationType:
+        type: string
+        description: 关系类型
+      lagQty:
+        type: integer
+        description: 延迟
+
+  BaseTmplTaskDelvVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      taskId:
+        type: integer
+        description: 任务id
+      delvName:
+        type: string
+        description: 交付清单名称
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        $ref: '#/definitions/DictionaryVo'
+        description: 类别
+      creator:
+        type: string
+        description: 创建者
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建时间
+
+  ClassifyAssignVo:
+    properties:
+      id:
+        type: integer
+        description: ID
+      classifyType:
+        type: object
+        description: '分类码'
+        $ref: '#/definitions/ClassifyVo'
+      classify:
+        type: object
+        description: '码值'
+        $ref: '#/definitions/ClassifyVo'
+
+  ClassifyVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      classifyCode:
+        type: string
+        description: 代码
+      classifyType:
+        type: integer
+        description: 类型
+      parentId:
+        type: integer
+        description: 父节点
+      classifyName:
+        type: string
+        description: 说明
+      boCode:
+        type: string
+        description: 业务代码
+
+  ClassifyAssignForm:
+    properties:
+      boCode:
+        type: string
+        description: 业务代码
+      boId:
+        type: integer
+        description: 业务主键
+      classifyTypeId:
+        type: integer
+        description: 分类码
+      classifyId:
+        type: integer
+        description: 码值
+
+  ClassifyUpdateAssignForm:
+    properties:
+      id:
+        type: integer
+        description: 业务主键
+      classifyId:
+        type: integer
+        description: 码值
+
+  BaseSetProjectUpdateForm:
+    properties:
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      cpmType:
+        type: string
+        description: 关键路径
+      cpmFloat:
+        type: number
+        description: 总浮时
+      enableProjectTeam:
+        type: integer
+        description: 启用项目团队
+      shareWbs:
+        type: integer
+        description: WBS/任务内部共享
+      message:
+        type: integer
+        description: 消息推送
+
+  BaseSetDocUpdateForm:
+    properties:
+      uploadMax:
+        type: number
+        description: 上传最大值（M）
+      banFileType:
+        type: array
+        description: 禁止文件类型
+        items:
+          type: string
+
+  BaseSetTimeUdateForm:
+    properties:
+      timeUnit:
+        type: string
+        description: 工时单位
+      drtnUnit:
+        type: string
+        description: 工期单位
+      dateFormat:
+        type: string
+        description: 时间格式
+
+  GeneralVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  DictionaryVo:
+    properties:
+      id:
+        type: string
+        description: id
+      name:
+        type: string
+        description: name
+
+  BaseSetProjectVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      cpmType:
+        type: string
+        description: 关键路径
+      cpmFloat:
+        type: number
+        description: 总浮时
+      enableProjectTeam:
+        type: integer
+        description: 启用项目团队
+      shareWbs:
+        type: integer
+        description: WBS/任务内部共享
+      message:
+        type: integer
+        description: 消息推送
+
+  BaseSetDocVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      uploadMax:
+        type: number
+        description: 上传最大值（M）
+      banFileType:
+        type: array
+        description: 禁止文件类型
+        items:
+          type: string
+
+  BaseSetTimeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      timeUnit:
+        type: string
+        description: 工时单位
+      drtnUnit:
+        type: string
+        description: 工期单位
+      dateFormat:
+        type: string
+        description: 时间格式
+
+  BaseSetBoVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      code:
+        type: string
+        description: 键
+      name:
+        type: string
+        description: 值
+
+  BaseCalendarWeekDaysUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      weekDays:
+        type: array
+        items:
+          $ref: '#/definitions/BaseWeekDayVo'
+      dayHrCnt:
+        type: integer
+        description: 日
+      weekHrCnt:
+        type: integer
+        description: 周
+      monthHrCnt:
+        type: integer
+        description: 月
+      yearHrCnt:
+        type: integer
+        description: 年
+
+  BaseCalendarExceptionsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      exceptions:
+        type: array
+        items:
+          $ref: '#/definitions/BaseExceptionDayVo'
+
+  BaseWeekDayVo:
+    properties:
+      dayWorking:
+        type: integer
+        description: 是否工作日0/1
+      dayType:
+        type: integer
+        description: 周几
+      workingTimes:
+        type: array
+        items:
+          $ref: '#/definitions/BaseWorkingTimeVo'
+
+  BaseWorkingTimeVo:
+    properties:
+      fromTime:
+        type: string
+        description: 开始时间
+      toTime:
+        type: string
+        description: 截止时间
+
+  BaseExceptionDayVo:
+    properties:
+      name:
+        type: string
+        description: 例外日期的名称
+      dayWorking:
+        type: integer
+        description: 是否工作日0/1
+      dayType:
+        type: integer
+        description: 周几，1周日/2周一/3周二/4周三/5周四/6周五/7周六
+      fromDate:
+        type: string
+        description: 例外开始时间
+      toDate:
+        type: string
+        description: 例外完成时间
+      workingTimes:
+        type: array
+        items:
+          $ref: '#/definitions/BaseWorkingTimeVo'
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  BaseCodeResultVo:
+    properties:
+      code:
+        type: string
+        description: 生成的代码
+      modified:
+        type: boolean
+        description: 用户是否可以修改

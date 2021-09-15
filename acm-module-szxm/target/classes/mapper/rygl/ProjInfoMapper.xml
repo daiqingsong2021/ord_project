@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.ProjInfoMapper">
+    <resultMap id="resultOrgPeople" type="com.wisdom.acm.szxm.vo.rygl.OrgPeopleVo">
+        <id property="id" column="id"/>
+        <result property="name" column="org_name"/>
+        <result property="projInfoId" column="id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="type" column="type"/>
+        <result property="name" column="name"/>
+        <result property="parentId" column="parent_id"/>
+        <association property="orgCategoryVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="org_category"/>
+            <result property="name" column="org_category_name"/>
+        </association>
+        <association property="orgTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="org_type"/>
+            <result property="name" column="org_type_name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="resultOrgVoList" type="com.wisdom.acm.szxm.vo.rygl.SysOrgTreeVo">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="orgCode" column="org_code"/>
+        <result property="orgType" column="org_type"/>
+        <result property="updateTime" column="last_upd_time"/>
+    </resultMap>
+
+    <delete id="deletePeopleByInfoIds" parameterType="java.util.List">
+        DELETE FROM szxm_rygl_people
+        <where>
+            proj_info_id IN
+            <foreach collection="projInfoIds" item="id" open="(" close=")"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <delete id="deleteWarnHouseByInfoIds" parameterType="java.util.List">
+        DELETE FROM szxm_rygl_warehouse
+        <where>
+            proj_info_id IN
+            <foreach collection="projInfoIds" item="id" open="(" close=")"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+
+    <delete id="deleteTsPlatByInfoIds" parameterType="java.util.List">
+        DELETE FROM szxm_rygl_tsplat
+        <where>
+            proj_info_id IN
+            <foreach collection="projInfoIds" item="id" open="(" close=")"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="selectOrgInfoList" parameterType="java.util.Map" resultMap="resultOrgPeople">
+        select a.id,
+        a.org_name as name,
+        a.parent_id,
+        'org' as type,
+        a.org_type,
+        dt.dict_name as org_type_name,
+        a.org_category,
+        dt1.dict_name as org_category_name
+        from szxm_rygl_projinfo a
+        left join wsd_base_dict dt
+        on a.org_type = dt.dict_code
+        and dt.TYPE_CODE = 'base.org.type'
+        left join wsd_base_dict dt1
+        on a.org_category = dt1.dict_code
+        and dt1.TYPE_CODE = 'base.org.classification'
+        <where>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id =#{projectId}
+            </if>
+        </where>
+        order by a.parent_id,a.SORT_NUM asc
+    </select>
+
+    <resultMap id="addressBookOrgVo" type="com.wisdom.acm.szxm.vo.rygl.AddressBookOrgVo">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="orgId" column="org_id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="source" column="source"/>
+        <result property="sectionCode" column="section_code"/>
+        <result property="type" column="type"/>
+    </resultMap>
+    <select id="selectAddressBookOrg" parameterType="java.util.Map" resultMap="addressBookOrgVo">
+            select case when pj.id=null then o.id else pj.id end as org_id,
+           case when pj.id=null then o.org_name else pj.org_name end as org_name,
+           case when pj.id=null then '0' else '1' end as source,
+           o.id,
+           o.parent_id,
+           o.org_code as section_code ,
+           o.EXTENDED_COLUMN_1 type
+      from wsd_sys_org o
+      left join szxm_rygl_projinfo pj
+        on o.id = pj.sys_org_id
+     where o.biz_type = 'project'
+       and o.biz_id = #{projectId}
+       order by o.PARENT_ID,o.SORT_NUM
+    </select>
+
+    <resultMap id="addPeopleVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleVo">
+        <id property="id" column="id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="name" column="name"/>
+        <result property="telPhone" column="telphone"/>
+        <association property="jobVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="job_code"/>
+            <result property="name" column="job_name"/>
+        </association>
+        <association property="sexVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="sex"/>
+            <result property="name" column="sex_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAddressBookPeopleFyz" resultMap="addPeopleVo">
+        select a.* from
+        (select u.id id,
+        u.user_name,
+        u.actu_name name,
+        (select o2.org_name from wsd_sys_userorg uo2 inner join wsd_sys_org o2 on uo2.org_id=o2.id and o2.biz_id is null
+        where uo2.user_id=u.id) org_name,
+        u.phone telphone,
+        uo.position job_code,
+        dt.dict_name job_name,
+        to_char(u.sex) as sex,
+        case when u.sex=1 then '男' when u.sex=0 then '女' end as sex_name
+        from wsd_sys_userorg uo
+        inner join wsd_sys_user u
+        on u.id = uo.user_id
+        inner join wsd_sys_org o
+        on uo.org_id = o.id
+        and o.biz_id = #{projectId} and o.EXTENDED_COLUMN_1='section'
+        inner join (select ro.user_id, ro.org_id
+        from wsd_sys_role r
+        inner join wsd_sys_userorg_role ro
+        on r.id = ro.role_id
+        and instr(r.role_code, 'YZ_YZDB', 1, 1) = 1) ro
+        on uo.user_id = ro.user_id and uo.org_id = ro.org_id
+        left join wsd_base_dict dt
+        on uo.position = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        where exists(select 1 from wsd_sys_userorg uo1 inner join wsd_sys_org o1 on uo1.org_id=o1.id and
+        o1.biz_id=#{projectId} where uo1.user_id= #{userId} and o1.parent_id=o.id)
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND u.actu_name like '%'|| #{searcher} || '%'
+            </if>
+        </where>
+        union
+        select p.id id,
+        null,
+        p.name name,
+        pj.org_name as org_name,
+        p.telphone,
+        p.job job_code,
+        dt.dict_name job_name,
+        to_char(p.sex) as sex,
+        case when p.sex=1 then '男' when p.sex=0 then '女' end as sex_name
+        from szxm_rygl_people p
+        inner join szxm_rygl_projinfo pj
+        on p.proj_info_id = pj.id
+        and p.project_id = #{projectId}
+        left join wsd_base_dict dt
+        on p.job = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND p.name like '%'|| #{searcher} || '%'
+            </if>
+        </where>) a
+        order by a.job_code,a.user_name
+    </select>
+
+    <select id="selectAddressBookPeople2" resultMap="addPeopleVo">
+        select u.id id,
+        (select o2.org_name from wsd_sys_userorg uo2 inner join wsd_sys_org o2 on uo2.org_id=o2.id and o2.biz_id is null
+        where uo2.user_id=u.id) org_name,
+        u.actu_name name,
+        uo.position job_code,
+        dt.dict_name job_name,
+        to_char(u.sex) as sex,
+        case when u.sex=1 then '男' when u.sex=0 then '女' end as sex_name,
+        u.phone telphone
+        from wsd_sys_userorg uo
+        inner join wsd_sys_user u
+        on u.id = uo.user_id
+        inner join wsd_sys_org o
+        on uo.org_id = o.id
+        and o.biz_id = #{projectId} and o.EXTENDED_COLUMN_1='section'
+        inner join (select ro.user_id, ro.org_id
+        from wsd_sys_role r
+        inner join wsd_sys_userorg_role ro
+        on r.id = ro.role_id
+        and instr(r.role_code, 'YZ_YZDB', 1, 1) = 1) ro
+        on uo.user_id = ro.user_id and uo.org_id = ro.org_id
+        left join wsd_base_dict dt
+        on uo.position = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        where exists(select 1 from wsd_sys_userorg uo1 inner join wsd_sys_org o1 on uo1.org_id=o1.id and o1.biz_id=
+        #{projectId} where uo1.user_id=#{userId} and o1.parent_id=o.id)
+        and exists (select 1 from wsd_sys_userorg uo1 inner join wsd_sys_org o1 on uo1.org_id=o1.id and o1.biz_id=
+        #{projectId} and o1.extended_column_1='org' inner join wsd_sys_user u1 on u1.id=uo1.user_id where o1.id=
+        #{orgId} and u1.user_name=u.user_name)
+        <if test="searcher != null and searcher != '' ">
+            AND u.actu_name like '%'|| #{searcher} || '%'
+        </if>
+        order by uo.position,u.user_name
+    </select>
+
+    <select id="selectAddressBookPeopleYz" resultMap="addPeopleVo">
+        select a.* from
+        (select u.id id,
+        u.user_name,
+        u.actu_name name,
+        o.org_name,
+        u.phone telphone,
+        uo.position job_code,
+        dt.dict_name job_name,
+        to_char(u.sex) as sex,
+        case when u.sex=1 then '男' when u.sex=0 then '女' end as sex_name
+        from wsd_sys_userorg uo
+        inner join wsd_sys_user u
+        on u.id = uo.user_id
+        inner join wsd_sys_org o
+        on uo.org_id = o.id
+        and o.biz_id = #{projectId} and o.EXTENDED_COLUMN_1='org'
+        inner join (select ro.user_id, ro.org_id
+        from wsd_sys_role r
+        inner join wsd_sys_userorg_role ro
+        on r.id = ro.role_id
+        and instr(r.role_code, 'YZ_', 1, 1) = 1) ro
+        on uo.user_id = ro.user_id and uo.org_id = ro.org_id
+        left join wsd_base_dict dt
+        on uo.position = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND u.actu_name like '%'|| #{searcher} || '%'
+            </if>
+        </where>
+        union
+        select p.id id,
+        null,
+        p.name name,
+        pj.org_name as org_name,
+        p.telphone,
+        p.job job_code,
+        dt.dict_name job_name,
+        to_char(p.sex) as sex,
+        case when p.sex=1 then '男' when p.sex=0 then '女' end as sex_name
+        from szxm_rygl_people p
+        inner join szxm_rygl_projinfo pj
+        on p.proj_info_id = pj.id
+        and p.project_id = #{projectId}
+        left join wsd_base_dict dt
+        on p.job = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND p.name like '%'|| #{searcher} || '%'
+            </if>
+        </where>) a
+        order by a.job_code,a.user_name
+    </select>
+
+    <select id="queryUserListByProjectTeamId" resultMap="addPeopleVo">
+        select u.id id,
+        o.org_name,
+        u.actu_name name,
+        uo.position job_code,
+        dt.dict_name job_name,
+        to_char(u.sex) as sex,
+        case when u.sex=1 then '男' when u.sex=0 then '女' end as sex_name,
+        u.phone telphone
+        from wsd_sys_user u
+        inner join wsd_sys_userorg uo
+        on u.id = uo.user_id
+        inner join wsd_sys_org o
+        on o.id = uo.org_id and o.id= #{orgId}
+        left join wsd_base_dict dt
+        on uo.position = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                and u.actu_name like '%'|| #{searcher} || '%'
+            </if>
+        </where>
+        order by uo.position,u.user_name
+    </select>
+
+    <select id="queryProjInfoNotUpdate" resultType="java.lang.Integer">
+        select count(*) from szxm_rygl_projinfo where last_upd_time = creat_time and org_type = '2'
+        and parent_id = 0
+        <if test="sectionId != null and sectionId != '' ">
+            AND section_id =#{sectionId}
+        </if>
+        group by section_id
+    </select>
+
+    <select id="getOrgIdsByProjectId" resultType="java.lang.Integer">
+        SELECT o.id FROM wsd_sys_org o where extended_column_1='org' and biz_type='project' and o.biz_id = #{projectId}
+        order by o.CREAT_TIME desc
+    </select>
+
+    <select id="getAllOrgInfoByProjectId" resultMap="resultOrgVoList">
+        select o.id,o.parent_id,o.org_name,o.org_code,o.org_type,o.last_upd_time from wsd_sys_org o where o.extended_column_1='org' and o.biz_type='project' and o.biz_id = #{projectId}
+    </select>
+
+
+    <select id="selectParticipartUnitProInfo"  parameterType="java.util.Map"  resultType="com.wisdom.acm.szxm.po.rygl.ProjInfoPo">
+        select     Pi.Id As Id,
+        Pi.Sort_Num As Sort,
+        Pi.Last_Upd_Time As Lastupdtime,
+        pi.last_upd_user As lastUpdUser,
+        pi.creat_time As creatTime,
+        pi.creator As creator,
+        pi.last_upd_ip As lastUpdIp,
+        pi.wsdver As wsdver,
+        pi.project_id As projectId,
+        pi.section_id As sectionId,
+        pi.org_code As orgCode,
+        pi.org_name As orgName,
+        pi.proj_unit_name As projUnitName,
+        pi.org_category As orgCategory,
+        pi.org_type As orgType,
+        pi.proj_unit_address As projUnitAddress,
+        pi.sys_org_id As sysOrgId,
+        pi.parent_id As parentId
+         from szxm_rygl_projinfo pi
+        left join org_section_relation o On pi.section_id =o.section_id
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                and o.o.project_id =#{projectId}
+            </if>
+            <if test="departmentId != null and departmentId != '' ">
+                and o.ORG_ID =#{departmentId}
+            </if>
+            <if test="orgCategory != null and orgCategory != '' ">
+                and pi.org_category =#{orgCategory}
+            </if>
+            <if test="sectionIds != null and sectionIds != '' ">
+                and a.section_id IN
+                <foreach collection="sectionIds" item="id" open="(" close=")"
+                         separator=",">
+                    #{id}
+                </foreach>
+
+            </if>
+
+        </where>
+    </select>
+
+
+
+    <select id="selectOrgCategoryBySessionId"  parameterType="java.util.Map"  resultType="com.wisdom.acm.szxm.po.rygl.ProjInfoPo">
+        select     Pi.Id As Id,
+        Pi.Sort_Num As Sort,
+        Pi.Last_Upd_Time As Lastupdtime,
+        pi.last_upd_user As lastUpdUser,
+        pi.creat_time As creatTime,
+        pi.creator As creator,
+        pi.last_upd_ip As lastUpdIp,
+        pi.wsdver As wsdver,
+        pi.project_id As projectId,
+        pi.section_id As sectionId,
+        pi.org_code As orgCode,
+        pi.org_name As orgName,
+        pi.proj_unit_name As projUnitName,
+        pi.org_category As orgCategory,
+        pi.org_type As orgType,
+        pi.proj_unit_address As projUnitAddress,
+        pi.sys_org_id As sysOrgId,
+        pi.parent_id As parentId
+        from szxm_rygl_projinfo pi
+        left join org_section_relation o On pi.section_id =o.section_id
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                and o.o.project_id =#{projectId}
+            </if>
+            <if test="departmentId != null and departmentId != '' ">
+                and o.ORG_ID =#{departmentId}
+            </if>
+            <if test="departmentId != null and departmentId != '' ">
+                and o.ORG_ID =#{departmentId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                and pi.section_id =#{sectionId}
+            </if>
+            <if test="sectionIds != null and sectionIds != '' ">
+                and a.section_id IN
+                <foreach collection="sectionIds" item="id" open="(" close=")"
+                         separator=",">
+                    #{id}
+                </foreach>
+
+            </if>
+
+        </where>
+    </select>
+
+
+</mapper>
+

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.base.mapper.BaseTmpldocMapper" >
+
+  <sql id="baseSelectSql">
+    select t.id,t.creat_time,t.creator,t.author,t.secuty_level,t.doc_classify,t.profession,t.doc_title,t.doc_num, t.doc_version,t.doc_object,t.file_id, f.file_name, t.is_use,
+    d1.dict_name as object_name,d2.dict_name as classify_name,d3.dict_name as profession_name,d4.dict_name as secuty_name,u.actu_name,u.user_name
+    from wsd_base_tmpldoc t
+    left join wsd_base_dict d1 on t.doc_object=d1.dict_code and d1.type_code='base.tmpldoc.biztype'
+    left join wsd_base_dict d2 on t.doc_classify=d2.dict_code and d2.type_code='doc.docclassify'
+    left join wsd_base_dict d3 on t.profession=d3.dict_code and d3.type_code='doc.profession'
+    left join wsd_base_dict d4 on t.secuty_level=d4.dict_code and d4.type_code='comm.secutylevel'
+    left join wsd_doc_file f on f.id=t.file_id
+    left join wsd_sys_user u on u.id = t.creator
+  </sql>
+
+  <resultMap id="BaseResultMap" type="com.wisdom.acm.base.vo.tmpldoc.BaseTmpldocVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="doc_title" property="docTitle" jdbcType="VARCHAR" />
+    <result column="doc_num" property="docNum" jdbcType="VARCHAR" />
+    <result column="doc_version" property="docVersion" jdbcType="VARCHAR" />
+    <result column="is_use" property="isUse" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" jdbcType="VARCHAR" />
+    <association property="docObject" javaType="com.wisdom.base.common.vo.DictionaryVo">
+      <result property="id" column="doc_object"></result>
+      <result property="name" column="object_name"></result>
+    </association>
+    <association property="fileId" javaType="com.wisdom.base.common.vo.DictionaryVo">
+      <result property="id" column="file_id"></result>
+      <result property="name" column="file_name"></result>
+    </association>
+    <association property="docClassify" javaType="com.wisdom.base.common.vo.DictionaryVo">
+      <result property="id" column="doc_classify"></result>
+      <result property="name" column="classify_name"></result>
+    </association>
+    <association property="profession" javaType="com.wisdom.base.common.vo.DictionaryVo">
+      <result property="id" column="profession"></result>
+      <result property="name" column="profession_name"></result>
+    </association>
+    <association property="secutyLevel" javaType="com.wisdom.base.common.vo.DictionaryVo">
+      <result property="id" column="secuty_level"></result>
+      <result property="name" column="secuty_name"></result>
+    </association>
+    <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+      <result property="id" column="creator"></result>
+      <result property="code" column="user_name"></result>
+      <result property="name" column="actu_name"></result>
+    </association>
+  </resultMap>
+
+  <select id="selectTmplDocList" parameterType="String" resultMap="BaseResultMap">
+    <include refid="baseSelectSql"></include>
+    <where>
+      <if test="key!=null">
+        and t.doc_title like  concat('%',#{key},'%') or t.doc_num like concat('%',#{key},'%')
+      </if>
+    </where>
+  </select>
+
+  <select id="selectTmplDocById" parameterType="int" resultMap="BaseResultMap">
+    <include refid="baseSelectSql"></include>
+    where t.id = #{value}
+  </select>
+
+</mapper>

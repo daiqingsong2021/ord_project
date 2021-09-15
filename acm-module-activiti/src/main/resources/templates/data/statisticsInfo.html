@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head th:include="include :: header"></head>
+<body>
+<!--导航-->
+<div th:include="include :: navbar"></div>
+<!--导航结束-->
+
+<!--编程基础-->
+<section id="course">
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="col-md-8">
+                <h3>统计公司正在审批的流程</h3>
+            </div>
+            <div class="col-md-4">
+                <h4>数量：<span th:text="${processingNum}"></span></h4>
+            </div>
+            <div  class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>标题</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(processing)}" >
+                    <tr  th:each="level : ${processing}">
+                        <td><span th:text="${level.leaveMsg}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="col-md-8">
+                <h3>统计公司结束流程</h3>
+            </div>
+            <div class="col-md-4">
+                <h4>数量：<span th:text="${endNum}"></span></h4>
+            </div>
+            <div  class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>标题</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>处理耗时</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(end)}" >
+                    <tr th:each="level : ${end}">
+                        <td><span th:text="${level.leaveMsg}"></span></td>
+                        <td><span th:text="${level.startTime}"></span></td>
+                        <td><span th:text="${level.endTime}"></span></td>
+                        <td><span th:text="${level.durationInMillis}"></span></td>
+                        <td><a href="javascript:void(0);" th:onclick="@{'javascript:detail(\'' + ${level.id} + '\')'}" >详情</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!--编程基础end-->
+
+<div th:include="include :: footer"></div>
+
+<script>
+    $(function(){
+        try{
+            /*导航跳转效果插件*/
+            /*$('.nav').singlePageNav({
+                offset:70
+            });
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }*/
+            var  lis = $(".navbar-nav li");
+            lis.removeClass("active");
+            lis.eq(6).addClass("active"); // 追加样式
+        }catch (e) {
+            console.log(e);
+        }
+    })
+
+    /**
+     * 跳转详情
+     * @param url
+     */
+    function detail(id) {
+        location.href = ctx+ 'detail?proinId='+id;
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+package ${package}.po;
+
+import javax.persistence.*;
+
+import lombok.Data;
+#if(${hasBigDecimal})
+#end
+
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Table(name = "${tableName}")
+@Data
+public class ${className} extends BasePo {
+
+#foreach ($column in $columns)
+	#if($column.columnName == $pk.columnName)
+##    //$column.comments
+##    @Id
+##    private $column.attrType $column.attrname;
+	#else
+    //$column.comments
+    @Column(name = "$column.columnName")
+    private $column.attrType $column.attrname;
+	#end
+
+#end
+
+}

@@ -1,0 +1,51 @@
+<head th:fragment="header">
+    <meta charset="UTF-8"> <!-- for HTML5 -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--<link th:href="@{/wow/css/animate.min.css}" rel="stylesheet"/>-->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+</head>
+<div th:fragment="footer">
+    <script th:src="@{/js/jquery.min.js}"></script>
+   <!-- <script th:src="@{/js/jquery.singlePageNav.min.js}"></script>
+    <script th:src="@{/wow/js/wow.min.js}"></script>-->
+    <script th:inline="javascript"> var ctx = [[@{/}]]; </script>
+</div>
+<div th:fragment="navbar">
+    <nav class="navbar navbar-default navbar-fixed-top_x">
+        <div class="container">
+            <!--小屏幕导航按钮和logoStrat-->
+            <div class="navbar-header">
+                <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <p class="navbar-brand">通用模板</p>
+            </div>
+            <!--小屏幕导航按钮和logo  End-->
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="javascript:void(0);" onclick="jump('generateModel');">通用模板</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('companyModel');">公司模板</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('deployment');">流程定义</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('processInstance');">流程实例</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('myNeedHandle');">我的待办</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('myInitiate');">我的发起</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('statisticsInfo');">统计信息</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script>
+        function jump(path) {
+            var user = window.localStorage.getItem("user");
+            /*<![CDATA[*/
+            var url = ctx + path + '?userId=' + user;
+            if("deployment,processInstance".indexOf(path) != -1){
+                url += '&currentPage=1&pageSize=50';
+            }
+            location.href = url
+            /*]]>*/
+        }
+    </script>
+</div>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.SpecialWorkerMapper">
+
+    <resultMap id="resultSpecialWorkerMap" type="com.wisdom.acm.szxm.vo.rygl.SpecialWorkerVo">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="name" column="name"/>
+        <result property="job" column="job"/>
+        <result property="telPhone" column="telphone"/>
+        <result property="orgName" column="org_name"/>
+        <result property="peoType" column="peo_type_name"/>
+        <result property="warnNums" column="warn_nums"/>
+        <result property="dDateNums" column="ddate_nums"/>
+        <result property="workType" column="work_type"/>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status"/>
+        </association>
+        <association property="peoStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="peo_status"/>
+            <result property="name" column="peo_status_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectSpecialWorker" parameterType="java.util.Map" resultMap="resultSpecialWorkerMap">
+        SELECT a.*,
+        b.name,
+        b.job,
+        b.peo_type,
+        b.status as peo_status,
+        b.telphone,
+        c.org_name,
+        (case b.peo_type
+        when '0' then
+        '分包'
+        when '1' then
+        '自有'
+        end) as peo_type_name,
+        (case b.status
+        when '0' then
+        '退场'
+        when '1' then
+        '进场'
+        end) as peo_status_name,
+        case when d.warn_nums=null then 0 esle d.warn_nums end as warn_nums,
+        case when d1.ddate_nums=null then 0 esle d1.ddate_nums end as ddate_nums
+        FROM szxm_rygl_speci_worker a
+        LEFT JOIN szxm_rygl_people b ON a.people_id = b.id
+        LEFT JOIN szxm_rygl_projinfo c ON b.proj_info_id = c.id
+        left join (
+        select d.special_worker_id,count(d.special_worker_id) warn_nums
+        from szxm_rygl_sw_cert d
+        inner join szxm_rygl_cert_gl e
+        on d.cert_gl_id = e.id
+        where (d.cert_expiration_time - e.warn_period)  <![CDATA[ <= ]]>  sysdate and sysdate <![CDATA[ <= ]]>
+        d.cert_expiration_time group by d.special_worker_id
+        ) d on d.special_worker_id = a.id
+        left join(
+        select d.special_worker_id,count(d.special_worker_id) ddate_nums
+        from szxm_rygl_sw_cert d
+        where sysdate <![CDATA[ > ]]> d.cert_expiration_time group by d.special_worker_id
+        ) d1 on d1.special_worker_id = a.id
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND (b.name like '%'|| #{searcher} || '%' or b.telphone like '%'|| #{searcher} || '%')
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <!--<if test="sectionList != null">-->
+            <!--AND a.section_id IN-->
+            <!--<foreach collection="sectionList" item="item" open="(" separator="," close=")">-->
+            <!--#{item}-->
+            <!--</foreach>-->
+            <!--</if>-->
+            <if test="sectionList != null and sectionList.size > 0">
+                AND ( a.section_id IN
+                <foreach collection="sectionList" item="item" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 0">) OR a.section_id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id =#{projectId}
+            </if>
+            <if test="ids != null">
+                AND a.id IN
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="querySpecialWorkerCount" resultType="java.lang.Integer">
+        select count(*) from szxm_rygl_people t left join
+        (select a.people_id,min(b.creat_time) creat_time from szxm_rygl_speci_worker a left join szxm_rygl_sw_cert b on
+        a.id = b.special_worker_id group by a.people_id) b
+        on t.id =b.people_id where t.type = '1' and to_date(to_char(b.creat_time,'yyyy-mm-dd'),'yyyy-mm-dd')
+        <![CDATA[ > ]]> to_date(to_char((t.creat_time + 7),'yyyy-mm-dd'), 'yyyy-mm-dd')
+        and t.creat_time <![CDATA[ < ]]> to_date((select concat(to_char(sysdate,'yyyy-MM'), '-25') endday from
+        dual),'yyyy-mm-dd')
+        and t.creat_time <![CDATA[ >= ]]> to_date((select concat(to_char(ADD_MONTHS(sysdate,-1),'yyyy-MM'), '-25')
+        endday from dual),'yyyy-mm-dd')
+        <if test="sectionId != null and sectionId != '' ">
+            AND t.section_id =#{sectionId}
+        </if>
+        group by t.section_id
+    </select>
+
+
+
+
+</mapper>
+

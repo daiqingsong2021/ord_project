@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.SysMessageUserMapper">
+    <resultMap id="msgUserIdMap" type="com.wisdom.acm.sys.vo.SysMessageRecvUserVo">
+        <result column="id" property="id"/>
+        <result column="message_id" property="messageId"/>
+        <association property="recvUser" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="recv_user" />
+        </association>
+    </resultMap>
+
+
+    <select id="selectMessageUserIdByMsgIdAndRecvId" resultMap="msgUserIdMap">
+        select s.id,s.recv_user,s.message_id
+        from wsd_sys_message_user s
+        where s.message_id = #{messageId} and s.recv_user = #{userId}
+    </select>
+
+    <select id="selectMessageUserIdsByMsgIdAndRecvId" resultMap="msgUserIdMap">
+        select s.id,s.recv_user,s.message_id
+        from wsd_sys_message_user s
+        where s.recv_user = #{userId}
+        and s.message_id in
+        <foreach collection="messageIds" item="messageId" open="(" close=")" index="index" separator=",">
+            #{messageId}
+        </foreach>
+    </select>
+    <insert id="addSysMessageUser" parameterType="com.wisdom.acm.sys.po.SysMessageUserPo">
+        INSERT INTO
+		WSD_SYS_MESSAGE_USER(ID,message_id,recv_user,recv_time,type,real_status,del,collect)
+		VALUES(
+		#{id},#{messageId},#{recvUser},#{recvTime},#{type},#{realStatus},#{del},#{collect}
+		)
+	</insert>
+</mapper>

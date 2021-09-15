@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseDictMapper">
+
+    <resultMap id="resultDirgitMap" type="com.wisdom.acm.base.po.BaseDictPo">
+        <id property="id" column="ID"/>
+        <result property="dictName" column="dict_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="dictCode" column="dict_code"/>
+        <result property="typeCode" column="type_code"/>
+        <result property="sort" column="SORT_NUM"/>
+        <result property="lastUpdTime" column="LAST_UPD_TIME"/>
+        <result property="lastUpdUser" column="LAST_UPD_USER"/>
+        <result property="creatTime" column="CREAT_TIME"/>
+        <result property="creator" column="CREATOR"/>
+        <result property="lastUpdIp" column="LAST_UPD_IP"/>
+        <result property="wsdver" column="WSDVER"/>
+        <result property="builtIn" column="built_in"/>
+    </resultMap>
+
+    <resultMap id="resultDirgTreeMap" type="com.wisdom.acm.base.vo.dict.BaseDictTreeVo">
+        <id property="id" column="ID"/>
+        <result property="dictName" column="dict_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="dictCode" column="dict_code"/>
+        <result property="builtIn" column="built_in"/>
+    </resultMap>
+
+
+    <select id="selectDictDateListByBoCode" resultMap="resultDirgitMap">
+        SELECT o.id,o.bo_code,o.dict_name,o.dict_code,o.built_in FROM wsd_base_dict o
+        <where>
+            o.bo_code = #{boCode}
+            <!--<if test="search != null and search != ''">
+                and concat(o.dict_name,o.dict_code) like '%'||#{search}||'%'
+            </if>-->
+        </where>
+        order by o.creat_time desc
+    </select>
+
+    <select id="selectDictDateListByTypeCode" resultMap="resultDirgitMap">
+        SELECT o.id,o.parent_id,o.bo_code,o.type_code,o.dict_name,o.dict_code,o.built_in FROM wsd_base_dict o where o.type_code = #{typeCode} order by o.creat_time desc
+    </select>
+
+    <select id="selectDictTreeVoByTypeCode" resultMap="resultDirgTreeMap">
+        SELECT o.id,o.parent_id,o.bo_code,o.type_code,o.dict_name,o.dict_code,o.built_in,o.sort_num FROM wsd_base_dict o where o.type_code = #{typeCode} order by o.sort_num desc
+    </select>
+
+    <delete id="deleteDictByTypeCodes" parameterType="java.util.List">
+        delete from wsd_base_dict where type_code in
+        <foreach collection="codes" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectDictNameByDictCode" resultType="java.lang.String">
+        SELECT o.dict_name FROM wsd_base_dict o where o.dict_code = #{digitDirCode} and o.bo_code = #{boCode}
+    </select>
+</mapper>

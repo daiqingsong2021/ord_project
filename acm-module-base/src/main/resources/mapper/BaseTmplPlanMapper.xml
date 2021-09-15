@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseTmplPlanMapper">
+
+    <sql id="baseSelectSql">
+        select e.id, e.tmpl_name,e.tmpl_code,e.status,e.is_global,e.creat_time,e.creator, u.actu_name from wsd_base_tmplplan e
+        left join wsd_sys_user u on e.creator = u.id
+    </sql>
+
+    <resultMap id="baseTmplPlanVoMap" type="com.wisdom.acm.base.vo.tmpltask.BaseTmplPlanVo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="tmpl_name" property="tmplName" />
+        <result column="is_global" property="isGlobal" />
+        <result column="creat_time" property="creatTime" />
+        <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="creator" property="id" />
+            <result column="actu_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectTmplPlanList" resultMap="baseTmplPlanVoMap">
+      <include refid="baseSelectSql"></include> order by e.sort_num,e.tmpl_code
+    </select>
+
+    <select id="selectTmplPlanById" parameterType="int" resultMap="baseTmplPlanVoMap">
+        <include refid="baseSelectSql"></include>
+        where e.id=#{value}
+    </select>
+
+    <!-- 获取导入计划模板下拉列表 -->
+    <select id="selectTmplPlanSelectList" resultMap="baseTmplPlanVoMap">
+        <include refid="baseSelectSql"></include>
+        where e.is_global = 1
+        or
+        (
+        e.is_global = 0 and e.id
+          in (select c.biz_id from wsd_plan_cprtm c where c.biz_type = 'tmplTask'
+              and
+            ((c.cprtm_type = 'org' and #{userId} in (select u.user_id from wsd_sys_userorg u where u.org_id = c.cprtm_id) ) or (c.cprtm_type = 'user' and c.cprtm_id = #{userId})
+            )
+          )
+        )
+        or e.creator = #{userId}
+    </select>
+</mapper>

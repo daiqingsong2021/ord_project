@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.TrainDailyPassageMileMapper">
+
+    <resultMap id="trainDailyPassageMileVo" type="com.wisdom.acm.dc2.vo.TrainDailyPassageMileVo">
+        <result property="id" column="id"/>
+        <result property="line" column="LINE"/>
+        <result property="recordTime" column="RECORD_TIME"/>
+        <result property="lineName" column="line_name"/>
+        <result property="trainListNumber" column="TRAIN_LIST_NUMBER"/>
+        <result property="passengerMiles" column="PASSENGER_MILES"/>
+        <result property="emptyMiles" column="EMPTY_MILES"/>
+        <result property="allLinePassenageMiles" column="ALL_LINE_PASSENAGE_MILES"/>
+        <result property="allLineEmptyMiles" column="ALL_LINE_EMPTY_MILES"/>
+        <result property="newLinePassenageMiles" column="NEW_LINE_PASSENAGE_MILES"/>
+        <result property="newLineEmptyMiles" column="NEW_LINE_EMPTY_MILES"/>
+        <result property="trainDailyId" column="TRAIN_DAILY_ID"/>
+        <result property="abnormalPassengerMiles" column="ABNORMAL_PASSENGER_MILES"/>
+        <result property="abnormalEmptyMiles" column="ABNORMAL_EMPTY_MILES"/>
+        <result property="abnormalAllPassenageMiles" column="ABNORMAL_ALL_PASSENAGE_MILES"/>
+        <result property="abnormalAllEmptyMiles" column="ABNORMAL_ALL_EMPTY_MILES"/>
+        <result property="abnormalNewPassenageMiles" column="ABNORMAL_NEW_PASSENAGE_MILES"/>
+        <result property="abnormalNewEmptyMiles" column="ABNORMAL_NEW_EMPTY_MILES"/>
+    </resultMap>
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="trainDailyPassageMileVo">
+        SELECT    a.*   FROM  odr_train_daily_Mile a
+        <where>
+            <if test="trainDailyId != null and trainDailyId != '' ">
+                AND a.TRAIN_DAILY_ID =#{trainDailyId}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="recordTime != null and recordTime != '' ">
+                AND a.RECORD_TIME =str_to_date(#{recordTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+
+</mapper>
+

@@ -1,0 +1,499 @@
+swagger: '2.0'
+info:
+  title: odr - processing
+  description: 哈尔滨运营日报项目SwaggerApi接口文档
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: user
+  description: 用户管理
+- name: subcontrApproval
+  description: 安全管理----分包审批
+
+produces:
+- application/json
+paths:
+  /auth/jwt/token:
+    post:
+      tags:
+      - user
+      description: 获取token
+      summary: 获取token
+      operationId: userToken
+      parameters:
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/UserNamePwdVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/login/user/info:
+    get:
+      tags:
+      - user
+      description: 用户登录
+      summary: 用户登录
+      operationId: getUserInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserLoginVo'
+
+  /szxm/aqgl/subcontrApproval/querySubcontrApprovalList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - subcontrApproval
+      summary: 查询分包审批数据
+      description: 分包审批数据
+      operationId: querySubcontrApprovalList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: subcontrType
+          in: query
+          description: 分包类型
+          type: string
+        - name: status
+          in: query
+          description: 状态
+          type: string
+        - name: startTime
+          in: query
+          description: 开始时间(yyyy-MM-dd)
+          type: string
+          required: false
+        - name: endTime
+          in: query
+          description: 完成时间(yyyy-MM-dd)
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/queryFlowSubcontrApprovalList:
+    get:
+      tags:
+        - subcontrApproval
+      description: 搜索流程相关分包审批数据
+      summary: 搜索流程相关分包审批数据
+      operationId: queryFlowSubcontrApprovalList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: ids
+          in: query
+          description: 主键IDs
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+        - name: startTime
+          in: query
+          description: 开始时间
+          required: false
+          type: string
+        - name: endTime
+          in: query
+          description: 完成时间
+          required: false
+          type: string
+        - name: subcontrType
+          in: query
+          description: 分包类型
+          required: false
+          type: string
+        - name: searcher
+          in: query
+          description: 搜索
+          required: false
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/querySubcontrApproval/{id}:
+    get:
+      tags:
+        - subcontrApproval
+      summary: 查询单个分包审批
+      description: 查询单个分包审批
+      operationId: querySubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/addSubcontrApproval:
+    post:
+      tags:
+        - subcontrApproval
+      description: 增加分包审批
+      summary: 增加设分包审批
+      operationId: addSubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加分包审批信息
+          required: true
+          schema:
+            $ref: '#/definitions/SubcontrApprovalAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/updateSubcontrApproval:
+    put:
+      tags:
+        - subcontrApproval
+      description: 修改分包审批信息
+      summary: 修改分包审批信息
+      operationId: updateSubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改分包审批信息
+          required: true
+          schema:
+            $ref: '#/definitions/SubcontrApprovalUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/delSubcontrApproval:
+    delete:
+      tags:
+        - subcontrApproval
+      description: 删除分包审批信息
+      summary: 删除分包审批信息
+      operationId: delSubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  SysUserLoginVo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      isOpen:
+        type: integer
+        description: 三员管理状态（0：未开启  1：开启）
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 菜单类型(1:组件 2:菜单  3:分组 4:模块)
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      group:
+        type: integer
+        description: 组
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 跟新时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+      children:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  SubcontrApprovalVo:
+    properties:
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      subcontrCode:
+        type: string
+        description: 分包编号
+      subcontrName:
+        type: string
+        description: 分包名称
+      subcontrTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 0专业分包1 劳务分包
+      residentNum:
+        type: string
+        description: 居住人数
+      workAddress:
+        type: string
+        description: 作业队地址
+      houseCharacter:
+        type: string
+        description: 房屋性质
+      houseArea:
+        type: string
+        description: 房屋面积
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      initiator:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间
+      creater:
+        type: string
+        description: 创建人
+
+
+  SubcontrApprovalAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      subcontrName:
+        type: string
+        description: 分包名称（必填）
+      subcontrType:
+        type: string
+        description: 分包类型（必填）
+      residentNum:
+        type: string
+        description: 居住人数
+      workAddress:
+        type: string
+        description: 作业队地址
+      houseCharacter:
+        type: string
+        description: 房屋性质
+      houseArea:
+        type: string
+        description: 房屋面积
+
+  SubcontrApprovalUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键（必填）
+      subcontrName:
+        type: string
+        description: 分包名称（必填）
+      subcontrType:
+        type: string
+        description: 分包类型（必填）
+      subcontrCode:
+        type: string
+        description: 分包编号

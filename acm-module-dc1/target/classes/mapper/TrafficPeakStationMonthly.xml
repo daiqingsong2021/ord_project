@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc1.mapper.TrafficPeakStationMonthlyMapper">
+    <delete id="delTrafficPeakStationMonthlyByDates" parameterType="java.lang.String">
+        DELETE FROM odr_traffic_peak_station_monthly
+        <where>
+            record_time IN
+            <foreach collection="recordTimes" item="date" open="(" close=")"
+                     separator=",">
+                #{date}
+            </foreach>
+        </where>
+    </delete>
+</mapper>

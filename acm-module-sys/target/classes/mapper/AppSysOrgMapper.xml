@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.AppSysOrgMapper">
+
+    <resultMap id="resultAppSysOrgVoList" type="com.wisdom.acm.sys.vo.app.AppSysOrgVo">
+        <id property="id" column="id"/>
+        <result property="name" column="org_name"/>
+    </resultMap>
+
+    <resultMap id="resultAppSysOrgUserMap" type="com.wisdom.acm.sys.vo.app.AppSysOrgUserVo">
+        <id property="id" column="id"/>
+        <result property="name" column="actu_name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <association property="sex" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="sex"/>
+            <result property="name" column="sex_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAppSysOrgList" resultMap="resultAppSysOrgVoList">
+        select o.id,o.parent_id,o.org_name,o.org_code,o.org_type from wsd_sys_org o where o.biz_id is null
+        <if test="key !=null and key !='' ">
+            and o.org_name like concat('%',#{key},'%')
+        </if>
+        order by o.sort_num asc
+    </select>
+
+    <select id="selectAppUserByOrgId" resultMap="resultAppSysOrgUserMap">
+        select
+        u.id,u.user_name,u.actu_name,(case u.sex when 0 then '女' when 1 then '男' end) as sex_name,u.sex,u.status,u.staff_status,
+        (case u.status when 0 then '锁定' when 1 then '正常' end) as status_name ,(case u.staff_status when '0' then '离职' when '1'
+        then '在岗' end) as staff_status_name,u.email,u.phone
+        from
+        wsd_sys_user u
+        inner join wsd_sys_userorg o ON o.user_id = u.id
+        <where>
+            o.org_id = #{orgId}
+            <if test="key != null and key != ''">
+               and u.actu_name like concat('%',#{key},'%')
+            </if>
+        </where>
+        order by u.sort_num asc
+    </select>
+
+    <select id="selectAppAllUser" resultMap="resultAppSysOrgUserMap">
+        select
+        u.id,u.user_name,u.actu_name,(case u.sex when 0 then '女' when 1 then '男' end) as sex_name,u.sex,u.status,u.staff_status,
+        (case u.status when 0 then '锁定' when 1 then '正常' end) as status_name ,(case u.staff_status when '0' then '离职' when '1'
+        then '在岗' end) as staff_status_name,u.email,u.phone
+        from
+        wsd_sys_user u
+        <where>
+            <if test="key != null and key != ''">
+                u.actu_name like concat('%',#{key},'%')
+            </if>
+        </where>
+        order by u.sort_num asc
+    </select>
+
+</mapper>

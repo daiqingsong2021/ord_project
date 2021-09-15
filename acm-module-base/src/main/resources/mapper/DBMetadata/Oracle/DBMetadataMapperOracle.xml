@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.DBMetadataMapper">
+
+
+    <select id="listTable" resultMap="listTable">
+        select t.table_name,m.comments as table_comment from user_tables t
+        left join user_tab_comments m on m.table_name=t.table_name and m.table_type='TABLE'
+        order by t.table_name
+    </select>
+
+    <select id="listTableColumn" resultMap="listTableColumn">
+        select t.column_name,t.comments as column_comment from user_col_comments t
+        where t.table_name=#{tableName} order by t.column_name
+    </select>
+
+    <resultMap id="listTable" type="com.wisdom.base.common.vo.GeneralVo">
+        <result column="table_name" property="code"/>
+        <result column="table_comment" property="name"/>
+    </resultMap>
+
+    <resultMap id="listTableColumn" type="com.wisdom.base.common.vo.GeneralVo">
+        <result column="column_name" property="code"/>
+        <result column="column_comment" property="name"/>
+    </resultMap>
+
+
+</mapper>

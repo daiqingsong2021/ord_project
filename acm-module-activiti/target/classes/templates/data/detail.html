@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head th:include="include :: header"></head>
+<body>
+<!--导航-->
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="container">
+            <!--小屏幕导航按钮和logoStrat-->
+            <div class="navbar-header">
+                <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <p class="navbar-brand">统计信息</p>
+            </div>
+            <!--小屏幕导航按钮和logo  End-->
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/generateModel">通用模板</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('companyModel');">公司模板</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('myNeedHandle');">我的待办</a></li>
+                    <li><a href="javascript:void(0);" onclick="jump('myInitiate');">我的发起</a></li>
+                    <li ><a href="javascript:void(0);" onclick="jump('statisticsInfo');">统计信息</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<!--导航结束-->
+
+<!--编程基础-->
+<section id="course">
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="col-md-8">
+                <h3>动作</h3>
+            </div>
+
+            <div  class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>步骤ID</th>
+                        <th>步骤名称</th>
+                        <th>执行人ID</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(activitiInstances)}" >
+                    <tr  th:each="activity : ${activitiInstances}">
+                        <td><span th:text="${activity.activityId}"></span></td>
+                        <td><span th:text="${activity.activityName}"></span></td>
+                        <td><span th:text="${activity.assignee}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="col-md-8">
+                <h3>详细任务列表</h3>
+            </div>
+            <div  class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>任务I</th>
+                        <th>名称</th>
+                        <th>流程定义ID</th>
+                        <th>处理人ID</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(taskInstances)}" >
+                    <tr  th:each="task : ${taskInstances}">
+                        <td><span th:text="${task.id}"></span></td>
+                        <td><span th:text="${task.name}"></span></td>
+                        <td><span th:text="${task.processDefinitionId}"></span></td>
+                        <td><span th:text="${task.assignee}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!--编程基础end-->
+
+<div th:include="include :: footer"></div>
+
+<script>
+    $(function(){
+        try{
+            /*导航跳转效果插件*/
+            /*$('.nav').singlePageNav({
+                offset:70
+            });
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }*/
+        }catch (e) {
+            console.log(e);
+        }
+    })
+
+</script>
+</body>
+</html>

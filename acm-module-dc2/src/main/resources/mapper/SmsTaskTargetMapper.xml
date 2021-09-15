@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.SmsTaskTargetMapper">
+    <resultMap id="smsTaskMap" type="com.wisdom.acm.dc2.vo.SmsTaskTargetVo">
+        <result property="targetNumber" column="target_number"></result>
+    </resultMap>
+
+    <select id="queryTargetList" parameterType="java.util.Map" resultMap="smsTaskMap">
+        SELECT
+	      DISTINCT(target_number) as target_number
+        FROM
+            odr_sms_task_target
+        where task_id = #{taskId}
+    </select>
+
+</mapper>
+

@@ -1,0 +1,30 @@
+eureka:
+  instance:
+    statusPageUrlPath: /actuator/info
+    healthCheckUrlPath: /actuator/health
+    home-page-url-path: /
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    hostname: ${spring.cloud.client.ip-address}
+    prefer-ip-address: true
+    # docker 部署开启
+  #        prefer-ip-address: true
+  #        ip-address: 221.226.30.122
+  client:
+    serviceUrl:
+      #            defaultZone: http://127.0.0.1:8761/eureka/
+      # docker 部署开启
+      defaultZone: http://${EUREKA_HOST:192.168.3.11}:${EUREKA_PORT:8761}/eureka/
+
+
+spring:
+  redis:
+    database: 2
+    host: 192.168.3.13
+    jedis:
+      pool:
+        max-active: 20
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:192.168.3.13}
+    port:  ${RABBIT_MQ_PORT:5672}
+    username: guest
+    password: guest

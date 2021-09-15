@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.sysscore.SubjectScoreDetailMapper">
+
+    <resultMap id="subjectScoreItemVoMap" type="com.wisdom.acm.szxm.vo.sysscore.SubjectScoreItemVo">
+        <id property="id" column="id"/>
+        <result property="moduleCode" column="source_type"/>
+        <result property="moduleTitle" column="module_title"/>
+        <result property="year" column="year"/>
+        <result property="month" column="month"/>
+        <result property="fileTitle" column="file_title"/>
+        <result property="fileId" column="file_id"/>
+        <result property="uploadfileTime" column="uploadfile_time"/>
+        <result property="uploador" column="uploador"/>
+        <result property="uploader" column="uploader"/>
+        <result property="raterId" column="rater_id"/>
+        <result property="rater" column="rater"/>
+        <result property="scoreTime" column="score_time"/>
+        <result property="score" column="score"/>
+    </resultMap>
+
+    <select id="selectSubjectScore" parameterType="java.util.Map" resultMap="subjectScoreItemVoMap">
+      SELECT a.id,
+        a.year,
+        a.month,
+        a.source_type,
+        a.file_title,
+        a.file_id,
+        a.uploadfile_time,
+        a.uploador,
+        a.rater_id,
+        a.score_time,
+        a.score,
+        st.module_title,
+        u1.actu_name as uploader,
+        u2.actu_name as rater
+        FROM szxm_sys_subjective_detail a
+        left join szxm_sys_subjective_template st on st.module_code=a.source_type
+        left join wsd_sys_user u1 on u1.id=a.uploador
+        left join wsd_sys_user u2 on u2.id=a.rater_id
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="year != null and year != '' ">
+                AND a.year = #{year}
+            </if>
+            <if test="month != null and month != '' ">
+                AND a.month = #{month}
+            </if>
+            <if test="sourceType != null and sourceType != '' ">
+                AND a.source_type = #{sourceType}
+            </if>
+            <if test="fileId != null and fileId != '' ">
+                AND a.file_id = #{fileId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                AND a.section_id = #{sectionId}
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="fileIds != null">
+                AND a.file_id IN
+                <foreach collection="fileIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+<update id="updateSubjectScoreByFileId" parameterType="com.wisdom.acm.szxm.po.sysscore.SubjectScoreDetailPo">
+    update szxm_sys_subjective_detail
+    set score = #{score}, rater_id = #{raterId}, score_time = #{scoreTime}
+    where file_id = #{fileId}
+</update>
+
+    <delete id="deleteSubjectScoreByFileId" parameterType="java.util.List">
+        delete from szxm_sys_subjective_detail
+        <where>
+            <if test="fileIds != null">
+                AND file_id IN
+                <foreach collection="fileIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+</mapper>
+

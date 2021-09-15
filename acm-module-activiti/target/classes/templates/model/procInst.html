@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="include :: header"></head>
+<body>
+<!--导航-->
+<div th:include="include :: navbar"></div>
+<!--导航结束-->
+
+<!--编程基础-->
+<section id="course">
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="panel-header" style="float: right">
+                <a th:href="@{'processInstance?userId=' + ${userId} + '&amp;currentPage=' + ${upPage} + '&amp;pageSize=' + ${pageSize}}" target="_self">上一页</a>
+                | <a th:href="@{'processInstance?userId=' + ${userId} + '&amp;currentPage=' + ${nextPage} + '&amp;pageSize=' + ${pageSize}}" target="_self">下一页</a>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>流程定义Key</th>
+                        <th>流程定义名称</th>
+                        <th>流程实例名称</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(processInstanceList)}">
+                    <tr th:each="procInst : ${processInstanceList}">
+                        <td><span th:text="${procInst.processDefinitionKey}"></span></td>
+                        <td><span th:text="${procInst.processDefinitionName}"></span></td>
+                        <td><span th:text="${procInst.name}"></span></td>
+                        <td><span th:if="${procInst.startTime}" th:text="${#dates.format(procInst.startTime, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                        <td><span th:if="${procInst.endTime}" th:text="${#dates.format(procInst.endTime, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                        <td>
+                            <a th:href="@{'modeler.html?procInstId=' + ${procInst.id}}" target="_blank">查看</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:terminateProc(\'' + ${procInst.id} + '\', \'' + ${procInst.endTime} + '\')'}"
+                                 th:style="${procInst.endTime != null ? 'color: #e7e7e7;cursor: not-allowed;' : ''}">终止</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:deleteProc(\'' + ${procInst.id} + '\', \'' + ${procInst.endTime} + '\')'}"
+                                 th:style="${procInst.endTime == null ? 'color: #e7e7e7;cursor: not-allowed;' : ''}">删除</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!--编程基础end-->
+
+<div th:include="include :: footer"></div>
+
+<script>
+    $(function () {
+        try {
+            /*导航跳转效果插件*/
+            /*$('.nav').singlePageNav({
+                offset:70
+            });
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }*/
+            var lis = $(".navbar-nav li");
+            lis.removeClass("active");
+            lis.eq(3).addClass("active"); // 追加样式
+        } catch (e) {
+            console.log(e);
+        }
+    })
+
+    /**
+     * 终止流程
+     * @param id
+     */
+    function terminateProc(id, end) {
+        if (end == 'null' && confirm("确定要终止流程实例？")) {
+            $.ajax({
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-HTTP-Method-Override": "PUT"
+                }, //PUT,DELETE
+                url: "/models/processInstance/" + id + "/terminate",
+                type: "PUT",
+                //dataType : "json",
+                //data: {id : id},
+                success: function (result) {
+                    alert(result.message);
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
+    /**
+     * 删除流程
+     * @param id
+     */
+    function deleteProc(id, end) {
+        if (end != 'null' && confirm("确定要删除流程实例？")) {
+            $.ajax({
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-HTTP-Method-Override": "DELETE"
+                }, //PUT,DELETE
+                url: "/models/processInstance/" + id,
+                type: "DELETE",
+                //dataType : "json",
+                //data: {id : id},
+                success: function (result) {
+                    alert(result.message);
+                    window.location.reload();
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

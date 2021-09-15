@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.base.mapper.AppBaseDictMapper">
+
+    <resultMap id="resultBaseDictMap" type="com.wisdom.acm.base.vo.app.AppBaseDictVo">
+        <id property="id" column="ID"/>
+        <result property="name" column="dict_name"/>
+        <result property="code" column="dict_code"/>
+    </resultMap>
+
+    <select id="selectAppDictVoByTypeCode" resultMap="resultBaseDictMap">
+        SELECT o.id,o.parent_id,o.bo_code,o.type_code,o.dict_name,o.dict_code,o.built_in,o.sort_num FROM wsd_base_dict o where o.type_code = #{typeCode} order by o.sort_num asc
+    </select>
+
+</mapper>

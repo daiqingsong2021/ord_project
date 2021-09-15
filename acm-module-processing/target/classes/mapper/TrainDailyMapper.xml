@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.processing.mapper.train.TrainDailyMapper">
+    <resultMap id="queryTrain" type="com.wisdom.acm.processing.vo.train.TrainDailyVo">
+        <id property="line" column="line"/>
+        <result property="lcsyqkyyc" column="lcsyqkyyc"/>
+        <result property="lcsyqkbyc" column="lcsyqkbyc"/>
+        <result property="lcsyqktsc" column="lcsyqktsc"/>
+        <result property="lcsyqkjxc" column="lcsyqkjxc"/>
+        <result property="lcsyqkqt" column="lcsyqkqt"/>
+    </resultMap>
+    <select id="queryTrain" parameterType="java.util.Map" resultMap="queryTrain">
+        select
+              a.line as line,
+              a.USE_CAR as lcsyqkyyc,
+              a.SPARE_CAR as lcsyqkbyc,
+              a.DEBUG_CAR as lcsyqktsc,
+              a.INSPECTION_CAR as lcsyqkjxc,
+              a.OTHER as lcsyqkqt
+        from odr_train_daily a where a.line=#{line} and a.RECORD_TIME=#{recordTime}
+    </select>
+    <resultMap id="trainVo" type="com.wisdom.acm.processing.vo.train.TrainVo">
+        <result property="line" column="LINE"/>
+        <result property="drskb" column="drskb" />
+        <result property="zdsxlcs" column="zdsxlcs" />
+        <result property="zxhcjj" column="zxhcjj" />
+        <result property="bycs" column="bycs" />
+
+        <result property="jhklbr" column="jhklbr" />
+        <result property="sjklbr" column="sjklbr" />
+        <result property="dxlbr" column="dxlbr" />
+        <result property="zdlbr" column="zdlbr" />
+        <result property="zdzlbr" column="zdzlbr" />
+        <result property="zdwlbr" column="zdwlbr" />
+        <result property="zdzdbr" column="zdzdbr" />
+        <result property="kslcbr" column="kslcbr" />
+        <result property="zzlcbr" column="zzlcbr" />
+        <result property="yylcbr" column="yylcbr" />
+        <result property="brsf25" column="brsf25"/>
+        <result property="brzd25" column="brzd25"/>
+        <result property="brsf510" column="brsf510"/>
+        <result property="brzd510" column="brzd510" />
+        <result property="brsf1015" column="brsf1015" />
+        <result property="brzd1015" column="brzd1015" />
+        <result property="brsf15" column="brsf15" />
+        <result property="brzd15" column="brzd15" />
+        <result property="jkbr" column="jkbr"/>
+        <result property="jybr" column="jybr"/>
+        <result property="ttbr" column="ttbr"/>
+        <result property="cxbr" column="cxbr"/>
+        <result property="xxbr" column="xxbr" />
+        <result property="ggqkbr" column="ggqkbr"/>
+        <result property="yytzbr" column="yytzbr"/>
+
+        <result property="jhklylj" column="jhklylj"/>
+        <result property="sjklylj" column="sjklylj"/>
+        <result property="dxlylj" column="dxlylj"/>
+        <result property="zdlylj" column="zdlylj"/>
+        <result property="zdzlylj" column="zdzlylj"/>
+        <result property="zdzdylj" column="zdzdylj"/>
+        <result property="kslcylj" column="kslcylj"/>
+        <result property="zzlcylj" column="zzlcylj"/>
+        <result property="yylcylj" column="yylcylj"/>
+        <result property="ysf25" column="ysf25"/>
+        <result property="ywd25" column="ywd25"/>
+        <result property="ysf510" column="ysf510"/>
+        <result property="ywd510" column="ywd510"/>
+        <result property="ysf1015" column="ysf1015"/>
+        <result property="ywd1015" column="ywd1015"/>
+        <result property="ysf15" column="ysf15"/>
+        <result property="ywd15" column="ywd15"/>
+        <result property="jkylj" column="jkylj"/>
+        <result property="jyylj" column="jyylj"/>
+        <result property="ttylj" column="ttylj"/>
+        <result property="cxylj" column="cxylj"/>
+        <result property="xxylj" column="xxylj"/>
+        <result property="ggqkylj" column="ggqkylj"/>
+        <result property="yytzylj" column="yytzylj"/>
+
+        <result property="jhklnlj" column="jhklnlj"/>
+        <result property="sjklnlj" column="sjklnlj"/>
+        <result property="dxlnlj" column="dxlnlj"/>
+        <result property="zdlnlj" column="zdlnlj"/>
+        <result property="zdzlnlj" column="zdzlnlj"/>
+        <result property="zdwlnlj" column="zdwlnlj"/>
+        <result property="zdzdnlj" column="zdzdnlj"/>
+        <result property="kslcnlj" column="kslcnlj"/>
+        <result property="zzlcnlj" column="zzlcnlj"/>
+        <result property="yylcnlj" column="yylcnlj"/>
+        <result property="jknlj" column="jknlj"/>
+        <result property="jynlj" column="jynlj"/>
+        <result property="ttnlj" column="ttnlj"/>
+        <result property="cxnlj" column="cxnlj"/>
+        <result property="xxnlj" column="xxnlj"/>
+        <result property="ggqknlj" column="ggqknlj"/>
+        <result property="yytznlj" column="yytznlj"/>
+    </resultMap>
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="trainVo">
+        select
+            a.line as line,
+            s.SCHEDULE_CODE as drskb,
+            s.MAX_ONLINE_TRAIN as zdsxlcs,
+            s.MIN_DRIVING_INTERVAL as zxhcjj,
+            s.STANDBY_TRAIN as bycs,
+
+            s.PLANNED_OPERATION_COLUMN as jhklbr,
+            a.ACTUAL_OPERATING_COLUMN as sjklbr,
+            a.FULFILLMENT_RATE as dxlbr,
+            a.ON_TIME_RATE as zdlbr,
+            a.ARRIVE_EARLY_COLUMN as zdzlbr,
+            a.ARRIVE_LATE_COLUMN as zdwlbr,
+            a.ARRIVE_ONTIME_COLUMN as zdzdbr,
+            a.DEADHEAD_KILOMETRES as kslcbr,
+            a.CARRYING_KILOMETRES as zzlcbr,
+            a.OPERATING_KILOMETRES as yylcbr,
+            a.STARTING_LATE_COLUMN_2_5 as brsf25,
+            a.ENDING_LATE_COLUMN_2_5 as brzd25,
+            a.STARTING_LATE_COLUMN_5_10 as brsf510,
+            a.ENDING_LATE_COLUMN_5_10 as brzd510,
+            a.STARTING_LATE_COLUMN_10_15 as brsf1015,
+            a.ENDING_LATE_COLUMN_10_15 as brzd1015,
+            a.STARTING_LATE_COLUMN_15 as brsf15,
+            a.ENDING_LATE_COLUMN_15 as brzd15,
+            a.COLUMN_JK as jkbr,
+            a.COLUMN_JY as jybr,
+            a.COLUMN_TT as ttbr,
+            a.COLUMN_CX as cxbr,
+            a.COLUMN_XX as xxbr,
+            a.COLUMN_QK as ggqkbr,
+            a.COLUMN_YY as yytzbr,
+
+            mmm.PLAN_OPERATING_COLUMN as jhklylj,
+            mmm.ACTUAL_OPERATING_COLUMN as sjklylj,
+            mmm.FULFILLMENT_RATE as dxlylj,
+            mmm.ON_TIME_RATE as zdlylj,
+            mmm.ARRIVE_EARLY_COLUMN as zdzlylj,
+
+            mmm.ARRIVE_LATE_COLUMN as zdwlylj,
+            mmm.ARRIVE_ONTIME_COLUMN as zdzdylj,
+            mmm.DEADHEAD_KILOMETRES as kslcylj,
+            mmm.CARRYING_KILOMETRES as zzlcylj,
+            mmm.OPERATING_KILOMETRES as yylcylj,
+            mmm.STARTING_LATE_COLUMN_2_5 as ysf25,
+            mmm.ENDING_LATE_COLUMN_2_5 as ywd25,
+            mmm.STARTING_LATE_COLUMN_5_10 as ysf510,
+            mmm.ENDING_LATE_COLUMN_5_10 as ywd510,
+            mmm.STARTING_LATE_COLUMN_10_15 as ysf1015,
+            mmm.ENDING_LATE_COLUMN_10_15 as ywd1015,
+            mmm.STARTING_LATE_COLUMN_15 as ysf15,
+            mmm.ENDING_LATE_COLUMN_15 as ywd15,
+            mmm.COLUMN_JK as jkylj,
+            mmm.COLUMN_JY as jyylj,
+            mmm.COLUMN_TT as ttylj,
+            mmm.COLUMN_CX as cxylj,
+            mmm.COLUMN_XX as xxylj,
+            mmm.COLUMN_QK as ggqkylj,
+            mmm.COLUMN_YY as yytzylj,
+
+            b.nljjhkl as jhklnlj,
+            b.nljsjkl as sjklnlj,
+            b.nljdxl as dxlnlj,
+            b.nljzdl as zdlnlj,
+            b.nljzdzd as zdzlnlj,
+            b.nljzdwd as zdwlnlj,
+            b.nljzdzdl as zdzdnlj,
+            b.nljkslc as kslcnlj,
+            b.nljzklc as zzlcnlj,
+            b.nljyylc as yylcnlj,
+            b.nljjkl as jknlj,
+            b.nljjyl as jynlj,
+            b.nljtt as ttnlj,
+            b.nljcxl as cxnlj,
+            b.nljxxl as xxnlj,
+            b.nljqkl as ggqknlj,
+            b.nljyyl as yytznlj
+
+    from
+    odr_train_daily a left join
+    (
+    select kbs.* from odr_train_monthly tt LEFT JOIN (
+    select
+            y.line,
+            (CONCAT(YEAR (y.RECORD_TIME))) as year,
+            sum(y.PLAN_OPERATING_COLUMN) as nljjhkl,
+            sum(y.ACTUAL_OPERATING_COLUMN) as nljsjkl,
+            sum(y.FULFILLMENT_RATE) as nljdxl,
+            sum(y.ON_TIME_RATE) as nljzdl,
+            sum(y.ARRIVE_EARLY_COLUMN) as nljzdzd,
+            sum(y.ARRIVE_LATE_COLUMN) as nljzdwd,
+            sum(y.ARRIVE_ONTIME_COLUMN) as nljzdzdl,
+            sum(y.DEADHEAD_KILOMETRES) as nljkslc,
+            sum(y.CARRYING_KILOMETRES) as nljzklc,
+            sum(y.OPERATING_KILOMETRES) as nljyylc,
+            sum(y.COLUMN_JK) as nljjkl,
+            sum(y.COLUMN_JY) as nljjyl,
+            sum(y.COLUMN_TT) as nljtt,
+            sum(y.COLUMN_CX) as nljcxl,
+            sum(y.COLUMN_XX) as nljxxl,
+            sum(y.COLUMN_QK) as nljqkl,
+            sum(y.COLUMN_YY) as nljyyl
+    from odr_train_monthly y where (CONCAT(YEAR (y.RECORD_TIME)))=#{year} and y.line=#{line}
+    ) kbs on kbs.year=(CONCAT(YEAR (tt.RECORD_TIME)))
+    ) b on a.line=b.line  left join odr_train_monthly mmm on a.line=mmm.line
+    left join odr_train_schedule s on s.id=a.SCHEDULE_ID where a.line=#{line} and a.RECORD_TIME =#{recordTime} GROUP BY a.id
+    </select>
+</mapper>
+

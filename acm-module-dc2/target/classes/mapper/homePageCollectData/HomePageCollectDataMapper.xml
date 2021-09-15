@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.homePage.HomePageCollectDataMapper">
+
+    <resultMap id="homePageCollectDataVo" type="com.wisdom.acm.dc2.vo.homePage.HomePageCollectDataVo">
+        <result property="trafficVolumeMonth" column="traffic_volume_month"/>
+        <result property="trafficVolumeMonthAverage" column="traffic_volume_month_average" />
+        <result property="trafficVolumeYear" column="traffic_volume_year"/>
+
+        <result property="operatingKilometres" column="OPERATING_KILOMETRES" />
+        <result property="fulfillmentRate" column="FULFILLMENT_RATE" />
+        <result property="onTimeRate" column="ON_TIME_RATE" />
+
+        <result property="totalPowerConsumption" column="TOTAL_POWER_CONSUMPTION" />
+        <result property="motivePowerRate" column="MOTIVE_POWER_RATE" />
+        <result property="towPowerRate" column="TOW_POWER_RATE" />
+
+        <result property="totalPlanYear" column="TOTAL_PLAN_YEAR" />
+        <result property="totalPlanConstructionQuantity" column="total_plan_construction_quantity" />
+        <result property="totalActualConstructionQuantity" column="total_actual_construction_quantity" />
+    </resultMap>
+
+    <select id="selectTrafficLineByParams" parameterType="java.util.Map" resultMap="homePageCollectDataVo">
+        SELECT
+        SUM(a.traffic_volume_month) AS traffic_volume_month,
+        SUM(a.traffic_volume_month_average) AS traffic_volume_month_average,
+        SUM(a.traffic_volume_year) AS traffic_volume_year
+        FROM       odr_traffic_line_daily a
+        <where>
+            <if test="recordTime != null and recordTime != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m-%d') =#{recordTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTrainByParams" parameterType="java.util.Map" resultMap="homePageCollectDataVo">
+        SELECT
+        (select SUM(b.OPERATING_KILOMETRES) from odr_train_monthly b where date_format(b.RECORD_TIME,'%Y')=#{recordTimeYear} ) AS OPERATING_KILOMETRES,
+        AVG(a.FULFILLMENT_RATE) AS FULFILLMENT_RATE,
+        AVG(a.ON_TIME_RATE)AS ON_TIME_RATE
+        FROM       odr_train_monthly a
+        <where>
+            <if test="recordTimeMonth != null and recordTimeMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{recordTimeMonth}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectEnergyByParams" parameterType="java.util.Map" resultMap="homePageCollectDataVo">
+        SELECT
+        (select SUM(b.TOTAL_POWER_CONSUMPTION) from odr_energy_Monthly b where date_format(b.RECORD_TIME,'%Y')=#{recordTimeYear} ) AS TOTAL_POWER_CONSUMPTION,
+        AVG(a.MOTIVE_POWER_RATE) AS MOTIVE_POWER_RATE,
+        AVG(a.TOW_POWER_RATE)AS TOW_POWER_RATE
+        FROM       odr_energy_Monthly a
+        <where>
+            <if test="recordTimeMonth != null and recordTimeMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{recordTimeMonth}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectConstructionByParams" parameterType="java.util.Map" resultMap="homePageCollectDataVo">
+        SELECT
+        (select SUM(b.TOTAL_PLAN_CONSTRUCTION_QUANTITY) from odr_construction_monthly b where date_format(b.RECORD_TIME,'%Y')=#{recordTimeYear} ) AS TOTAL_PLAN_YEAR,
+        SUM(a.TOTAL_PLAN_CONSTRUCTION_QUANTITY) AS TOTAL_PLAN_CONSTRUCTION_QUANTITY,
+        SUM(a.TOTAL_ACTUAL_CONSTRUCTION_QUANTITY)AS TOTAL_ACTUAL_CONSTRUCTION_QUANTITY
+        FROM       odr_construction_monthly a
+        <where>
+            <if test="recordTimeMonth != null and recordTimeMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{recordTimeMonth}
+            </if>
+        </where>
+    </select>
+
+
+
+
+
+</mapper>
+

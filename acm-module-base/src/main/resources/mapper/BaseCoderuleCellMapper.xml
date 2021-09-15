@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCoderuleCellMapper">
+
+    <resultMap id="BaseCoderuleCellMap" type="com.wisdom.acm.base.vo.coderule.BaseCoderuleCellVo" >
+        <id column="id" property="id"/>
+        <result column="max_length" property="maxLength"/>
+        <result column="fill_char" property="fillChar"/>
+        <result column="seq_min_value" property="seqMinValue"/>
+        <result column="seq_steep" property="seqSteep"/>
+        <result column="cell_value" property="cellValue"/>
+        <result column="rule_cell_name" property="ruleCellName"/>
+        <association property="ruleTypeIdVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result column="rule_type_id" property="id" />
+            <result column="rule_type_name" property="name"/>
+        </association>
+        <association property="ruleTypeVo" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="d1_id" property="id" />
+            <result column="d1_name" property="name"/>
+        </association>
+        <association property="connectorVo" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="d2_id" property="id" />
+            <result column="d2_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectCoderuleCellById" resultMap="BaseCoderuleCellMap">
+        select c.*,
+        c.rule_type as d1_id,
+        d1.dict_name as d1_name,
+        d2.dict_code as d2_id,
+        d2.dict_name as d2_name
+        from wsd_base_coderule_cell c
+        left join wsd_base_dict d1 on d1.dict_code = c.rule_type
+        left join wsd_base_dict d2 on d2.dict_code = c.connector
+        where c.id = #{id}
+    </select>
+
+    <select id="selectCoderuleCellByRuleIdAndPosition" resultMap="BaseCoderuleCellMap">
+        select c.*,y.rule_type_name,
+        c.rule_type as d1_id,
+        d1.dict_name as d1_name,
+        d2.dict_code as d2_id,
+        d2.dict_name as d2_name
+        from wsd_base_coderule_cell c
+        left join wsd_base_dict d1 on d1.dict_code = c.rule_type
+        left join wsd_base_dict d2 on d2.dict_code = c.connector
+        left join wsd_base_coderule_type y on y.id = c.rule_type_id
+        where c.rule_id = #{ruleId}
+        and c.position = #{position}
+    </select>
+
+
+    <resultMap id="BaseCoderuleCellPoMap" type="com.wisdom.acm.base.po.BaseCoderuleCellPo" >
+        <id column="id" property="id"/>
+        <result column="position" property="position"/>
+        <result column="rule_cell_name" property="ruleCellName"/>
+        <result column="rule_id" property="ruleId"/>
+    </resultMap>
+
+    <select id="selectPosByRuleIds" resultMap="BaseCoderuleCellPoMap">
+        select c.* from wsd_base_coderule_cell c
+        where c.rule_id in
+        <foreach collection="coderuleIds" item="coderuleId" open="(" separator="," close=")">
+            #{coderuleId}
+        </foreach>
+    </select>
+
+
+</mapper>

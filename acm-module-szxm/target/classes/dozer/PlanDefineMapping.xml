@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+    <mapping>
+        <class-a map-null="false">com.wisdom.acm.szxm.po.pfe.plan.define.PlanDefinePo</class-a>
+        <class-b map-null="false">com.wisdom.base.common.vo.plan.define.PlanDefineVo</class-b>
+        <field-exclude>
+            <a>status</a>
+            <b>status</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
+        <field-exclude>
+            <a>planType</a>
+            <b>planType</b>
+        </field-exclude>
+    </mapping>
+    <mapping>
+        <class-a map-null="false">com.wisdom.base.common.po.PlanTaskPo</class-a>
+        <class-b map-null="false">com.wisdom.base.common.vo.plan.task.PlanTaskTreeVo</class-b>
+        <field-exclude>
+            <a>status</a>
+            <b>status</b>
+        </field-exclude>
+        <field-exclude>
+            <a>creator</a>
+            <b>creator</b>
+        </field-exclude>
+        <field-exclude>
+            <a>planType</a>
+            <b>planType</b>
+        </field-exclude>
+        <field-exclude>
+            <a>feedbackStatus</a>
+            <b>feedbackStatus</b>
+        </field-exclude>
+        <field-exclude>
+            <a>taskDrtnType</a>
+            <b>taskDrtnType</b>
+        </field-exclude>
+        <field-exclude>
+            <a>planLevel</a>
+            <b>planLevel</b>
+        </field-exclude>
+    </mapping>
+</mappings>

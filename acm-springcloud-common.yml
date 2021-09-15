@@ -1,0 +1,467 @@
+swagger: '2.0'
+info:
+  title: ACM新产品API
+  description: 公共模块的API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: common
+  description: 公共功能
+
+produces:
+- application/json
+paths:
+  /plan/define/user/auth/tree:
+    get:
+      tags:
+      - common
+      description: 打开计划--获取用户权限内的计划定义集合，包括（参与任务的的计划定义集合）
+      summary: 打开计划–获取用户权限内的计划定义集合，包括（queryDefineTreeByUser参与任务的的计划定义集合）
+      operationId: queryDefineTreeByUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanDefineAuthTreeVo'
+
+  /plan/project/user/auth/tree:
+    get:
+      tags:
+      - common
+      description: 打开项目--获取用户权限内的打开项目集合，包括（参与任务/合同/协作团队的打开项目集合）
+      summary: 打开项目–获取用户权限内的打开项目集合，包括（参与任务/合同/协作团队打开项目集合）
+      operationId: queryProjectTreeByUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanProjectAuthTreeVo'
+
+  /plan/project/user/auth/select/tree:
+    get:
+      tags:
+      - common
+      description: 打开项目--获取用户权限内的打开项目集合，包括（参与任务/合同/协作团队的打开项目集合）
+      summary: 打开项目–获取用户权限内的打开项目集合，包括（参与任务/合同/协作团队打开项目集合）
+      operationId: queryDefineSelectTreeByUser
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanProjectAuthSelectTreeVo'
+
+  /plan/eps/select/tree:
+    get:
+      tags:
+      - common
+      description: EPS下拉树值
+      summary: EPS下拉树值
+      operationId: querySelectTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanDefineAuthTreeVo'
+
+  /plan/task/{projectId}/check/tree:
+    get:
+      tags:
+      - common
+      description: 选择任务弹窗页面接口
+      summary: 选择任务弹窗页面接口
+      operationId: queryCheckTaskTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: path
+        description: 项目id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskCheckVo'
+
+  /sys/org/{projectId}/select/tree:
+    get:
+      tags:
+      - common
+      description: 根据项目id获取组织
+      summary: 根据项目id获取组织
+      operationId: queryOrgByProject
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: path
+        description: 项目id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysOrgSelectVo'
+
+  /sys/org/select/tree:
+    get:
+      tags:
+      - common
+      description: 获取全局ORG的树形集合
+      summary: 获取全局ORG的树形集合
+      operationId: queryGlobalOrgSelectVos
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysOrgSelectVo'
+
+  /sys/user/{orgId}/select/list:
+    get:
+      tags:
+      - common
+      description: 获取组织用户
+      summary: 获取组织用户
+      operationId: queryGlobalUsersByOrgId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: orgId
+        in: path
+        description: 组织id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysUserSelectVo'
+
+  /sys/org/orgusertree:
+    get:
+      tags:
+      - common
+      description: 获取组织用户列表树形
+      summary: 获取组织用户树形
+      operationId: queryOrgUserTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SysOrgUserTreeVo'
+
+  /base/dict/{dictTypeCode}/select/tree:
+    get:
+      tags:
+      - common
+      description: 根据数据字典代码字典码值列表--为外部提供的接口
+      summary: 字典码值列表--为外部提供的接口
+      operationId: queryDictTreeDateListByTypeCode
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: dictTypeCode
+        description: 数据字典代码
+        required: true
+        type: string
+      responses:
+        200:
+          description: 返回值
+          schema:
+            $ref: '#/definitions/DictSelectTreeVo'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  PlanTaskCheckVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父级id
+      name:
+        type: string
+        description: 计划名称
+      code:
+        type: string
+        description: 计划编码
+      defineId:
+        type: integer
+        description: 所属计划定义
+      org:
+        description: 责任主体
+        $ref: '#/definitions/OrgVo'
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      type:
+        type: string
+        description: 节点类型（eps项目群project项目define计划定义）
+      taskType:
+        type: integer
+        description: 任务类型(0任务，1开始里程碑，2完成里程碑，3WBS)
+      check:
+        type: integer
+        description: 权限
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/PlanTaskCheckVo'
+
+  OrgVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  UserVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  PlanDefineAuthTreeVo:
+    properties:
+      id:
+        type: integer
+        description: 计划 Id
+      name:
+        type: string
+        description: 计划名称
+      code:
+        type: string
+        description: 计划编码
+      type:
+        type: string
+        description: 节点类型（eps项目群project项目define计划定义）
+      parentId:
+        type: integer
+        description: 父节点ID
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/PlanDefineAuthTreeVo'
+
+  PlanProjectAuthTreeVo:
+    properties:
+      id:
+        type: integer
+        description: Id
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 编码
+      type:
+        type: string
+        description: 节点类型（eps项目群project项目）
+      parentId:
+        type: integer
+        description: 父节点ID
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/PlanProjectAuthTreeVo'
+
+  PlanProjectAuthSelectTreeVo:
+    properties:
+      id:
+        type: integer
+        description: Id
+      title:
+        type: string
+        description: 名称
+      value:
+        type: string
+        description: 编码
+      type:
+        type: string
+        description: 节点类型（eps项目群project项目）
+      parentId:
+        type: integer
+        description: 父节点ID
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/PlanProjectAuthSelectTreeVo'
+
+  SysUserSelectVo:
+    properties:
+      id:
+        type: integer
+        description: 用户Id
+      name:
+        type: string
+        description: 用户名
+
+  SysOrgUserTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 编码（用户：此字段为用户名）
+      type:
+        type: string
+        description: 类型（org|user）
+      parentId:
+        type: integer
+        description: 父id
+      children:
+        type: array
+        description: 子节点
+        items:
+          $ref: '#/definitions/SysOrgUserTreeVo'
+
+
+  SysOrgSelectVo:
+    properties:
+      id:
+        type: integer
+        description: ID
+      name:
+        type: string
+        description: 名称
+      type:
+        type: string
+        description: 类型
+      parentId:
+        type: integer
+        description: 父节点ID
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/SysOrgSelectVo'
+
+  DictSelectTreeVo:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 代码
+      name:
+        type: string
+        description: 名称
+      children:
+        type: array
+        description: 子节点
+        items:
+          $ref: '#/definitions/DictSelectTreeVo'
+
+  EpsSelectTreeVo:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 代码
+      name:
+        type: string
+        description: 名称
+      children:
+        type: array
+        description: 子节点
+        items:
+          $ref: '#/definitions/EpsSelectTreeVo'

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseClassifyAssignMapper">
+
+    <resultMap id="resultClassifyAssignMap" type="com.wisdom.acm.base.vo.classify.BaseClassifyAssignVo">
+        <id property="id" column="ID"/>
+        <result property="boCode" column="BO_CODE"/>
+        <result property="bizId" column="biz_id"/>
+        <association property="classifyType" javaType="com.wisdom.acm.base.vo.classify.BaseClassifyTreeVo">
+            <result column="CLASSIFY_TYPE_ID" property="id" />
+            <result column="CLASSIFY_TYPE_CODE" property="classifyCode"/>
+            <result column="classify_type_name" property="classifyName"/>
+        </association>
+        <association property="classify" javaType="com.wisdom.acm.base.vo.classify.BaseClassifyTreeVo">
+            <result column="CLASSIFY_ID" property="id" />
+            <result column="CLASSIFY_CODE" property="classifyCode"/>
+            <result column="CLASSIFY_name" property="classifyName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectClassifyAssignDateListByBoCodeAndBoId" resultMap="resultClassifyAssignMap">
+        SELECT o.id,o.bo_code,o.biz_id,o.classify_id,n.classify_code,n.classify_name,o.classify_type_id,
+        nn.classify_code as classify_type_code,nn.classify_name as classify_type_name
+        FROM wsd_base_classifyassign o
+        left join wsd_base_classify n on o.classify_id = n.id
+        left join wsd_base_classify nn on o.classify_type_id = nn.id
+        <where>
+            o.bo_code = #{boCode} and o.biz_id=#{bizId}
+<!--            <if test="search != null and search != ''">
+                and concat(o.classify_code) like '%'||#{search}||'%'
+            </if>-->
+        </where>
+        order by o.creat_time desc
+    </select>
+</mapper>

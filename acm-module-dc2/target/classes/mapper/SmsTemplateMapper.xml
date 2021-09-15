@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.SmsTemplateMapper">
+
+    <resultMap id="resultMap" type="com.wisdom.acm.dc2.vo.SmsTemplateVo">
+        <id property="id" column="id"/>
+        <result property="templateTitle" column="template_title"/>
+        <result property="templateContent" column="template_content"/>
+    </resultMap>
+
+    <select id="querySmsTemplateList" parameterType="java.util.Map" resultMap="resultMap">
+      SELECT
+        id,
+        template_title,
+        template_content
+        FROM
+        odr_sms_template
+      where 1=1
+      <if test="searchstr != null and searchstr != '' ">
+      	  AND template_title like concat('%', #{searchstr}, '%')
+      </if>
+      <if test="templateTitle != null and templateTitle != '' ">
+          AND template_title = #{templateTitle}
+      </if>
+      <if test="id != null and id != '' ">
+          AND id = #{id}
+      </if>
+      order by id desc
+    </select>
+
+
+</mapper>
+

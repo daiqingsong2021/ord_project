@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCoderuleBoMapper">
+
+    <resultMap id="BaseCoderuleBoMap" type="com.wisdom.acm.base.vo.coderule.BaseCoderuleBoVo" >
+        <id column="id" property="id"/>
+        <result column="bo_code" property="boCode"/>
+        <result column="bo_name" property="boName"/>
+        <association property="tableName" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="table_name" property="id" />
+        </association>
+        <association property="codeColumnName" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="code_column_name" property="id" />
+        </association>
+        <association property="seqScope" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="seq_scope" property="id" />
+        </association>
+        <association property="assignColumnName" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="assign_column_name" property="id" />
+        </association>
+    </resultMap>
+
+
+    <select id="selectCoderuleboList" resultMap="BaseCoderuleBoMap">
+        select * from wsd_base_coderule_bo c order by c.sort_num
+    </select>
+
+    <select id="selectCoderuleboById" resultMap="BaseCoderuleBoMap">
+        select * from wsd_base_coderule_bo c
+        where c.id = #{id}
+    </select>
+
+    <select id="selectCoderuleboByBoCode" resultMap="BaseCoderuleBoMap">
+        select * from wsd_base_coderule_bo c
+        where c.bo_code = #{boCode}
+    </select>
+
+</mapper>

@@ -1,0 +1,119 @@
+
+adminauth:
+  map:
+    2:
+      - SM
+      - SM-MENU
+      - SM-USER
+      - SM-ORG
+      #- SM-IPT
+      - WM
+      - WM-DEFINE
+      - WM-BUSSI
+    3:
+      - SM
+      - SM-ROLE
+      #- SM-LB
+      - SYS-TMM
+      - SM-USER
+      - SM-COMUSRLOG
+    4:
+      - SM
+      - SM-COMUSRLOG
+      - SM-ADMLOG
+    5:
+      - SM
+      - SM-MENU
+      - SM-USER
+      - SM-ROLE
+      #- SM-LB
+      - SM-ORG
+      #- SM-IPT
+      - SYS-TMM
+      - SM-COMUSRLOG
+      - SM-ADMLOG
+      - WM
+      - WM-DEFINE
+      - WM-BUSSI
+      - WM-VAR
+      - SM-TIME-SETTING
+    6:
+      - SM
+      - SM-MENU
+menus:
+  system:
+    - SM
+    - WM
+    - WFFORM
+
+#    - PM-TASK
+  built_in:
+    - SM
+    - SM-MENU
+    - SM-USER
+    - SM-ROLE
+    #- SM-LB
+    - SM-ORG
+    #- SM-IPT
+    - SYS-TMM
+    - SM-COMUSRLOG
+    - SM-ADMLOG
+    - WM
+    - WM-DEFINE
+    - WM-BUSSI
+    - WM-VAR
+    - BM
+    - RULETYPE
+    - BM-DICT
+    - BM-CLASSIFY
+    - BM-CALENDAR
+    - BM-CURRENY
+    - BM-GLOBALD
+    - BM-TMPL-PLAN
+    - BM-TMPL-DELV
+    - BM-TMPL-DOC
+    - BM-CODERULE
+    - DM
+    - DM-TEMPORARY
+    - DM-USERGROUP
+    - DM-CORP
+    - DM-PROJECT
+    - DM-FAVORITE
+    - DM-RECYCLEBIN
+    - CM
+    - CM-QUESTION
+    - CM-MEETING
+    - RM
+    - RM-ROLE
+    - RM-LIST
+    - RM-ANAL
+    - ST
+    - PM-DEFINE
+    - PM-TASK
+    - PM-CHANGE
+    - PM-FEEDBACK
+    - IM
+    - IM-EPS
+    - IM-PREPA
+    - IM-PROJECT
+    - IM-DELV
+    - IM-PROJTEAM
+    - OM
+    - OM-DEFINE
+    - OM-TASK
+    - OM-FEEDBACK
+    - OM-CHANGE
+    - STATIS
+    - STATIS-RESOURCES
+    - STATIS-PROJMAP
+    - STATIS-EVMS
+    - SM-TIME-SETTING
+
+
+sys:
+  tmm:
+    #三员管理开启（1：开启  0：关闭）
+    enable: 0
+  log:
+    #日志（1：开启  0：关闭）
+    enable: 0

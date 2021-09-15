@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCalendarMapper">
+
+    <select id = "selectOneCalendarFromPropject" resultType="java.util.Map">
+        select p.* from wsd_plan_project p
+           where p.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+         limit 1
+    </select>
+
+    <select id = "selectOneCalendarFromDefine" resultType="java.util.Map">
+        select d.* from wsd_plan_define d
+        where d.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+    <select id = "selectOneCalendarFromTask" resultType="java.util.Map">
+        select t.* from wsd_plan_task t
+        where t.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+    <select id = "selectOneCalendarFromPrepa" resultType="java.util.Map">
+        select pre.* from wsd_plan_prepa pre
+        where pre.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+    <select id = "selectOneCalendarRsrcMaterial" resultType="java.util.Map">
+        select rm.* from wsd_rsrc_material rm
+        where rm.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+    <select id = "selectOneCalendarRsrcEquip" resultType="java.util.Map">
+        select re.* from wsd_rsrc_equip re
+        where re.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+    <select id = "selectOneCalendarRsrcUser" resultType="java.util.Map">
+        select ru.* from wsd_rsrc_user ru
+        where ru.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+    <select id = "selectOneCalendarRsrcRole" resultType="java.util.Map">
+        select rr.* from wsd_rsrc_role rr
+        where rr.calendar_id in
+        <foreach collection="calendarIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+        limit 1
+    </select>
+
+</mapper>

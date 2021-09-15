@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.RoleMapper">
+
+    <select id="selectRoleVoById" resultType="com.wisdom.acm.sys.vo.SysRoleVo">
+        select r.id,r.role_name roleName,r.role_code roleCode,r.role_desc roleDesc from wsd_sys_role r where r.id = #{roleId}
+    </select>
+
+    <select id="selectRoleAll" resultType="com.wisdom.acm.sys.vo.SysRoleVo">
+        select r.id,r.role_name roleName,r.role_code roleCode,r.role_desc roleDesc from wsd_sys_role r
+    </select>
+
+    <select id="selectRoleBySearch" resultType="com.wisdom.acm.sys.vo.SysRoleVo">
+        select r.id,r.role_name roleName,r.role_code roleCode,r.role_desc roleDesc from wsd_sys_role r
+        <where>
+            <if test="search.searcher != '' and search.searcher != null">
+                (r.role_name like concat('%',#{search.searcher},'%')
+                or
+                r.role_code like concat('%',#{search.searcher},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRolesByIds" resultType="com.wisdom.acm.sys.vo.SysRoleVo">
+        select r.id,r.role_name roleName,r.role_code roleCode,r.role_desc roleDesc from wsd_sys_role r
+        where
+        <choose>
+            <when test="roleIds != null and roleIds.size() > 0">
+                r.id in
+                <foreach collection="roleIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </when>
+            <otherwise>
+                1 = 2
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

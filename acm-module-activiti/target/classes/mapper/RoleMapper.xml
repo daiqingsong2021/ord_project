@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.activiti.mapper.RoleMapper">
+	<resultMap id="RoleInfoMap" type="com.wisdom.acm.activiti.po.Role">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="code" column="role_code"/>
+		<result property="name" column="role_name" />
+	</resultMap>
+
+	<select id="getCount" resultType="java.lang.Integer">
+		select count(*) from wsd_sys_role r
+		<if test="findContent !=null and findContent != ''">
+			where upper(r.role_code) like concat('%', #{findContent}, '%') or upper(r.role_name) like concat('%', #{findContent}, '%')
+		</if>
+	</select>
+
+	<select id="getList" resultMap="RoleInfoMap">
+		select r.id,r.role_code,r.role_name from wsd_sys_role r
+		<if test="findContent !=null and findContent != ''">
+			where upper(r.role_code) like concat('%', #{findContent}, '%') or upper(r.role_name) like concat('%', #{findContent}, '%')
+		</if>
+		order by r.role_name
+	</select>
+
+	<select id="getListById" resultMap="RoleInfoMap">
+		select r.id,r.role_code,r.role_name from wsd_sys_role r
+		where
+		<choose>
+			<when test="roleIds != null and roleIds.size() > 0">
+				r.id in
+				<foreach collection="roleIds" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				1 = 2
+			</otherwise>
+		</choose>
+		order by r.role_name
+	</select>
+
+</mapper>

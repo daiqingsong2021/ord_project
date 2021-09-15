@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.message.SmsHistoryDetailsMapper">
+
+    <resultMap id="smsHistoryDetailsVo" type="com.wisdom.acm.dc2.vo.message.SmsHistoryDetailsVo">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id" />
+        <result property="smsSendNumber" column="sms_send_number"/>
+        <result property="targetNumber" column="target_number" />
+        <result property="sendStatus" column="send_status" />
+        <result property="receiveStatus" column="receive_status" />
+        <result property="receiveNum" column="receive_num" />
+        <result property="smsSendTime" column="sms_send_time" />
+    </resultMap>
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="smsHistoryDetailsVo">
+	    SELECT
+		a.*
+		FROM
+		odr_sms_history a
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="taskId != null and taskId != '' ">
+                AND a.task_id =#{taskId}
+            </if>
+            <if test="receiveStatus != null and receiveStatus != '' ">
+                AND a.receive_status =#{receiveStatus}
+            </if>
+            <if test="sendStatus != null and sendStatus != '' ">
+                AND a.send_status =#{sendStatus}
+            </if>
+            <if test="searcher != null and searcher != ''">
+            	AND a.target_number like concat('%', #{searcher}, '%')
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+    
+ <update id="updateSmsHistoryDetails" parameterType="java.util.Map">
+    update odr_sms_history 
+      <set> 
+      <if test="sendStatus != null">
+        send_status = #{sendStatus},
+      </if>
+      <if test="receiveStatus != null">
+        receive_status = #{receiveStatus},
+      </if>
+      </set>
+      <where>
+      task_id = #{taskId} AND target_number = #{targetNumber}
+      </where>
+</update>
+
+    
+<delete id="deleteSmsHistoryDetails" parameterType="java.util.List">
+        delete from odr_sms_history
+        <where>
+         <if test="taskIds != null">
+                AND task_id IN
+                <foreach collection="taskIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+</delete>
+
+<select id="targetNumberNum" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(a.id) as targetNumberNum from odr_sms_history  a
+       <where>
+            <if test="receiveStatus != null and receiveStatus != '' ">
+                AND a.receive_status =#{receiveStatus}
+            </if>
+            <if test="sendStatus != null and sendStatus != '' ">
+                AND a.send_status =#{sendStatus}
+            </if>
+            <if test="targetNumber != null and targetNumber != ''">
+            	AND a.target_number =#{targetNumber}
+            </if>
+             <if test="smsTimeStart != null and smsTimeStart != ''">
+            	AND a.sms_send_time &gt;=#{smsTimeStart}
+        	</if> 
+        	<if test="smsTimeEnd != null and smsTimeEnd != ''">
+           		AND a.sms_send_time &lt;=#{smsTimeEnd}
+        	</if>
+        </where>
+</select>
+
+
+</mapper>
+

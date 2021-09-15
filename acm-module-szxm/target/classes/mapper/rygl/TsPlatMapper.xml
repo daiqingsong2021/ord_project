@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.TsPlatMapper">
+
+    <resultMap id="tsPlatVo" type="com.wisdom.acm.szxm.vo.rygl.TsPlatVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="creater" column="creater"/>
+        <result property="createTime" column="creat_time"/>
+    </resultMap>
+
+
+
+    <select id="selectTsPlatList" parameterType="java.util.Map" resultMap="tsPlatVo">
+        select a.*,u.ACTU_NAME as creater from szxm_rygl_tsplat a
+        left join wsd_sys_user u on u.id=a.creator
+        <where>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.PROJ_INFO_ID = #{projInfoId}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+</mapper>
+

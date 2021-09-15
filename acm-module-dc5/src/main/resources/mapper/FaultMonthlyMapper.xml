@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc5.mapper.FaultMonthlyMapper">
+
+    <select id="selectFaultMonthByParams" parameterType="java.util.Map" resultType="com.wisdom.acm.dc5.po.FaultMonthlyPo">
+        select id,record_month as recordMonth,line as line,major_vehicle as majorVehicle,major_power as majorPower,
+        major_signal as majorSignal,major_communication as majorCommunication,major_construction as majorConstruction,
+        major_mechatronics as majorMechatronics,major_afc as majorAfc,major_other as majorOther,total_fault as totalFault
+        from odr_fault_monthly
+        where 1=1
+            <if test="line != null and line != '' ">
+                AND LINE =#{line}
+            </if>
+            <if test="up2MonthRecordTime != null and up2MonthRecordTime != '' ">
+                AND record_month = #{up2MonthRecordTime}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+    </select>
+
+</mapper>
+

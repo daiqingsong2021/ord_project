@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Activiti 管理</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/loginstyle.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+            <div class="form-horizontal">
+                <span class="heading">Activiti 管理登录</span>
+                <div class="form-group">
+                    <input name="username" type="text" class="form-control" id="username" value="请输入用户名"/>
+                </div>
+                <div class="form-group">
+                    <input name="password" type="password" class="form-control" id="password" value="请输入密码"/>
+                </div>
+                <div class="form-group">
+                    <li class="li4">
+                        <input class="submit" type="submit" id="btnSubmit" value="登录"/>
+                    </li>
+                    <li class="li3">
+                        <!--<a  class="visitor" href="index.html">游客身份进入</a>-->
+                    </li>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<!--动态背景-->
+<script th:src="@{/js/jquery.gradientify.min.js}"></script>
+<script th:inline="javascript"> var ctx = [[@{/}]]; </script>
+<script>
+    $(document).ready(function () {
+        $("body").gradientify({
+            gradients: [
+                {start: [49, 76, 172], stop: [242, 159, 191]},
+                {start: [255, 103, 69], stop: [240, 154, 241]},
+                {start: [33, 229, 241], stop: [235, 236, 117]}
+            ]
+        });
+    });
+</script>
+
+<!--登录验证-->
+<script type="text/javascript">
+    $('#username').focus(function () {
+        $('#username').val('');
+    })
+    $('#password').focus(function () {
+        $('#password').val('');
+    })
+    $('#username').blur(function () {
+        if ($('#username').val() == '') {
+            $('#username').val('用户名不能为空');
+            $('#username').css({'color': 'red'});
+        }
+    })
+
+    $('#username').focus(function () {
+        $('#username').css({'color': '#ADADAD'});
+    });
+
+    $('#password').blur(function () {
+        if ($('#password').val() == '') {
+            $('#password').val('密码不能为空');
+            $('#password').css({'color': 'red'});
+        }
+    })
+    $('#password').focus(function () {
+        $('#password').css({'color': '#ADADAD'});
+    });
+
+    $('.submit').click(function () {
+        $.post("login", {loginId: $('#username').val(), password: $('#password').val()}, function (result) {
+            if (result.code == -1) {
+                alert("账户名密码错误！")
+                $('#username').val('');
+                $('#password').val('');
+            } else {
+                window.localStorage.setItem("user", result.data.id);
+                location.href = ctx + 'generateModel?userId=' + result.data.id;
+            }
+        });
+    })
+</script>
+</html>

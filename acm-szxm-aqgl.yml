@@ -1,0 +1,7210 @@
+swagger: '2.0'
+info:
+  title: SZXM - AQGLAPI
+  description: SZXM安全管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: user
+  description: 用户管理
+- name: subcontrApproval
+  description: 安全管理----分包审批
+- name: trainDisclosure
+  description: 安全管理----培训交底
+- name: securityCheck
+  description: 安全管理----安全检查
+- name: constructEvaluation
+  description: 安全管理----施工考评
+- name: securityExamination
+  description: 安全管理----安全考核
+- name: riskIndentify
+  description: 安全管理----风险识别
+- name: riskRegist
+  description: 安全管理----风险登记
+- name: keyPointAccept
+  description: 安全管理----关键节点验收
+- name: mortgageRefund
+  description: 安全管理----抵押金退还
+- name: fileUpload
+  description: 安全管理----文件上报
+- name: trouble
+  description: 安全管理----隐患管理
+- name: dangerPlan
+  description: 安全管理----专项方案
+- name: dangerProject
+  description: 安全管理----危大工程验收
+
+produces:
+- application/json
+paths:
+  /auth/jwt/token:
+    post:
+      tags:
+      - user
+      description: 获取token
+      summary: 获取token
+      operationId: userToken
+      parameters:
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/UserNamePwdVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/login/user/info:
+    get:
+      tags:
+      - user
+      description: 用户登录
+      summary: 用户登录
+      operationId: getUserInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserLoginVo'
+
+  /szxm/aqgl/subcontrApproval/querySubcontrApprovalList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - subcontrApproval
+      summary: 查询分包审批数据
+      description: 分包审批数据
+      operationId: querySubcontrApprovalList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: subcontrType
+          in: query
+          description: 分包类型
+          type: string
+        - name: status
+          in: query
+          description: 状态
+          type: string
+        - name: startTime
+          in: query
+          description: 开始时间(yyyy-MM-dd)
+          type: string
+          required: false
+        - name: endTime
+          in: query
+          description: 完成时间(yyyy-MM-dd)
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/queryFlowSubcontrApprovalList:
+    get:
+      tags:
+        - subcontrApproval
+      description: 搜索流程相关分包审批数据
+      summary: 搜索流程相关分包审批数据
+      operationId: queryFlowSubcontrApprovalList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: ids
+          in: query
+          description: 主键IDs
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+        - name: startTime
+          in: query
+          description: 开始时间
+          required: false
+          type: string
+        - name: endTime
+          in: query
+          description: 完成时间
+          required: false
+          type: string
+        - name: subcontrType
+          in: query
+          description: 分包类型
+          required: false
+          type: string
+        - name: searcher
+          in: query
+          description: 搜索
+          required: false
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/querySubcontrApproval/{id}:
+    get:
+      tags:
+        - subcontrApproval
+      summary: 查询单个分包审批
+      description: 查询单个分包审批
+      operationId: querySubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/addSubcontrApproval:
+    post:
+      tags:
+        - subcontrApproval
+      description: 增加分包审批
+      summary: 增加设分包审批
+      operationId: addSubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加分包审批信息
+          required: true
+          schema:
+            $ref: '#/definitions/SubcontrApprovalAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/updateSubcontrApproval:
+    put:
+      tags:
+        - subcontrApproval
+      description: 修改分包审批信息
+      summary: 修改分包审批信息
+      operationId: updateSubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改分包审批信息
+          required: true
+          schema:
+            $ref: '#/definitions/SubcontrApprovalUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SubcontrApprovalVo'
+
+  /szxm/aqgl/subcontrApproval/delSubcontrApproval:
+    delete:
+      tags:
+        - subcontrApproval
+      description: 删除分包审批信息
+      summary: 删除分包审批信息
+      operationId: delSubcontrApproval
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/trainDisclosure/queryTrainDisclosureList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询培训交底数据列表
+      description: 查询培训交底数据列表
+      operationId: queryTrainDisclosureList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: intExt
+          in: query
+          description: 内外部培训 (0内部培训 ， 1外部培训)
+          type: string
+          required: true
+        - name: sponsorDep
+          in: query
+          description: 发起部门
+          type: string
+        - name: fileStatus
+          in: query
+          description: 附件状态（0未上传，1已上传，2全）
+          type: integer
+        - name: trainUnitId
+          in: query
+          description: 培训单位名称ID
+          type: string
+        - name: trainType
+          in: query
+          description: 培训类型（数字字典）
+          type: string
+        - name: trainTime
+          in: query
+          description: 培训时间（年）
+          type: integer
+        - name: trainName
+          in: query
+          description: 培训名称
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TrainDisclosureVo'
+
+  /szxm/aqgl/trainDisclosure/queryFlowTrainDisclosureList:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询流程相关培训交底数据列表
+      description: 查询流程相关培训交底数据列表
+      operationId: queryFlowTrainDisclosureList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: sponsorDep
+          in: query
+          description: 发起部门
+          type: string
+        - name: fileStatus
+          in: query
+          description: 附件状态（0未上传，1已上传，2全）
+          type: integer
+        - name: trainUnitName
+          in: query
+          description: 培训单位名称
+          type: string
+        - name: trainType
+          in: query
+          description: 培训类型（数字字典）
+          type: string
+        - name: trainTime
+          in: query
+          description: 培训时间（年）
+          type: integer
+        - name: trainName
+          in: query
+          description: 培训名称
+          type: string
+        - name: ids
+          in: query
+          description: 主键IDs
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TrainDisclosureVo'
+
+  /szxm/aqgl/trainDisclosure/queryTrainDisclosure/{id}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询单个培训交底
+      description: 查询单个培训交底
+      operationId: queryTrainDisclosure
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/TrainDisclosureVo'
+
+  /szxm/aqgl/trainDisclosure/addTrainDisclosure:
+    post:
+      tags:
+        - trainDisclosure
+      description: 增加培训交底
+      summary: 增加设培训交底数据
+      operationId: addTrainDisclosure
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加培训交底信息
+          required: true
+          schema:
+            $ref: '#/definitions/TrainDisclosureAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/TrainDisclosureVo'
+
+  /szxm/aqgl/trainDisclosure/updateTrainDisclosure:
+    put:
+      tags:
+        - trainDisclosure
+      description: 修改培训交底信息
+      summary: 修改培训交底信息
+      operationId: updateTrainDisclosure
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改培训交底信息
+          required: true
+          schema:
+            $ref: '#/definitions/TrainDisclosureUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TrainDisclosureVo'
+
+  /szxm/aqgl/trainDisclosure/delTrainDisclosure:
+    delete:
+      tags:
+        - trainDisclosure
+      description: 删除培训交底信息
+      summary: 删除培训交底信息
+      operationId: delTrainDisclosure
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/trainDisclosure/queryTrainStaffList/{trainId}/{intExtStaff}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询培训人员信息列表
+      description: 查询培训人员信息列表
+      operationId: queryTrainStaffList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: trainId
+          in: path
+          description: 培训id
+          required: true
+          type: integer
+        - name: intExtStaff
+          in: path
+          description: 内外部人员（0内部 1外部）
+          required: true
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/trainDisclosure/queryTrainStaff/{id}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询单个培训人员信息
+      description: 查询单个培训人员信息
+      operationId: queryTrainStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/trainDisclosure/queryRyglPeopleList/{trainUnitId}/{trainId}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询人员信息列表
+      description: 查询人员信息列表
+      operationId: queryRyglPeopleList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: trainUnitId
+          in: path
+          description: 培训单位id
+          required: true
+          type: integer
+        - name: trainId
+          in: path
+          description: 培训主表id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/PeopleVo'
+
+  /szxm/aqgl/trainDisclosure/queryOrgPeopleList:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询人员信息列表
+      description: 查询人员信息列表
+      operationId: queryOrgPeopleList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: sponsorDepId
+          in: query
+          description: 发起部门id(安质部不需要传id)
+          required: false
+          type: integer
+        - name: sponsorDep
+          in: query
+          description: 发起部门
+          required: true
+          type: string
+        - name: trainType
+          in: query
+          description: 培训类型
+          required: true
+          type: string
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/PeopleInVo'
+
+  /szxm/aqgl/trainDisclosure/queryAllDep:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询人员信息列表
+      description: 查询人员信息列表
+      operationId: queryAllDep
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/OrgVo'
+
+  /szxm/aqgl/trainDisclosure/addTrainStaffList:
+    post:
+      tags:
+        - trainDisclosure
+      description: 增加培训人员信息
+      summary: 增加培训人员信息
+      operationId: addTrainStaffList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加培训人员信息
+          required: true
+          schema:
+            $ref: '#/definitions/TrainStaffAddVo'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/trainDisclosure/queryOutTrainTimeStatisticsList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 查询外部培训学时统计
+      description: 查询外部培训学时统计
+      operationId: queryOutTrainTimeStatisticsList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+          required: false
+        - name: trainUnitName
+          in: query
+          description: 培训单位名称
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutStaffTrainVo'
+
+  /szxm/aqgl/trainDisclosure/queryPeopleOutTrainTimeStatisticsList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 外部培训单个人员统计数据的查询
+      description: 外部培训单个人员统计数据的查询
+      operationId: queryPeopleOutTrainTimeStatisticsList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: workerId
+          in: query
+          description: 人员id
+          type: integer
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutStaffTrainVo'
+
+  /szxm/aqgl/trainDisclosure/addTrainStaffReportList:
+    post:
+      tags:
+        - trainDisclosure
+      description: 一键上报功能的编写
+      summary: 一键上报功能的编写
+      operationId: addTrainStaffReportList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 一键上报功能的编写
+          required: true
+          schema:
+            $ref: '#/definitions/TrainStaffAddVoReport'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/trainDisclosure/updateTrainStaff:
+    put:
+      tags:
+        - trainDisclosure
+      description: 修改培训人员信息
+      summary: 修改培训人员信息
+      operationId: updateTrainStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改培训人员信息
+          required: true
+          schema:
+            $ref: '#/definitions/TrainStaffUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/trainDisclosure/delTrainStaff:
+    delete:
+      tags:
+        - trainDisclosure
+      description: 删除培训人员信息
+      summary: 删除培训人员信息
+      operationId: delTrainStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/trainDisclosure/queryTrainTimeStatisticsList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 学时统计数据的查询
+      description: 学时统计数据的查询
+      operationId: queryTrainTimeStatisticsList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: sponsorDep
+          in: query
+          description: 发起部门
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/trainDisclosure/getOutLearnHoursStatistics/export:
+    post:
+      tags:
+        - trainDisclosure
+      summary: 外部培训汇总导出（格式为XSLX文件）
+      description: 外部培训汇总导出（格式为XSLX文件）
+      operationId: getOutLearnHoursStatistics
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+          required: false
+        - name: trainUnitName
+          in: query
+          description: 培训单位名称
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/trainDisclosure/getLearnHoursStatistics/export:
+    post:
+      tags:
+        - trainDisclosure
+      summary: 内部培训汇总导出（格式为XSLX文件）
+      description: 内部培训汇总导出（格式为XSLX文件）
+      operationId: dowLearnHoursStatisticsTemp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: sponsorDep
+          in: query
+          description: 发起部门
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/trainDisclosure/queryPeopleStatisticsList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trainDisclosure
+      summary: 人员内部学时统计数据的查询
+      description: 人员内部学时统计数据的查询
+      operationId: queryPeopleStatisticsList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: workerId
+          in: query
+          description: 人员id
+          type: integer
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TrainStaffVo'
+
+  /szxm/aqgl/securityCheck/querySecurityCheckList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - securityCheck
+      summary: 查询安全检查数据列表
+      description: 查询安全检查数据列表
+      operationId: querySecurityCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: jclx
+          in: query
+          description: 检查类型
+          type: string
+        - name: checkStatus
+          in: query
+          description: 检查形式（必填）
+          type: string
+          required: true
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: checkId
+          in: query
+          description: 主键ID
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/app/securityCheck/queryMoveSecurityCheckList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - securityCheck
+      summary: 移动端查询安全检查数据列表
+      description: 移动端查询安全检查数据列表
+      operationId: queryMoveSecurityCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: type
+          in: query
+          description: （0是创建人的，1是负责人的）
+          type: string
+        - name: jclx
+          in: query
+          description: 检查类型
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/queryFlowSecurityCheckList:
+    get:
+      tags:
+        - securityCheck
+      description: 搜索流程相关安全检查数据
+      summary: 搜索流程相关安全检查数据
+      operationId: queryFlowSecurityCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: jclx
+          in: query
+          description: 检查类型
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/querySecurityCheck:
+    get:
+      tags:
+        - securityCheck
+      summary: 根据主键id查询安全检查信息
+      description: 根据主键id查询安全检查信息
+      operationId: querySecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 主键ID
+          required: true
+          type: string
+        - name: checkStatus
+          in: query
+          description: 检查形式（必填）（0个人检查，1组织检查）
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/dySecurityCheck:
+    post:
+      tags:
+        - securityCheck
+      summary: 根据主键id查询安全检查信息然后打印数据
+      description: 根据主键id查询安全检查信息然后打印数据
+      operationId: dySecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 主键ID
+          required: true
+          type: string
+        - name: checkStatus
+          in: query
+          description: 检查形式（必填）（0个人检查，1组织检查）
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/queryZgzrrInfo:
+    get:
+      tags:
+        - securityCheck
+      summary: 查询安全整改责任人信息
+      description: 查询安全整改责任人信息 增加时必须选择标段才能调用
+      operationId: queryZgzrrInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionId
+          in: query
+          description: 必传
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/ZgzrrInfoVo'
+
+  /szxm/aqgl/securityCheck/addSecurityCheck:
+    post:
+      tags:
+        - securityCheck
+      description: 增加安全检查信息
+      summary: 增加安全检查信息
+      operationId: addSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加安全检查信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityCheckAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/updateSecurityCheck:
+    put:
+      tags:
+        - securityCheck
+      description: 修改安全检查信息
+      summary: 修改安全检查信息
+      operationId: updateSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改安全检查信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityCheckUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/delSecurityCheck:
+    delete:
+      tags:
+        - securityCheck
+      description: 删除安全检查信息
+      summary: 删除安全检查信息
+      operationId: delSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityCheck/queryCheckTeamList/{checkId}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - securityCheck
+      summary: 根据检查主键Id查询检查小组数据信息
+      description: 根据检查主键Id查询检查小组数据信息
+      operationId: queryCheckTeamList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: checkId
+          in: path
+          description: 安全检查主表id
+          required: true
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CheckTeamVo'
+
+  /szxm/aqgl/securityCheck/addCheckTeam:
+    post:
+      tags:
+        - securityCheck
+      description: 分配检查小组数据
+      summary: 分配检查小组数据
+      operationId: addCheckTeam
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 分配检查小组数据
+          required: true
+          schema:
+            $ref: '#/definitions/CheckTeamAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/CheckTeamVo'
+
+  /szxm/aqgl/securityCheck/delCheckTeam:
+    delete:
+      tags:
+        - securityCheck
+      description: 根据安全检查小组id删除数据
+      summary: 根据安全检查小组id删除数据
+      operationId: delCheckTeam
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityCheck/queryOutUnitSecurityCheckList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - securityCheck
+      summary: 根据条件查询外部单位检查数据
+      description: 根据条件查询外部单位检查数据
+      operationId: queryOutUnitSecurityCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: jclx
+          in: query
+          description: 检查类型
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OutUnitCheckVo'
+
+  /szxm/aqgl/securityCheck/queryOutUnitSecurityCheck/{id}:
+    get:
+      tags:
+        - securityCheck
+      summary: 查询外部单位安全检查信息
+      description: 查询外部单位安全检查信息
+      operationId: queryOutUnitSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/OutUnitCheckVo'
+
+  /szxm/aqgl/securityCheck/addOutUnitSecurityCheck:
+    post:
+      tags:
+        - securityCheck
+      description: 添加外部单位检查数据
+      summary: 添加外部单位检查数据
+      operationId: addOutUnitSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加外部单位检查数据
+          required: true
+          schema:
+            $ref: '#/definitions/OutUnitCheckAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/CheckTeamVo'
+
+  /szxm/aqgl/securityCheck/updateOutUnitSecurityCheck:
+    put:
+      tags:
+        - securityCheck
+      description: 修改外部单位检查数据
+      summary: 修改外部单位检查数据
+      operationId: updateOutUnitSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改外部单位检查数据
+          required: true
+          schema:
+            $ref: '#/definitions/OutUnitCheckUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SecurityCheckVo'
+
+  /szxm/aqgl/securityCheck/delOutUnitSecurityCheck:
+    delete:
+      tags:
+        - securityCheck
+      description: 删除外部单位检查数据
+      summary: 删除外部单位检查数据
+      operationId: delOutUnitSecurityCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/constructEvaluation/queryConstructEvaluationList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - constructEvaluation
+      summary: 查询施工考评list数据
+      description: 查询施工考评list数据
+      operationId: queryConstructEvaluationList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，必传
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          type: integer
+        - name: season
+          in: query
+          description: 季度
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ConstructEvaluationVo'
+
+  /szxm/aqgl/constructEvaluation/queryFlowConstructEvaluationList:
+    get:
+      tags:
+        - constructEvaluation
+      description: 搜索流程相关施工考评数据
+      summary: 搜索流程相关施工考评数据
+      operationId: queryFlowConstructEvaluationList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          required: false
+          type: integer
+        - name: season
+          in: query
+          description: 季度
+          required: false
+          type: integer
+        - name: ids
+          in: query
+          description: 主键IDs
+          type: integer
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ConstructEvaluationVo'
+
+  /szxm/aqgl/constructEvaluation/queryConstructEvaluation/{id}:
+    get:
+      tags:
+        - constructEvaluation
+      summary: 查询施工考评数据
+      description: 查询安施工考评数据
+      operationId: queryConstructEvaluation
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/ConstructEvaluationVo'
+
+  /szxm/aqgl/constructEvaluation/addConstructEvaluation:
+    post:
+      tags:
+        - constructEvaluation
+      description: 增加施工考评数据
+      summary: 增加施工考评数据
+      operationId: addConstructEvaluation
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加施工考评数据
+          required: true
+          schema:
+            $ref: '#/definitions/ConstructEvaluationAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/ConstructEvaluationVo'
+
+  /szxm/aqgl/constructEvaluation/updateConstructEvaluation:
+    put:
+      tags:
+        - constructEvaluation
+      description: 修改施工考评数据
+      summary: 修改施工考评数据
+      operationId: updateConstructEvaluation
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改施工考评数据
+          required: true
+          schema:
+            $ref: '#/definitions/ConstructEvaluationUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ConstructEvaluationVo'
+
+  /szxm/aqgl/constructEvaluation/delConstructEvaluation:
+    delete:
+      tags:
+        - constructEvaluation
+      description: 删除施工考评数据
+      summary: 删除施工考评数据
+      operationId: delConstructEvaluation
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/constructEvaluation/queryEvaluateCheckList/{testId}/{checkType}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - constructEvaluation
+      summary: 查询考评检查关联表信息
+      description: 查询考评检查关联表信息
+      operationId: queryEvaluateCheckList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: testId
+          in: path
+          description: 施工考评主表id
+          required: true
+          type: integer
+        - name: checkType
+          in: path
+          description: 检查类型
+          required: true
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EvaluateCheckVo'
+
+  /szxm/aqgl/constructEvaluation/updateEvaluateCheck:
+    put:
+      tags:
+        - constructEvaluation
+      description: 修改考评检查关联表信息及主表数据的相关逻辑更新
+      summary: 修改考评检查关联表信息及主表数据的相关逻辑更新
+      operationId: updateEvaluateCheck
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改考评检查关联表信息及主表数据的相关逻辑更新
+          required: true
+          schema:
+            $ref: '#/definitions/EvaluateCheckUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/EvaluateCheckVo'
+
+  /szxm/aqgl/constructEvaluation/getConstructEvaluation/export:
+    post:
+      tags:
+        - constructEvaluation
+      summary: 施工考评汇总导出（格式为XSLX文件）
+      description: 施工考评汇总导出（格式为XSLX文件）
+      operationId: dowConstructEvaluationTemp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: year
+          in: query
+          description: 年份
+          required: false
+          type: integer
+        - name: season
+          in: query
+          description: 季度
+          required: false
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/monthReport/queryMonthReport/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - fileUpload
+      summary: 查询安全月报
+      description: 查询安全月报
+      operationId: queryMonthReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID 视图为外部单位视图的时候，必填
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件 文档编号/单位名称
+          type: string
+          required: false
+        - name: companyId
+          in: query
+          description: 部门ID（内部视图会传）
+          type: string
+          required: false
+        - name: year
+          in: query
+          description: 年份
+          type: string
+          required: false
+        - name: month
+          in: query
+          description: 月份
+          type: string
+        - name: type
+          in: query
+          description: 0 部门 1 外部单位
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MonThReportVo'
+
+  /szxm/aqgl/monthReport/getFlowMonthReportList:
+    get:
+      tags:
+        - fileUpload
+      description:  查询安全月报 流程用
+      summary: 查询安全月报 流程用
+      operationId: getFlowMonthReportList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID 视图为外部单位视图的时候，必填
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件 文档编号/单位名称
+          type: string
+          required: false
+        - name: companyId
+          in: query
+          description: 部门ID（内部视图会传）
+          type: string
+          required: false
+        - name: year
+          in: query
+          description: 年份
+          type: string
+          required: false
+        - name: month
+          in: query
+          description: 月份
+          type: string
+          required: false
+        - name: type
+          in: query
+          description: 0 部门 1 外部单位
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MonThReportVo'
+
+  /szxm/aqgl/monthReport/queryMonthReport/{id}:
+    get:
+      tags:
+        - fileUpload
+      summary: 查询单个安全月报
+      description: 查询单个安全月报
+      operationId: queryMonthReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/MonThReportVo'
+
+  /szxm/aqgl/monthReport/addMonthReport:
+    post:
+      tags:
+        - fileUpload
+      description: 增加安全月报
+      summary: 增加安全月报
+      operationId: addMonthReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加安全月报信息
+          required: true
+          schema:
+            $ref: '#/definitions/MonThReportAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/MonThReportVo'
+
+  /szxm/aqgl/monthReport/deleteMonthReport:
+    delete:
+      tags:
+        - fileUpload
+      description: 删除安全月报
+      summary: 删除安全月报
+      operationId: deleteMonthReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - name: type
+          in: query
+          description: 类型，0 部门 1 外部单位
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/queryRcReport/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - fileUpload
+      summary: 查询日常报表
+      description: 查询日常报表
+      operationId: queryRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID 视图类型为外部单位视图的，必传
+          type: integer
+          required: false
+        - name: viewType
+          in: query
+          description: 视图类型 0 部门 1外部单位
+          type: string
+          required: true
+        - name: status
+          in: query
+          description:  0 未下发 1 已下发 2已关闭
+          type: string
+          required: false
+        - name: xfSjStart
+          in: query
+          description: 下发开始时间
+          type: string
+          required: false
+        - name: xfSjEnd
+          in: query
+          description: 下发结束时间
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RcReportVo'
+
+  /szxm/aqgl/rcRcport/selectChoseOrg:
+    get:
+      tags:
+        - fileUpload
+      summary: 责任单位下拉选择
+      description: 责任单位下拉选择
+      operationId: selectChoseOrg
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID 视图类型为外部单位视图的，必传
+          type: integer
+          required: false
+        - name: viewType
+          in: query
+          description: 视图类型 0 部门 1外部单位
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/selectChoseRole:
+    get:
+      tags:
+        - fileUpload
+      summary: 责任角色下拉选择
+      description: 责任角色下拉选择
+      operationId: selectChoseRole
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID 视图类型为外部单位视图的，必传
+          type: integer
+          required: false
+        - name: viewType
+          in: query
+          description: 视图类型 0 部门 1外部单位
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/addRcReport:
+    post:
+      tags:
+        - fileUpload
+      description: 增加日常报表
+      summary: 增加日常报表
+      operationId: addRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加日常报表信息
+          required: true
+          schema:
+            $ref: '#/definitions/RcReportAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/RcReportVo'
+
+  /szxm/aqgl/rcRcport/updateRcReport:
+    put:
+      tags:
+        - fileUpload
+      description: 更新日常报表
+      summary: 更新日常报表
+      operationId: updateRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 更新日常报表信息
+          required: true
+          schema:
+            $ref: '#/definitions/RcReportUpdateForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/RcReportVo'
+
+  /szxm/aqgl/rcRcport/deleteRcReport:
+    delete:
+      tags:
+        - fileUpload
+      description: 删除日常报表
+      summary: 删除日常报表
+      operationId: deleteRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - name: viewType
+          in: query
+          description: 视图类型，0 部门 1 外部单位
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/publishRcReport:
+    post:
+      tags:
+        - fileUpload
+      description: 发布日常报表
+      summary: 发布日常报表
+      operationId: publishRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 日常报表主键ID
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/closeRcReport:
+    post:
+      tags:
+        - fileUpload
+      description: 关闭日常报表
+      summary: 关闭日常报表
+      operationId: closeRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 日常报表主键ID
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/cbRcReport:
+    post:
+      tags:
+        - fileUpload
+      description: 催报日常报表
+      summary: 催报日常报表
+      operationId: cbRcReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 日常报表主键ID
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/monthReport/cbMonThReport:
+    post:
+      tags:
+        - fileUpload
+      description: 催报安全月报
+      summary: 催报安全月报
+      operationId: cbMonThReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 催报安全月报主键ID
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/{rcReportId}/getRcDetailReport/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - fileUpload
+      summary: 查询日常报表上报详情
+      description: 查询日常报表上报详情
+      operationId: getRcDetailReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: rcReportId
+          in: path
+          description: 日常报表ID
+          type: integer
+          required: true
+        - name: zqStart
+          in: query
+          description: 周期开始时间 默认当前月的开始时间
+          type: string
+          required: false
+        - name: zqEnd
+          in: query
+          description: 周期结束时间 默认当前月的结束时间
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RcDetailVo'
+
+  /szxm/aqgl/rcRcport/bindRcDetailFile:
+    post:
+      tags:
+        - fileUpload
+      description: 上报详情 文件 业务绑定
+      summary: 上报详情 文件 业务绑定
+      operationId: bindRcDetailFile
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 更新日常报表信息
+          required: true
+          schema:
+            $ref: '#/definitions/BindFileForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/rcRcport/getCountRcDetailReport/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - fileUpload
+      summary: 上报统计报表
+      description: 上报统计报表
+      operationId: getCountRcDetailReport
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: viewType
+          in: query
+          description: 0各部门 1外部单位。默认各部门传0
+          type: string
+          required: true
+        - name: companyName
+          in: query
+          description: 组织名称
+          type: string
+          required: false
+        - name: zqStart
+          in: query
+          description: 周期开始时间 默认当前月的开始时间
+          type: string
+          required: false
+        - name: zqEnd
+          in: query
+          description: 周期结束时间 默认当前月的结束时间
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CountRcDetailReportVo'
+
+  /szxm/aqgl/rcRcport/getCountRcDetailReport/export:
+    post:
+      tags:
+        - fileUpload
+      summary: 上报统计报表导出（格式为XSLX文件）
+      description: 上报统计报表导出（格式为XSLX文件）
+      operationId: getCountRcDetailReport_export
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: viewType
+          in: query
+          description: 0各部门 1外部单位。默认各部门传0
+          type: string
+          required: true
+        - name: companyName
+          in: query
+          description: 组织名称
+          type: string
+          required: false
+        - name: zqStart
+          in: query
+          description: 周期开始时间
+          type: string
+          required: false
+        - name: zqEnd
+          in: query
+          description: 周期结束时间
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/trouble/queryTroubleList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - trouble
+      summary: 查询隐患管理
+      description: 查询隐患管理
+      operationId: queryTroubleList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID 必填
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件 隐患编号/隐患名称
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TroubleVo'
+
+
+  /szxm/aqgl/trouble/queryTrouble/{id}:
+    get:
+      tags:
+        - trouble
+      summary: 查询单个隐患管理
+      description: 查询单个隐患管理
+      operationId: queryTrouble
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/TroubleVo'
+
+  /szxm/aqgl/trouble/addTrouble:
+    post:
+      tags:
+        - trouble
+      description: 增加隐患管理
+      summary: 增加隐患管理
+      operationId: addtrouble
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加隐患管理信息
+          required: true
+          schema:
+            $ref: '#/definitions/TroubleAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/TroubleVo'
+
+  /szxm/aqgl/trouble/updateTrouble:
+    put:
+      tags:
+        - trouble
+      description: 修改隐患管理
+      summary: 修改隐患管理
+      operationId: updateTrouble
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加隐患管理信息
+          required: true
+          schema:
+            $ref: '#/definitions/TroubleUpdateForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/TroubleVo'
+
+  /szxm/aqgl/trouble/deleteTrouble:
+    delete:
+      tags:
+        - trouble
+      description: 删除隐患管理
+      summary: 删除隐患管理
+      operationId: deletetrouble
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/dangerPlan/queryDangerPlan/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - dangerPlan
+      description: 查询专项方案
+      summary: 查询专项方案
+      operationId: queryDangerPlan
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态 取数据字典的code ：base.flow.status
+          type: string
+          required: false
+        - name: faName
+          in: query
+          description: 方案名称
+          type: string
+          required: false
+        - name: initTimeStart
+          in: query
+          description: 上报时间开始 yyyy
+          type: string
+          required: false
+        - name: initTimeEnd
+          in: query
+          description: 上报时间结束 yyyy
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DangerPlanVo'
+
+  /szxm/aqgl/dangerPlan/queryFlowDangerPlan:
+    get:
+      tags:
+        - dangerPlan
+      description: 查询专项方案 流程用
+      summary: 查询专项方案  流程用
+      operationId: queryFlowDangerPlan
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: false
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态 取数据字典的code ：base.flow.status
+          type: string
+          required: false
+        - name: faName
+          in: query
+          description: 专项方案名称
+          type: string
+          required: false
+        - name: initTimeStart
+          in: query
+          description: 上报时间开始 yyyy
+          type: string
+          required: false
+        - name: initTimeEnd
+          in: query
+          description: 上报时间结束 yyyy
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DangerPlanVo'
+
+  /szxm/aqgl/dangerPlan/getDangerPlan/{id}:
+    get:
+      tags:
+        - dangerPlan
+      description: 查询单个专项方案
+      summary: 查询单个专项方案
+      operationId: getDangerPlan
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            items:
+              $ref: '#/definitions/DangerPlanVo'
+
+  /szxm/aqgl/dangerPlan/addDangerPlan:
+    post:
+      tags:
+        - dangerPlan
+      description: 增加专项方案
+      summary: 增加专项方案
+      operationId: addDangerPlan
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加专项方案对象
+          required: true
+          schema:
+            $ref: '#/definitions/DangerPlanAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DangerPlanVo'
+
+  /szxm/aqgl/dangerPlan/updateDangerPlan:
+    put:
+      tags:
+        - dangerPlan
+      description: 修改专项方案
+      summary: 修改专项方案
+      operationId: updateDangerPlan
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改专项方案对象
+          required: true
+          schema:
+            $ref: '#/definitions/DangerPlanUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DangerPlanVo'
+
+  /szxm/aqgl/dangerPlan/deleteDangerPlan:
+    delete:
+      tags:
+        - dangerPlan
+      description: 删除专项方案
+      summary: 删除专项方案
+      operationId: deleteDangerPlan
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/dangerProject/queryDangerProject/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - dangerProject
+      description: 查询危大工程验收
+      summary: 查询危大工程验收
+      operationId: queryDangerProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态 取数据字典的code ：base.flow.status
+          type: string
+          required: false
+        - name: title
+          in: query
+          description: 方案名称
+          type: string
+          required: false
+        - name: initTimeStart
+          in: query
+          description: 上报时间开始 yyyy
+          type: string
+          required: false
+        - name: initTimeEnd
+          in: query
+          description: 上报时间结束 yyyy
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DangerProjectVo'
+
+  /szxm/aqgl/dangerProject/queryFlowDangerProject:
+    get:
+      tags:
+        - dangerProject
+      description: 查询危大工程验收 流程用
+      summary: 查询危大工程验收  流程用
+      operationId: queryFlowDangerProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: false
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态 取数据字典的code ：base.flow.status
+          type: string
+          required: false
+        - name: faName
+          in: query
+          description: 危大工程验收名称
+          type: string
+          required: false
+        - name: initTimeStart
+          in: query
+          description: 上报时间开始 yyyy
+          type: string
+          required: false
+        - name: initTimeEnd
+          in: query
+          description: 上报时间结束 yyyy
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DangerProjectVo'
+
+  /szxm/aqgl/dangerProject/getDangerProject/{id}:
+    get:
+      tags:
+        - dangerProject
+      description: 查询单个危大工程验收
+      summary: 查询单个危大工程验收
+      operationId: getDangerProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            items:
+              $ref: '#/definitions/DangerProjectVo'
+
+  /szxm/aqgl/dangerProject/addDangerProject:
+    post:
+      tags:
+        - dangerProject
+      description: 增加危大工程验收
+      summary: 增加危大工程验收
+      operationId: addDangerProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加危大工程验收对象
+          required: true
+          schema:
+            $ref: '#/definitions/DangerProjectAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DangerProjectVo'
+
+  /szxm/aqgl/dangerProject/updateDangerProject:
+    put:
+      tags:
+        - dangerProject
+      description: 修改危大工程验收
+      summary: 修改危大工程验收
+      operationId: updateDangerProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改危大工程验收对象
+          required: true
+          schema:
+            $ref: '#/definitions/DangerProjectUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DangerProjectVo'
+
+  /szxm/aqgl/dangerProject/deleteDangerProject:
+    delete:
+      tags:
+        - dangerProject
+      description: 删除危大工程验收
+      summary: 删除危大工程验收
+      operationId: deleteDangerProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationModuleList:
+    get:
+      tags:
+        - securityExamination
+      summary: 查询安全考核模板
+      description: 查询安全考核模板
+      operationId: querySecurityExaminationModuleList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityExaminationModuleVo'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationModule/{id}:
+    get:
+      tags:
+        - securityExamination
+      summary: 查询单个安全考核模板
+      description: 查询单个安全考核模板
+      operationId: querySecurityExaminationModule
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleVo'
+
+  /szxm/aqgl/securityExamination/addSecurityExaminationModule:
+    post:
+      tags:
+        - securityExamination
+      description: 增加安全考核模板
+      summary: 增加安全考核模板
+      operationId: addSecurityExaminationModule
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加安全考核模板信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleVo'
+
+  /szxm/aqgl/securityExamination/updateSecurityExaminationModule:
+    put:
+      tags:
+        - securityExamination
+      description: 修改安全考核模板
+      summary: 修改安全考核模板
+      operationId: updateSecurityExaminationModule
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改安全考核模板信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleUpdateForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleVo'
+
+  /szxm/aqgl/securityExamination/delSecurityExaminationModule:
+    delete:
+      tags:
+        - securityExamination
+      description: 删除安全考核模板
+      summary: 删除安全考核模板
+      operationId: delSecurityExaminationModule
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationModuleDetailList/{moduleId}:
+    get:
+      tags:
+        - securityExamination
+      summary: 查询安全考核模板细项
+      description: 查询安全考核模板细项
+      operationId: querySecurityExaminationModuleDetailList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: moduleId
+          in: path
+          description: 考核模板ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityExaminationModuleDetailVo'
+
+  /szxm/aqgl/securityExamination/addSecurityExaminationModuleDetail:
+    post:
+      tags:
+        - securityExamination
+      description: 增加安全考核模板细项
+      summary: 增加安全考核模板细项
+      operationId: addSecurityExaminationModuleDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加安全考核模板细项信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleDetailAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleDetailVo'
+
+  /szxm/aqgl/securityExamination/updateSecurityExaminationModuleDetail:
+    put:
+      tags:
+        - securityExamination
+      description: 修改安全考核模板细项
+      summary: 修改安全考核模板细项
+      operationId: updateSecurityExaminationModuleDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改安全考核模板细项信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleDetailUpdateForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SecurityExaminationModuleDetailVo'
+
+  /szxm/aqgl/securityExamination/delSecurityExaminationModuleDetail:
+    delete:
+      tags:
+        - securityExamination
+      description: 删除安全考核模板细项
+      summary: 删除安全考核模板细项
+      operationId: delSecurityExaminationModuleDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/dowSecurityExaminationModuleDetail:
+    post:
+      tags:
+        - securityExamination
+      summary: 安全考核详情页模板导出（格式为XSLX文件）
+      description: 安全考核详情页模板导出（格式为XSLX文件）
+      operationId: dowSecurityExaminationModuleDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/uploadSecurityExaminationModuleDetail:
+    post:
+      tags:
+        - securityExamination
+      summary: 安全考核详情页导入
+      description: 安全考核详情页导入
+      operationId: uploadSecurityExaminationModuleDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: moduleId
+          in: query
+          description: 模板ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 操作（返回错误日志ID,errorId）
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationModuleStaffList/{moduleId}:
+    get:
+      tags:
+        - securityExamination
+      summary: 查询安全考核模板关联人员
+      description: 查询安全考核模板关联人员
+      operationId: querySecurityExaminationModuleStaffList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: moduleId
+          in: path
+          description: 考核模板ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModuleStaffVo'
+
+  /szxm/aqgl/securityExamination/addSecurityExaminationModuleStaff:
+    post:
+      tags:
+        - securityExamination
+      description: 批量增加安全考核模板关联人员
+      summary: 批量增加安全考核模板关联人员，如果返回成功，返回码2000,则有errorMsg，打出错误信息
+      operationId: addSecurityExaminationModuleStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加安全考核模板关联人员信息
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/moduleStaffAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/delSecurityExaminationModuleStaff:
+    delete:
+      tags:
+        - securityExamination
+      description: 删除安全考核模板关联人员
+      summary: 删除安全考核模板关联人员
+      operationId: delSecurityExaminationModuleStaff
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - securityExamination
+      summary: 查询安全考核数据
+      description: 查询安全考核数据
+      operationId: querySecurityExaminationList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: orgId
+          in: query
+          description: 选择组织ID
+          type: integer
+          required: false
+        - name: bkhrZw
+          in: query
+          description: 职位，下拉框中文内容
+          type: string
+          required: false
+        - name: bkhrXm
+          in: query
+          description: 姓名
+          type: string
+          required: false
+        - name: year
+          in: query
+          description: 年份，默认填充为当前年
+          type: integer
+          required: false
+        - name: khzq
+          in: query
+          description: 考核周期，0 上半年 1下半年
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityExaminationVo'
+
+  /szxm/aqgl/securityExamination/getFlowSecurityExaminationList:
+    get:
+      tags:
+        - securityExamination
+      description:  查询安全考核数据 流程用
+      summary: 查询安全考核数据 流程用
+      operationId: getFlowSecurityExaminationList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: orgId
+          in: query
+          description: 选择组织ID
+          type: integer
+          required: false
+        - name: bkhrZw
+          in: query
+          description: 职位，下拉框中文内容
+          type: string
+          required: false
+        - name: bkhrXm
+          in: query
+          description: 姓名
+          type: string
+          required: false
+        - name: year
+          in: query
+          description: 年份，默认填充为当前年
+          type: integer
+          required: false
+        - name: khzq
+          in: query
+          description: 考核周期，0 上半年 1下半年
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityExaminationVo'
+
+  /szxm/aqgl/securityExamination/queryAssessmenter:
+    get:
+      tags:
+        - securityExamination
+      description:  下拉框 查询考核人
+      summary:  下拉框 查询考核人
+      operationId: queryAssessmenter
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            $ref: '#/definitions/GeneralVo'
+
+  /szxm/aqgl/securityExamination/addSecurityExaminationBatch:
+    post:
+      tags:
+        - securityExamination
+      description: 批量增加安全考核数据
+      summary: 批量增加安全考核数据，如果返回成功，返回码2000,则有errorMsg，打出错误信息
+      operationId: addSecurityExaminationBatch
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 批量增加安全考核数据信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityExaminationAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/delSecurityExamination:
+    delete:
+      tags:
+        - securityExamination
+      description: 删除安全考核数据
+      summary: 删除安全考核数据
+      operationId: delSecurityExamination
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationDetailList/{aqkhId}:
+    get:
+      tags:
+        - securityExamination
+      summary: 查询安全考核明细数据
+      description: 查询安全考核明细数据
+      operationId: querySecurityExaminationDetailList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: aqkhId
+          in: path
+          description: 安全考核ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SecurityExaminationDetailVo'
+
+  /szxm/aqgl/securityExamination/updateSecurityExaminationDetail:
+    put:
+      tags:
+        - securityExamination
+      description: 修改安全考核细项
+      summary: 修改安全考核细项
+      operationId: updateSecurityExaminationDetail
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改安全考核细项信息
+          required: true
+          schema:
+            $ref: '#/definitions/SecurityExaminationDetailUpdateForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/SecurityExaminationDetailVo'
+
+  /szxm/aqgl/securityExamination/updateConfirm:
+    put:
+      tags:
+        - securityExamination
+      description: 安全考核确认打分
+      summary: 安全考核确认打分
+      operationId: updateConfirm
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: aqkhId
+          in: query
+          description: 安全考核ID
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/securityExamination/querySecurityExaminationList/export:
+    post:
+      tags:
+        - securityExamination
+      summary: 安全考核导出（格式为XSLX文件）
+      description: 安全考核导出（格式为XSLX文件）
+      operationId: querySecurityExaminationList_export
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: orgId
+          in: query
+          description: 选择组织ID
+          type: integer
+          required: false
+        - name: bkhrZw
+          in: query
+          description: 职位，下拉框中文内容
+          type: string
+          required: false
+        - name: bkhrXm
+          in: query
+          description: 姓名
+          type: string
+          required: false
+        - name: year
+          in: query
+          description: 年份，默认填充为当前年
+          type: integer
+          required: false
+        - name: khzq
+          in: query
+          description: 考核周期，0 上半年 1下半年
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/riskIndentify/add:
+    post:
+      tags:
+        - riskIndentify
+      summary: 增加风险识别
+      description: 增加风险识别
+      operationId: addRiskIndentify
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加风险识别
+          required: true
+          schema:
+            $ref: '#/definitions/RiskIndentifyAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/RiskIndentifyVo'
+
+  /szxm/aqgl/riskIndentify/delete:
+    delete:
+      tags:
+        - riskIndentify
+      summary: 删除风险识别
+      description: 删除风险识别
+      operationId: deleteRiskIndentify
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除风险识别
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/riskIndentify/update:
+    put:
+      tags:
+        - riskIndentify
+      summary: 修改风险识别
+      description:
+      operationId: updateRiskIndentify
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改风险识别入参
+          required: true
+          schema:
+            $ref: '#/definitions/RiskIndentifyUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/RiskIndentifyVo'
+
+  /szxm/aqgl/riskIndentify/{id}:
+    get:
+      tags:
+        - riskIndentify
+      summary: 查询单个风险识别信息
+      description: 查询单个风险识别信息
+      operationId: getRiskIndentify
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/RiskIndentifyVo'
+
+  /szxm/aqgl/riskIndentify/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - riskIndentify
+      summary: 查询风险识别信息
+      description: 查询风险识别物料分类
+      operationId: getRiskIndentifyList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: initiateTimeFrom
+          in: query
+          description: 上报时间From
+          type: string
+          required: false
+        - name: initiateTimeTo
+          in: query
+          description: 上报时间To
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RiskIndentifyVo'
+
+  /szxm/aqgl/riskIndentify/list:
+    get:
+      tags:
+        - riskIndentify
+      summary: 查询风险识别信息--无分页
+      description: 查询风险识别信息--无分页
+      operationId: getClassList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: initiateTime
+          in: query
+          description: 上报时间
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RiskIndentifyVo'
+
+  /szxm/aqgl/riskRegist/add:
+    post:
+      tags:
+        - riskRegist
+      summary: 增加风险登记
+      description: 增加风险登记
+      operationId: addRiskRegist
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加风险登记
+          required: true
+          schema:
+            $ref: '#/definitions/RiskRegistAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/RiskRegistVo'
+
+  /szxm/aqgl/riskRegist/delete:
+    delete:
+      tags:
+        - riskRegist
+      summary: 删除风险登记
+      description: 删除风险登记
+      operationId: deleteRiskRegist
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除风险识别
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/riskRegist/update:
+    put:
+      tags:
+        - riskRegist
+      summary: 修改风险登记
+      description:
+      operationId: updateRiskRegist
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改风险识别入参
+          required: true
+          schema:
+            $ref: '#/definitions/RiskRegistUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/RiskRegistVo'
+
+  /szxm/aqgl/riskRegist/{id}:
+    get:
+      tags:
+        - riskRegist
+      summary: 查询单个风险登记信息
+      description: 查询单个风险登记信息
+      operationId: getRiskRegist
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/RiskRegistVo'
+
+  /szxm/aqgl/riskRegist/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - riskRegist
+      summary: 查询风险登记信息
+      description: 查询风险登记分类
+      operationId: getRiskRegistList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: title
+          in: query
+          description: 风险名称
+          type: string
+          required: false
+        - name: riskLevel
+          in: query
+          description: 风险等级
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RiskRegistVo'
+
+  /szxm/aqgl/riskRegist/list:
+    get:
+      tags:
+        - riskRegist
+      summary: 查询风险登记信息--无分页
+      description: 查询风险登记信息--无分页
+      operationId: getClassList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: initiateTime
+          in: query
+          description: 上报时间
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RiskRegistVo'
+
+  /szxm/aqgl/riskRegist/getFlowRiskRegistList:
+    get:
+      tags:
+        - riskRegist
+      summary: 查询风险登记(流程用)
+      description: 查询风险登记(流程用)
+      operationId: getFlowRiskRegistList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RiskRegistVo'
+
+  /szxm/aqgl/keyPointAccept/add:
+    post:
+      tags:
+        - keyPointAccept
+      summary: 增加关键节点验收
+      description: 增加关键节点验收
+      operationId: addKeyPointAccept
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加关键节点验收
+          required: true
+          schema:
+            $ref: '#/definitions/KeyPointAcceptAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/KeyPointAcceptVo'
+
+  /szxm/aqgl/keyPointAccept/delete:
+    delete:
+      tags:
+        - keyPointAccept
+      summary: 删除关键节点验收
+      description: 删除关键节点验收
+      operationId: deleteKeyPointAccept
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除关键节点验收
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/keyPointAccept/update:
+    put:
+      tags:
+        - keyPointAccept
+      summary: 修改关键节点验收
+      description:
+      operationId: updateKeyPointAccept
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改关键节点验收入参
+          required: true
+          schema:
+            $ref: '#/definitions/KeyPointAcceptUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/KeyPointAcceptVo'
+
+  /szxm/aqgl/keyPointAccept/{id}:
+    get:
+      tags:
+        - keyPointAccept
+      summary: 查询关键节点验收信息
+      description: 查询关键节点验收信息
+      operationId: getKeyPointAccept
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/KeyPointAcceptVo'
+
+  /szxm/aqgl/keyPointAccept/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - keyPointAccept
+      summary: 查询关键节点验收信息
+      description: 查询关键节点验收
+      operationId: getKeyPointAcceptList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: keyPointCategory
+          in: query
+          description: 关键节点类别
+          type: string
+          required: false
+        - name: acceptTimeFrom
+          in: query
+          description: 验收时间-From
+          type: string
+          required: false
+        - name: acceptTimeTo
+          in: query
+          description: 验收时间-To
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 验收状态
+          type: string
+          required: false
+        - name: accessoryStatus
+          in: query
+          description: 附件状态
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/KeyPointAcceptVo'
+
+  /szxm/aqgl/keyPointAccept/list:
+    get:
+      tags:
+        - keyPointAccept
+      summary: 查询关键节点验收信息--无分页
+      description: 查询关键节点验收信息--无分页
+      operationId: getClassList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: keyPointCategory
+          in: query
+          description: 关键节点类别
+          type: string
+          required: false
+        - name: acceptTimeFrom
+          in: query
+          description: 验收时间-From
+          type: string
+          required: false
+        - name: acceptTimeTo
+          in: query
+          description: 验收时间-To
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 验收状态
+          type: string
+          required: false
+        - name: accessoryStatus
+          in: query
+          description: 附件状态
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/KeyPointAcceptVo'
+
+  /szxm/aqgl/keyPointAccept/getFlowKeyPointAcceptList:
+    get:
+      tags:
+        - keyPointAccept
+      summary: 查询关键节点验收(流程用)
+      description: 查询关键节点验收(流程用)
+      operationId: getFlowKeyPointAcceptList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 流程状态查询
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/KeyPointAcceptVo'
+
+  /szxm/aqgl/mortgageRefund/addMortgageRefund:
+    post:
+      tags:
+        - mortgageRefund
+      summary: 增加风险抵押金主表
+      description: 增加风险抵押金主表
+      operationId: addMortgageRefund
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加风险抵押金主表入参
+          required: true
+          schema:
+            $ref: '#/definitions/MortgageRefundAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/MortgageRefundVo'
+
+  /szxm/aqgl/mortgageRefund/delMortgageRefund:
+    delete:
+      tags:
+        - mortgageRefund
+      summary: 删除风险抵押金
+      description: 删除风险抵押金
+      operationId: deleteMortgageRefund
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除风险抵押金入参
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/aqgl/mortgageRefund/updateMortgageRefund:
+    put:
+      tags:
+        - mortgageRefund
+      summary: 修改风险抵押金
+      description:
+      operationId: updateMortgageRefund
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改风险抵押金入参
+          required: true
+          schema:
+            $ref: '#/definitions/MortgageRefundUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/MortgageRefundVo'
+
+  /szxm/aqgl/mortgageRefund/queryMortgageRefund/{id}:
+    get:
+      tags:
+        - mortgageRefund
+      summary: 查询风险抵押金信息
+      description: 查询风险抵押金信息
+      operationId: getMortgageRefund
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/MortgageRefundVo'
+
+  /szxm/aqgl/mortgageRefund/queryMortgageRefundList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - mortgageRefund
+      summary: 查询风险抵押金信息
+      description: 查询风险抵押金
+      operationId: getMortgageRefundList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: sectionType
+          in: query
+          description: 标段类型
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MortgageRefundVo'
+
+  /szxm/aqgl/mortgageRefund/getFlowMortgageRefundList:
+    get:
+      tags:
+        - mortgageRefund
+      summary: 查询风险抵押金(流程用)
+      description: 查询风险抵押金(流程用)
+      operationId: getFlowMortgageRefundList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: false
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 流程状态查询
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MortgageRefundVo'
+
+  /szxm/aqgl/mortgageRefund/updateMonthMortgage:
+    put:
+      tags:
+        - mortgageRefund
+      summary: 修改月度抵押金
+      description: 修改月度抵押金
+      operationId: updateMonthMortgage
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改月度抵押金入参
+          required: true
+          schema:
+            $ref: '#/definitions/MonthMortgageUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/MonthMortgageVo'
+
+  /szxm/aqgl/mortgageRefund/updateQuarterMortgage:
+    put:
+      tags:
+        - mortgageRefund
+      summary: 修改季度抵押金
+      description: 修改季度抵押金
+      operationId: updateQuarterMortgage
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改季度抵押金入参
+          required: true
+          schema:
+            $ref: '#/definitions/QuarterMortgageUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/QuarterMortgageVo'
+
+  /szxm/aqgl/mortgageRefund/updateZbsj:
+    put:
+      tags:
+        - mortgageRefund
+      summary: 修改抵押金主表
+      description: 修改抵押金主表
+      operationId: updateZbsj
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改抵押金主表
+          required: true
+          schema:
+            $ref: '#/definitions/MortgageRefundUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/MortgageRefundVo'
+
+  /szxm/aqgl/mortgageRefund/queryMonthMortgageList/{dyjSqId}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - mortgageRefund
+      summary: 查询月度抵押金明细
+      description: 查询月度抵押金明细
+      operationId: getMonthMortgageList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: dyjSqId
+          in: path
+          description: 风险抵押金ID
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/MonthMortgageVo'
+
+  /szxm/aqgl/mortgageRefund/queryQuarterMortgageList/{dyjSqId}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - mortgageRefund
+      summary: 查询季度抵押金明细
+      description: 查询季度抵押金明细
+      operationId: getQuarterMortgageList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: dyjSqId
+          in: path
+          description: 风险抵押金ID
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuarterMortgageVo'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  SysUserLoginVo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      isOpen:
+        type: integer
+        description: 三员管理状态（0：未开启  1：开启）
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 菜单类型(1:组件 2:菜单  3:分组 4:模块)
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      group:
+        type: integer
+        description: 组
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 跟新时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+      children:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  SubcontrApprovalVo:
+    properties:
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      subcontrCode:
+        type: string
+        description: 分包编号
+      subcontrName:
+        type: string
+        description: 分包名称
+      subcontrTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 0专业分包1 劳务分包
+      residentNum:
+        type: string
+        description: 居住人数
+      workAddress:
+        type: string
+        description: 作业队地址
+      houseCharacter:
+        type: string
+        description: 房屋性质
+      houseArea:
+        type: string
+        description: 房屋面积
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      initiator:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间
+      creater:
+        type: string
+        description: 创建人
+
+  SubcontrApprovalAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      subcontrName:
+        type: string
+        description: 分包名称（必填）
+      subcontrType:
+        type: string
+        description: 分包类型（必填）
+      residentNum:
+        type: string
+        description: 居住人数
+      workAddress:
+        type: string
+        description: 作业队地址
+      houseCharacter:
+        type: string
+        description: 房屋性质
+      houseArea:
+        type: string
+        description: 房屋面积
+
+  SubcontrApprovalUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键（必填）
+      subcontrName:
+        type: string
+        description: 分包名称（必填）
+      subcontrType:
+        type: string
+        description: 分包类型（必填）
+      subcontrCode:
+        type: string
+        description: 分包编号
+
+  TrainDisclosureVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      intExtVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 内外部培训 (0内部培训 ， 1外部培训)
+      trainUnitId:
+        type: integer
+        description: 培训单位ID
+      trainUnitName:
+        type: string
+        description: 培训单位
+      trainName:
+        type: string
+        description: 培训名称
+      trainLocation:
+        type: string
+        description: 培训地点
+      trainTime:
+        type: string
+        description: 培训时间
+      trainTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 0 安全三级教育培训 1 安全交底 2中心培训 3 部门培训
+      creater:
+        type: string
+        description: 创建人
+      creator:
+        type: integer
+        description: 创建人ID
+      creatTime:
+        type: string
+        description: 创建日期
+      sponsorDep:
+        type: integer
+        description: 发起部门
+      sponsorDepId:
+        type: integer
+        description: 发起部门ID
+      fileStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 附件状态 0 未上传 1 已上传
+      fileCount:
+        type: integer
+        description: 附件数
+      trainLearnTime:
+        type: string
+        description: 培训学时
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      initiator:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间
+
+  TrainDisclosureAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      intExt:
+        type: string
+        description: 内外部培训 (0内部培训 ， 1外部培训)（必填）
+      trainUnitId:
+        type: integer
+        description: 培训单位ID（必填）
+      trainUnitName:
+        type: string
+        description: 培训单位名称（必填）
+      trainName:
+        type: string
+        description: 培训名称
+        trainTime:
+          type: string
+          description: 培训时间
+      trainLocation:
+        type: string
+        description: 培训地点
+      trainType:
+        type: string
+        description: 培训类型
+      sponsorDep:
+        type: string
+        description: 发起部门
+      sponsorDepId:
+        type: integer
+        description: 发起部门ID
+      trainLearnTime:
+        type: string
+        description: 培训学时
+
+  TrainDisclosureUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      intExt:
+        type: string
+        description: 内外部培训 (0内部培训 ， 1外部培训)（必填）
+      trainUnitId:
+        type: integer
+        description: 培训单位ID（必填）
+      trainUnitName:
+        type: string
+        description: 培训单位名称（必填）
+      trainName:
+        type: string
+        description: 培训名称
+      trainTime:
+        type: string
+        description: 培训时间
+      trainLocation:
+        type: string
+        description: 培训地点
+      trainType:
+        type: string
+        description: 培训类型
+      sponsorDep:
+        type: string
+        description: 发起部门
+      sponsorDepId:
+        type: integer
+        description: 发起部门ID
+      trainLearnTime:
+        type: string
+        description: 培训学时
+
+  TrainStaffVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      trainId:
+        type: integer
+        description: 培训主表 ID（必填）
+      intExtStaff:
+        type: string
+        description: 内外部培训人员
+      workerId:
+        type: integer
+        description: 人员ID
+      workerName:
+        type: string
+        description: 人员姓名
+      workerDifVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 工种(数字字典)
+      score:
+        type: string
+        description: 考试得分
+      learnTime:
+        type: string
+        description: 人员学时
+      dep:
+        type: string
+        description: 部门
+      depId:
+        type: integer
+        description: 部门ID
+      learnOk:
+        type: string
+        description: 学时确认
+      jdzxTotalTime:
+        type: string
+        description: 机电中心总学时
+      bmTotalTime:
+        type: string
+        description: 部门培训总学时
+      edu:
+        type: string
+        description: 学历
+      sexVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 性别(0女，1男)
+      entryDate:
+        type: string
+        description: 入司日期
+      positionVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 职务(数字字典)
+      orgName:
+        type: string
+        description: 部门（人员统计使用）
+      trainTime:
+        type: string
+        description: 培训时间
+      trainName:
+        type: string
+        description: 培训名称
+      sponsorDep:
+        type: string
+        description: 发起部门
+      jdzxLearnTime:
+        type: string
+        description: 机电中心培训学时
+      bmLearnTime:
+        type: string
+        description: 部门培训学时
+      isTz:
+        type: string
+        description: 是否通知
+
+  TrainStaffAddVo:
+    properties:
+      code:
+        type: string
+        description: (0是保存，1是保存及上报)
+      users:
+        description: 用户数组
+        type: array
+        items:
+          $ref: '#/definitions/TrainStaffAddForm'
+
+  TrainStaffAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      trainId:
+        type: integer
+        description: 培训主表 ID（必填）
+      intExtStaff:
+        type: string
+        description: 内外部培训人员（必填）
+      workerName:
+        type: string
+        description: 人员姓名
+      workerId:
+        type: integer
+        description: 人员ID（必填）
+      workDif:
+        type: string
+        description: 工种
+      score:
+        type: string
+        description: 考试得分
+      learnTime:
+        type: string
+        description: 人员学时
+      dep:
+        type: string
+        description: 部门
+      depId:
+        type: integer
+        description: 部门ID
+      learnOk:
+        type: string
+        description: 学时确认
+      jdzxLearnTime:
+        type: string
+        description: 机电中心培训学时
+      bmLearnTime:
+        type: string
+        description: 部门培训学时
+      trainType:
+        type: string
+        description: 培训类型
+
+  TrainStaffUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      trainId:
+        type: integer
+        description: 培训主表 ID（必填）
+      intExtStaff:
+        type: string
+        description: 内外部培训人员（必填）
+      workerName:
+        type: string
+        description: 人员姓名
+      workerId:
+        type: integer
+        description: 人员ID（必填）
+      workDif:
+        type: string
+        description: 工种
+      score:
+        type: string
+        description: 考试得分
+      learnTime:
+        type: string
+        description: 人员学时
+      dep:
+        type: string
+        description: 部门
+      depId:
+        type: integer
+        description: 部门ID
+      learnOk:
+        type: string
+        description: 学时确认
+      jdzxLearnTime:
+        type: string
+        description: 机电中心培训学时
+      bmLearnTime:
+        type: string
+        description: 部门培训学时
+      trainType:
+        type: string
+        description: 部门类型
+
+  SecurityCheckVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      code:
+        type: string
+        description: 检查编号
+      gcmc:
+        type: string
+        description: 检查标题
+      jclxVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 检查类型（数字字典）
+      zgzrrId:
+        type: integer
+        description: 整改责任人ID
+      zgzrrName:
+        type: string
+        description: 整改责任人姓名
+      zgzrrPosition:
+        type: string
+        description: 整改责任人身份
+      jcsx:
+        type: string
+        description: 检查时限
+      creatTime:
+        type: string
+        description: 表创建时间
+      checkContent:
+        type: string
+        description: 检查内容
+      isTestCheckVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否考评检查
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionName:
+        type: string
+        description: 标段名称
+      projectName:
+        type: string
+        description: 项目名称
+      sjdw:
+        type: string
+        description: 受检单位
+      zgzrrOrgId:
+        type: integer
+        description: 整改责任人orgID
+      sectionNames:
+        type: string
+        description: 多个标段的数据
+      checkStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 检查形式(0个人检查1组织检查)
+      checkLocation:
+        type: string
+        description: 检查地点
+      bhNums:
+        type: string
+        description: 问题闭环个数
+      wbhNums:
+        type: string
+        description: 问题未闭环个数
+      wtNums:
+        type: string
+        description: 问题个数
+      stationPointInfo:
+        type: string
+        description: 站点信息
+      stationPointInfoDetail:
+        type: string
+        description: 站点相关问题
+      constructionContent:
+        type: string
+        description: 现场主要施工内容
+
+  SecurityCheckAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      code:
+        type: string
+        description: 检查编号
+      gcmc:
+        type: string
+        description: 检查标题
+      zgzrrId:
+        type: integer
+        description: 整改责任人ID
+      zgzrrName:
+        type: string
+        description: 整改责任人姓名
+      zgzrrPosition:
+        type: string
+        description: 整改责任人身份
+      jcsx:
+        type: string
+        description: 检查时限
+      checkContent:
+        type: string
+        description: 检查内容
+      isTestCheck:
+        type: string
+        description: 是否考评检查
+      jclx:
+        type: string
+        description: 检查类型
+      constructionContent:
+        type: string
+        description: 现场主要施工内容
+      stationPointInfo:
+        type: string
+        description: 站点信息
+      stationPointInfoDetail:
+        type: string
+        description: 站点相关问题
+      sectionIds:
+        type: string
+        description: 多个标段的数据
+      checkStatus:
+        type: string
+        description: 检查形式（0个人检查1组织检查）（必填）
+      checkLocation:
+        type: string
+        description: 检查地点
+
+  SecurityCheckUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      code:
+        type: string
+        description: 检查编号
+      gcmc:
+        type: string
+        description: 检查标题
+      zgzrrId:
+        type: integer
+        description: 整改责任人ID
+      zgzrrName:
+        type: string
+        description: 整改责任人姓名
+      zgzrrPosition:
+        type: string
+        description: 整改责任人身份
+      jcsx:
+        type: string
+        description: 检查时限
+      checkContent:
+        type: string
+        description: 检查内容
+      isTestCheck:
+        type: string
+        description: 是否考评检查
+      jclx:
+        type: string
+        description: 检查类型
+      checkLocation:
+        type: string
+        description: 检查地点
+      checkStatus:
+        type: string
+        description: 检查形式（0个人检查1组织检查）（必填）
+      constructionContent:
+        type: string
+        description: 现场主要施工内容
+      stationPointInfo:
+        type: string
+        description: 站点信息
+      stationPointInfoDetail:
+        type: string
+        description: 站点相关问题
+
+  CheckTeamVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      userId:
+        type: integer
+        description: 人员ID
+      checkId:
+        type: integer
+        description: 检查ID主表
+      position:
+        type: string
+        description: 职务
+      departName:
+        type: string
+        description: 部门
+      isLeaderVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否领导(0否1是)
+
+  ConstructEvaluationVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      year:
+        type: integer
+        description: 年份
+      seasonVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 季度
+      professionVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 专业
+      zxjdScore:
+        type: string
+        description: 中心季度检查得分
+      bmydScore:
+        type: string
+        description: 部门月度检查得分
+      rcjcScore:
+        type: string
+        description: 日常安全检查得分
+      totalScore:
+        type: string
+        description: 季度考评综合得分
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+
+  ConstructEvaluationAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      year:
+        type: integer
+        description: 年份（必填）
+      season:
+        type: integer
+        description: 季度（必填）
+
+  ConstructEvaluationUpdateForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      id:
+        type: integer
+        description: 主键ID（必填）
+      year:
+        type: integer
+        description: 年份（必填）
+      season:
+        type: integer
+        description: 季度（必填）
+
+  EvaluateCheckVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      checkCode:
+        type: string
+        description: 检查编号
+      checkTitle:
+        type: string
+        description: 检查标题
+      checkScore:
+        type: string
+        description: 检查得分
+      checkTime:
+        type: string
+        description: 检查时间
+      testId:
+        type: integer
+        description: 施工单位考评ID
+      checkId:
+        type: integer
+        description: 安全检查关联ID
+      checkTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 检查类型(0 中心季度检查 1部门月度检查 2中心日常巡查 3个人检查 4专项检查)
+
+  EvaluateCheckUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      checkScore:
+        type: string
+        description: 检查得分
+      checkType:
+        type: string
+        description: 检查类型
+
+  PeopleVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      projInfoId:
+        type: integer
+        description: 项目组织信息ID
+      name:
+        type: string
+        description: 人员姓名
+      jobVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 职务（取数据字典 base.position.type的code）
+      sexVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 性别（0 女 1 男）
+      workType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 工种
+      age:
+        type: string
+        description: 年龄
+      orgName:
+        type: string
+        description: 单位
+
+  CheckTeamAddForm:
+    properties:
+      userId:
+        type: integer
+        description: 人员ID（必填）
+      checkId:
+        type: integer
+        description: 检查ID主表（必填）
+      isLeader:
+        type: string
+        description: 是否为检查小组组长(0否1是)
+
+
+  OutUnitCheckVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      code:
+        type: string
+        description: 检查编号
+      title:
+        type: string
+        description: 检查标题
+      jclxVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 数字字典
+      jcdwName:
+        type: string
+        description: 检查单位
+      question:
+        type: string
+        description: 发现问题
+      creatTime:
+        type: string
+        description: 创建日期
+      creater:
+        type: string
+        description: 创建人
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+
+  OutUnitCheckAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目（必填）
+      sectionId:
+        type: integer
+        description: 标段（必填）
+      code:
+        type: string
+        description: 检查编号
+      title:
+        type: string
+        description: 检查标题
+      jclx:
+        type: string
+        description: 检查类型
+      jcdwName:
+        type: string
+        description: 检查单位
+      question:
+        type: string
+        description: 发现问题
+
+  OutUnitCheckUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      code:
+        type: string
+        description: 检查编号
+      title:
+        type: string
+        description: 检查标题
+      jclx:
+        type: string
+        description: 检查类型
+      jcdwName:
+        type: string
+        description: 检查单位
+      question:
+        type: string
+        description: 发现问题
+
+
+
+
+  PeopleInVo:
+    properties:
+      id:
+        type: integer
+        description: 被培训部门ID
+      parentId:
+        type: integer
+        description: 父Id
+      orgName:
+        type: string
+        description: 被培训部门名称
+      userId:
+        type: integer
+        description: 人员ID
+      userCode:
+        type: string
+        description: 人员账号
+      userName:
+        type: string
+        description: 人员名称
+
+  RiskIndentifyAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      title:
+        type: string
+        description: 风险名称
+      location:
+        type: string
+        description: 发生位置
+      riskReason:
+        type: string
+        description: 风险因素
+      riskLoss:
+        type: string
+        description: 风险损失
+      probability:
+        type: string
+        description: 概率
+      riskLevel:
+        type: string
+        description: 风险等级
+      processCompany:
+        type: string
+        description: 处理负责单位
+
+  RiskIndentifyUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      title:
+        type: string
+        description: 风险名称
+      location:
+        type: string
+        description: 发生位置
+      riskReason:
+        type: string
+        description: 风险因素
+      riskLoss:
+        type: string
+        description: 风险损失
+      probability:
+        type: string
+        description: 概率
+      riskLevel:
+        type: string
+        description: 风险等级
+      processCompany:
+        type: string
+        description: 处理负责单位
+
+  RiskIndentifyVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      title:
+        type: string
+        description: 风险名称
+      location:
+        type: string
+        description: 发生位置
+      riskReason:
+        type: string
+        description: 风险因素
+      riskLoss:
+        type: string
+        description: 风险损失
+      probability:
+        type: string
+        description: 概率
+      riskLevel:
+        type: string
+        description: 风险等级
+      processCompany:
+        type: string
+        description: 处理负责单位
+      initiateTime:
+        type: string
+        description: 上报时间
+      initiator:
+        type: string
+        description: 上报人
+
+  RiskRegistAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      title:
+        type: string
+        description: 风险名称
+      location:
+        type: string
+        description: 发生位置
+      riskDesc:
+        type: string
+        description: 风险描述
+      riskLevel:
+        type: string
+        description: 风险等级
+      afterRiskLevel:
+        type: string
+        description: 处置后风险等级
+      processCompany:
+        type: string
+        description: 风险处理单位
+      processTime:
+        type: string
+        description: 实施时间
+      riskResult:
+        type: string
+        description: 风险处置措施
+      status:
+        type: string
+        description: 状态
+
+  RiskRegistUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键id
+      title:
+        type: string
+        description: 风险名称
+      location:
+        type: string
+        description: 发生位置
+      riskDesc:
+        type: string
+        description: 风险描述
+      riskLevel:
+        type: string
+        description: 风险等级
+      afterRiskLevel:
+        type: string
+        description: 处置后风险等级
+      processCompany:
+        type: string
+        description: 风险处理单位
+      processTime:
+        type: string
+        description: 实施时间
+      riskResult:
+        type: string
+        description: 风险处置措施
+      initiationTime:
+        type: string
+        description: 发起时间
+      initiator:
+        type: string
+        description: 发起人
+      status:
+        type: string
+        description: 状态
+
+  RiskRegistVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      title:
+        type: string
+        description: 风险名称
+      location:
+        type: string
+        description: 发生位置
+      riskDesc:
+        type: string
+        description: 风险描述
+      riskLevel:
+        type: string
+        description: 风险等级
+      afterRiskLevel:
+        type: string
+        description: 处置后风险等级
+      processCompany:
+        type: string
+        description: 风险处理单位
+      processTime:
+        type: string
+        description: 实施时间
+      riskResult:
+        type: string
+        description: 风险处置措施
+      initiationTime:
+        type: string
+        description: 发起时间
+      initiator:
+        type: string
+        description: 发起人
+      status:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 物料分类
+
+  OrgVo:
+    properties:
+      orgName:
+        type: string
+        description: 部门
+
+  ZgzrrInfoVo:
+    properties:
+      user:
+        $ref: '#/definitions/GeneralVo'
+      roles:
+        type: array
+        items:
+          $ref: '#/definitions/GeneralVo'
+
+  KeyPointAcceptAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectBuildName:
+        type: string
+        description: 单位工程名称
+      keyPointCategory:
+        type: string
+        description: 关键节点类别
+      acceptTime:
+        type: string
+        description: 验收时间
+      selfComment:
+        type: string
+        description: 自评意见
+
+  KeyPointAcceptUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectBuildName:
+        type: string
+        description: 单位工程名称
+      keyPointCategory:
+        type: string
+        description: 关键节点类别
+      acceptTime:
+        type: string
+        description: 验收时间
+      selfComment:
+        type: string
+        description: 自评意见
+      status:
+        type: string
+        description: 状态
+      accessoryStatus:
+        type: string
+        description: 附件状态
+
+  KeyPointAcceptVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      projectBuildName:
+        type: string
+        description: 单位工程名称
+      keyPointCategory:
+        type: string
+        description: 关键节点类别
+      initiator:
+        type: string
+        description: 发起人
+      initiateTime:
+        type: string
+        description: 发起时间
+      acceptTime:
+        type: string
+        description: 验收时间
+      jldw:
+        type: string
+        description: 监理单位
+      sgdw:
+        type: string
+        description: 施工单位
+      selfComment:
+        type: string
+        description: 自评意见
+      status:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      accessoryStatus:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 附件状态
+
+  MortgageRefundAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      sqthje:
+        type: string
+        description: 申请退还金额
+
+  MortgageRefundUpdateForm:
+    properties:
+
+      id:
+        type: integer
+        description: 主键ID
+      sqthje:
+        type: string
+        description: 申请退还金额
+      pjJg:
+        type: string
+        description: 评价结果
+
+  MortgageRefundVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      sectionType:
+        type: string
+        description: 标段类型
+      sgdw:
+        type: string
+        description: 施工单位
+      sqthje:
+        type: string
+        description: 申请退还金额
+      zkcbffhe:
+        type: string
+        description: 申请退还金额
+      sjTotal:
+        type: string
+        description: 申请退还金额
+      initTime:
+        type: string
+        description: 发起时间
+      initiator:
+        type: string
+        description: 发起人
+      pjJgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+
+  MonthMortgageUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      year:
+        type: integer
+        description: 项目id
+      month:
+        type: integer
+        description: 项目名称
+      jlNum:
+        type: string
+        description: 月总建筑安装进度计量款
+
+  MonthMortgageVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      year:
+        type: integer
+        description: 年度
+      month:
+        type: integer
+        description: 月度
+      jlNum:
+        type: string
+        description: 月总建筑安装进度计量款
+      dyjNum:
+        type: string
+        description: 月安全生产风险抵押金
+
+  QuarterMortgageUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID(必填)
+      zid:
+        type: integer
+        description: 主表ID(必填)
+      year:
+        type: integer
+        description: 年度
+      session:
+        type: integer
+        description: 季度
+      pjJg:
+        type: integer
+        description: 评价结果(必填)
+      zrdhze:
+        type: string
+        description: 安全管理违约责任单汇总额
+
+  QuarterMortgageVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段id
+      sectionCode:
+        type: string
+        description: 标段编码
+      sectionName:
+        type: string
+        description: 标段名称
+      year:
+        type: integer
+        description: 年度
+      session:
+        type: integer
+        description: 季度
+      pjJg:
+        type: integer
+        description: 总和评价结果
+      zrdhze:
+        type: string
+        description: 安全管理违约责任单汇总额
+      checkScore:
+        type: integer
+        description: 考评得分
+      jdfxdysjjle:
+        type: string
+        description: 季度风险抵押金实际计量额
+      kcje:
+        type: string
+        description: 扣除金额
+
+  MonThReportVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionCode:
+        type: string
+        description: 标段编号
+      sectionName:
+        type: string
+        description: 标段名称
+      code:
+        type: string
+        description: 文档编号
+      title:
+        type: string
+        description: 文档标题
+      year:
+        type: integer
+        description: 所属年份
+      month:
+        type: integer
+        description: 所属月份
+      companyId:
+        type: integer
+        description: 单位ID
+      company:
+        type: string
+        description: 单位名称
+      initiatorName:
+        type: string
+        description: 上报人员
+      initTime:
+        type: string
+        description: 上报日期
+      type:
+        type: string
+        description: 0 部门月报 1外部单位月报
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 流程状态
+
+  MonThReportAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（视图为外部单位视图时 必填）
+      projectId:
+        type: integer
+        description: 项目ID（视图为外部单位视图时 必填）
+      type:
+        type: string
+        description:  0 部门月报 1外部单位月报（必填）
+      title:
+        type: string
+        description: 文档标题（必填）
+      year:
+        type: integer
+        description: 所属年份（必填）
+      month:
+        type: integer
+        description: 所属月份（必填）
+
+  RcReportVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      code:
+        type: string
+        description: 编号
+      title:
+        type: string
+        description: 标题
+      viewType:
+        type: string
+        description: 0部门视图 1外部单位视图
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 上报类型(D每日 M每月 W每周 S自定义)
+      rate:
+        type: string
+        description: 上报频率 ,取决于上报类型，每日 无，每月（1-30），每周（1-7），自定义（yyyy-MM-dd）
+      txRuleVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 提醒规则  1 前一天  3前三天 7前一周
+      zrDwInfo:
+        description: 责任单位信息 id:责任单位ID code：责任单位编码 name:责任单位名称
+        type: array
+        items:
+          $ref: '#/definitions/GeneralVo'
+      zrRoleInfo:
+        description: 责任角色info： id 角色ID  code：角色编码 name：角色名称
+        type: array
+        items:
+          $ref: '#/definitions/GeneralVo'
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 0 未下发 1 已下发 2已关闭
+      xfSj:
+        type: string
+        description: 下发时间（yyyy-MM-dd）
+      zqs:
+        type: integer
+        description: 周期数
+      lastReminderTime:
+        type: string
+        description: 上次周期结束时间（yyyy-MM-dd HH:mm:ss）
+
+  RcReportAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID（视图为外部单位视图时 必填）
+      title:
+        type: string
+        description: 标题 (必填)
+      zrDwIds:
+        type: string
+        description: 责任单位IDs 逗号相隔 (必填)
+      zrRoleIds:
+        type: string
+        description: 责任角色IDs 逗号相隔 (必填)
+      type:
+        type: string
+        description: 上报类型 D每日 M每月 W每周 S自定义 (必填)
+      rate:
+        type: string
+        description: 上报频率 ,取决于上报类型，每日 无，每月（1-30），每周（1-7），自定义（yyyy-MM-dd），除选择每日外，必填
+      txRule:
+        type: string
+        description: 提醒规则 1 前一天(默认选择)  3前三天 7前一周 （下拉框默认选择第一条数据）
+      viewType:
+        type: string
+        description: 视图分类 0 内部 1 外部 (必填)
+
+  RcReportUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      title:
+        type: string
+        description: 标题 (必填)
+      zrDwIds:
+        type: string
+        description: 责任单位IDs 逗号相隔 (必填)
+      zrRoleIds:
+        type: string
+        description: 责任角色IDs 逗号相隔 (必填)
+      type:
+        type: string
+        description: 上报类型 D每日 M每月 W每周 S自定义 (必填)
+      rate:
+        type: string
+        description: 上报频率 ,取决于上报类型，每日 无，每月（1-30），每周（1-7），自定义（yyyy-MM-dd），除选择每日外，必填
+      txRule:
+        type: string
+        description: 提醒规则 1 前一天(默认选择)  3前三天 7前一周 （下拉框默认选择第一条数据）
+
+  RcDetailVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      companyId:
+        type: integer
+        description: 上报单位ID
+      companyName:
+        type: string
+        description: 上报单位名称
+      canEdit:
+        type: string
+        description: 是否可编辑 1 是 0 否，可编辑 代表可以删除附件，上报附件
+      uploader:
+        type: string
+        description: 上报人
+      reReportId:
+        type: integer
+        description: 日常报表ID
+      sbQs:
+        type: integer
+        description: 上报期数
+      zqStart:
+        type: string
+        description: 周期开始 yyyy-MM-dd
+      zqEnd:
+        type: string
+        description: 周期结束 yyyy-MM-dd
+      sbDate:
+        type: string
+        description: 上报日期 yyyy-MM-dd
+      fileCount:
+        type: integer
+        description: 附件数
+      isSbVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description:  是否上报 1 是 0否
+      isYqVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description:  是否逾期 1 是 0否
+
+  BindFileForm:
+    properties:
+      bizId:
+        type: integer
+        description: 业务ID
+      bizType:
+        type: string
+        description: 业务类型，人员传“STAFF-PROJINFO-PERSON”
+      fileIds:
+        type: array
+        description: 附件IDs
+        items:
+          type: integer
+
+  CountRcDetailReportVo:
+    properties:
+      COMPANY_NAME:
+        type: string
+        description: 组织名称
+      YQ_NUM:
+        type: integer
+        description: 逾期次数
+      GZSX_NUM:
+        type: integer
+        description: 工作事项
+
+  TroubleVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionCode:
+        type: string
+        description: 标段编号
+      sectionName:
+        type: string
+        description: 标段名称
+      troubleCode:
+        type: string
+        description: 隐患编号
+      troubleTitle:
+        type: string
+        description: 隐患名称
+      troubleBw:
+        type: string
+        description: 隐患部位
+      tbUnit:
+        type: integer
+        description: 填报单位
+      creatTime:
+        type: integer
+        description: 创建时间
+      creater:
+        type: string
+        description: 创建人
+      isFinsihVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否解决
+
+  TroubleAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      troubleCode:
+        type: string
+        description: 隐患编号
+      troubleTitle:
+        type: string
+        description: 隐患名称
+      troubleBw:
+        type: string
+        description: 所属部位
+      isFinsih:
+        type: string
+        description: 是否解决 1 是 0否
+
+  TroubleUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      troubleTitle:
+        type: string
+        description: 隐患名称
+      troubleBw:
+        type: string
+        description: 所属部位
+      isFinsih:
+        type: string
+        description: 是否解决 1 是 0否
+
+  DangerPlanVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionCode:
+        type: string
+        description: 标段编号
+      sectionName:
+        type: string
+        description: 标段名称
+      faName:
+        type: string
+        description: 方案名称
+      method:
+        type: string
+        description: 具体措施
+      initiatorName:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间 yyy-MM-dd
+      sgdw:
+        type: string
+        description: 施工单位
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 流程状态
+
+  DangerPlanAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      faName:
+        type: string
+        description: 方案名称
+      method:
+        type: string
+        description: 具体措施
+
+  DangerPlanUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      faName:
+        type: string
+        description: 方案名称
+      method:
+        type: string
+        description: 具体措施
+
+  DangerProjectVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionCode:
+        type: string
+        description: 标段编号
+      sectionName:
+        type: string
+        description: 标段名称
+      title:
+        type: string
+        description: 危大工程名称
+      initiatorName:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间 yyy-MM-dd
+      sgdw:
+        type: string
+        description: 施工单位
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 流程状态
+
+  DangerProjectAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      title:
+        type: string
+        description: 危大工程名称
+
+
+  DangerProjectUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      title:
+        type: string
+        description: 危大工程名称
+
+
+  SecurityExaminationModuleVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      parentId:
+        type: integer
+        description: 父ID
+      moduleCode:
+        type: string
+        description: 模板编码
+      moduleName:
+        type: string
+        description: 模板名称
+      children:
+        description: 子节点，如没有返回空数组[]
+        type: array
+        items:
+          $ref: '#/definitions/SecurityExaminationModuleVo'
+
+  SecurityExaminationModuleAddForm:
+    properties:
+      parentId:
+        type: integer
+        description: 父ID （必填）
+      moduleCode:
+        type: string
+        description: 模板编码 （必填）
+      moduleName:
+        type: string
+        description: 模板名称 （必填）
+
+  SecurityExaminationModuleUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID （必填）
+      moduleCode:
+        type: string
+        description: 模板编码
+      moduleName:
+        type: string
+        description: 模板名称
+
+
+
+  SecurityExaminationModuleDetailVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      moduleId:
+        type: integer
+        description: 模板ID
+      title:
+        type: string
+        description: 考核项
+      score:
+        type: string
+        description: 考核分数
+
+  SecurityExaminationModuleDetailAddForm:
+    properties:
+      moduleId:
+        type: integer
+        description: 模板ID 必填
+      title:
+        type: string
+        description: 考核项 必填
+      score:
+        type: string
+        description: 考核分数 必填
+
+  SecurityExaminationModuleDetailUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID 必填
+      title:
+        type: string
+        description: 考核项
+      score:
+        type: string
+        description: 考核分数
+
+  ModuleStaffVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      moduleId:
+        type: integer
+        description: 模板ID
+      moduleCode:
+        type: string
+        description: 模板编码
+      moduleName:
+        type: string
+        description: 模板名称
+      staffId:
+        type: integer
+        description: 人员id
+      staffName:
+        type: string
+        description: 人员姓名
+      staffZw:
+        type: string
+        description: 人员职务
+      orgName:
+        type: string
+        description: 组织名称
+
+
+  moduleStaffAddForm:
+    properties:
+      staffId:
+        type: integer
+        description: 人员ID (必填项)
+      moduleId:
+        type: integer
+        description: 模板ID (必填项)
+      staffName:
+        type: string
+        description: 人员名称 (必填项)
+
+  SecurityExaminationVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      orgName:
+        type: string
+        description: 部门
+      orgId:
+        type: integer
+        description: 部门id
+      bkhrId:
+        type: integer
+        description: 被考核人ID
+      bkhrXm:
+        type: string
+        description: 被考核人姓名
+      bkhrZw:
+        type: string
+        description: 被考核人职位
+      khzq:
+        type: string
+        description: 考核周期 0 上半年 1下半年
+      year:
+        type: integer
+        description: 考核年份
+      khsj:
+        type: string
+        description: 考核时间
+      reduTotal:
+        type: string
+        description: 扣减分数
+      actTotal:
+        type: string
+        description: 实得分数
+      total:
+        type: string
+        description: 总分
+      isPassVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 评定 0 不合格 1合格  2 未评定
+      asserId:
+        type: integer
+        description: 考核人ID
+      assessmenter:
+        type: integer
+        description: 考核人名称
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+
+  SecurityExaminationAddForm:
+    properties:
+      khzq:
+        type: string
+        description: 考核周期 0 上半年 1下半年（必填，默认选择上半年）
+      year:
+        type: integer
+        description: 年份（默认填充当前年，必填）
+      asserId:
+        type: integer
+        description: 默认为当前登录用户ID（可下拉选择，必填）
+      assessmenter:
+        type: string
+        description: 默认为当前登录用户姓名（必填）
+      bkhrAddForms:
+        type: array
+        description: 被考核人信息
+        items:
+          $ref: '#/definitions/BkhrAddForm'
+
+  BkhrAddForm:
+    properties:
+      orgName:
+        type: string
+        description: 被考核人所在组织名称（必填，父节点的名称）
+      orgId:
+        type: string
+        description: 被考核人所在组织ID（必填，父节点的ID）
+      bkhrId:
+        type: string
+        description: 被考核人ID（必填）
+      bkhrXm:
+        type: string
+        description: 被考核人名称（必填）
+
+  SecurityExaminationDetailVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      aqkhId:
+        type: integer
+        description: 安全考核ID
+      title:
+        type: string
+        description: 考核项
+      score:
+        type: string
+        description: 实际得分
+      total:
+        type: string
+        description: 应得分
+
+  SecurityExaminationDetailUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID(必填)
+      aqkhId:
+        type: integer
+        description: 安全考核ID(必填)
+      title:
+        type: string
+        description: 考核项
+      score:
+        type: string
+        description: 实际得分（必填）
+      total:
+        type: string
+        description: 应得分
+
+  TrainStaffAddVoReport:
+        description: 数组
+        type: array
+        items:
+          $ref: '#/definitions/TrainStaffAddForm_'
+
+  TrainStaffAddForm_:
+    properties:
+      id:
+        type: integer
+        description: 主表ID（必填）
+      trainId:
+        type: integer
+        description: 培训主表 ID（必填）
+      workerId:
+        type: integer
+        description: 人员 ID（必填）
+
+  OutStaffTrainVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      trainUnitName:
+        type: string
+        description: 培训单位名称
+      workerName:
+        type: string
+        description: 人员姓名
+      workerId:
+        type: integer
+        description: 人员id
+      learnTime:
+        type: string
+        description: 学时
+      totalTime:
+        type: string
+        description: 累计学时
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 人员分类
+      jobVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 职务
+      isEntryVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态（1进场0退场）
+      trainTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 外部培训类型
+      id:
+        type: integer
+        description: 主键ID
+      trainTime:
+        type: string
+        description: 培训时间
+      trainLocation:
+        type: string
+        description: 培训地点
+      trainName:
+        type: string
+        description: 培训名称
+
+
+
+
+

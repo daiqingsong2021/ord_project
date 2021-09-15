@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.IptMapper">
+
+
+    <resultMap id="resultIptInfoMap" type="com.wisdom.acm.sys.vo.SysIptInfoVo">
+        <id property="id" column="id"/>
+        <result property="iptCode" column="ipt_code"/>
+        <result property="iptName" column="ipt_name"/>
+        <result property="remark" column="remark"/>
+        <result property="sort" column="sort_num"/>
+        <association property="level" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="level_"/>
+        </association>
+        <association property="parent" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="parentId"/>
+            <result property="name" column="parentName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectIptsBySearch" resultType="java.lang.Integer">
+        SELECT o.id from wsd_sys_ipt o
+        <where>
+            <if test="search.searcher != null and search.searcher != ''">
+                (o.ipt_name like concat('%',#{search.searcher},'%')
+                or
+                o.ipt_code like concat('%',#{search.searcher},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectIptsAllByPid" resultMap="resultChildrenIptMap">
+        select i.id,i.ipt_name,i.ipt_code,i.remark from wsd_sys_ipt i where i.parent_id = #{parentId}
+    </select>
+
+    <select id="selectIptList" resultMap="resultIptListMap">
+         select i.id,i.parent_id,i.ipt_name,i.ipt_code,i.remark,(case i.level_ when '1' then '一级' when '2' then '二级' end) as levelName from wsd_sys_ipt i order by i.sort_num asc
+    </select>
+
+    <resultMap id="resultChildrenIptMap" type="com.wisdom.acm.sys.vo.SysIptVo">
+        <id property="id" column="id"/>
+        <result property="iptCode" column="ipt_code"/>
+        <result property="iptName" column="ipt_name"/>
+        <result property="remark" column="remark"/>
+        <association property="level" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="level_"/>
+        </association>
+        <collection column="id" property="children" ofType="com.wisdom.acm.sys.vo.SysIptVo"
+                    select="selectIptsAllByPid"/>
+    </resultMap>
+
+    <resultMap id="resultIptListMap" type="com.wisdom.acm.sys.vo.SysIptVo">
+        <id property="id" column="id"/>
+        <result property="iptCode" column="ipt_code"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="iptName" column="ipt_name"/>
+        <result property="remark" column="remark"/>
+        <result property="level" column="levelName"/>
+    </resultMap>
+
+    <select id="selectIptById" resultMap="resultIptInfoMap">
+        select
+		  i.id,i.ipt_name,i.parent_id,p.id parentId,p.ipt_name parentName,i.ipt_code,i.level_,i.remark,i.sort_num
+        from wsd_sys_ipt i left join wsd_sys_ipt p on i.parent_id = p.id where i.id = #{iptId}
+    </select>
+
+    <select id="selectIptsByIds" resultMap="resultIptInfoMap">
+         select
+		  i.id,i.parent_id,p.ipt_name parentName,i.ipt_name,i.ipt_code,i.level_,(case i.del when 0 then '有效' else '无效' end) as delName,i.del,i.remark,i.sort_num
+        from wsd_sys_ipt i left join wsd_sys_ipt p on i.parent_id = p.id where i.id in
+        <foreach collection="iptIds" separator="," open="(" close=")" index="index" item="item">
+            #{item}
+        </foreach>
+    </select>
+    <insert id="addIptList" parameterType="java.util.List">
+        insert into wsd_ipt
+        (IPT_NAME,IPT_CODE,IPT_TYPE,ORG_ID,ORG_PID,last_upd_ip,wsd_creator,creat_time)
+        values
+        <foreach collection="iptList" index="index" item="item" separator=",">
+            (#{item.iptName},#{item.iptCode},#{item.iptType},#{item.orgId},#{item.orgPid},#{item.lastUpdIp},#{item.wsdCreator},now())
+        </foreach>
+    </insert>
+
+    <select id="selectAddIptsFromOrg" resultType="com.wisdom.acm.sys.po.SysIptPo">
+        select i.ipt_id iptId,i.parent_id parentId,i.org_id orgId,i.org_pid orgPid  from wsd_sys_ipt i where i.org_id != 0 and i.org_pid != 0
+    </select>
+
+    <update id="updateIptRelationFromOrg">
+        update wsd_ipt set parent_id = #{parentId} where ID = #{iptId}
+    </update>
+
+    <update id="updateIptImportOver">
+        update wsd_ipt set org_id = 0,org_pid = 0
+    </update>
+
+    <update id="updateIptImportTopIpt">
+        update wsd_ipt set parent_id = #{iptId} where org_id = #{topOrgId};
+    </update>
+
+    <insert id="addIptUserRelations" parameterType="java.util.List">
+        insert into wsd_useript
+        (user_id,ipt_id,role_ids,last_upd_ip,wsd_creator,creat_time)
+        values
+        <foreach collection="iptUsers" item="item" separator=",">
+            (#{item.userId},#{item.iptId},#{item.roleIds},#{item.lastUpdIp},#{item.wsdCreator},#{item.creatTime})
+        </foreach>
+    </insert>
+</mapper>

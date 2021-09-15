@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.activiti.mapper.UserMapper">
+	<resultMap id="UserInfoMap" type="com.wisdom.acm.activiti.po.User">
+		<result property="id" column="id" jdbcType="VARCHAR"/>
+		<result property="loginId" column="user_name"/>
+		<result property="userName" column="actu_name" />
+		<result property="orgId" column="org_id" jdbcType="VARCHAR"/>
+		<result property="orgName" column="org_name" />
+	</resultMap>
+
+	<select id="getCount" resultType="java.lang.Integer">
+		select count(1) from wsd_sys_user u
+		left join wsd_sys_userorg g on u.id=g.user_id and g.main_org=1
+		left join wsd_sys_org o on o.id=g.org_id
+		<if test="findContent !=null and findContent != ''">
+			where upper(u.user_name) like concat('%', #{findContent}, '%') or upper(u.actu_name) like concat('%', #{findContent}, '%')
+			or u.id in(select g.user_id from wsd_sys_userorg g where g.org_id in(
+			select o.id from wsd_sys_org o where upper(o.org_name) like concat('%', #{findContent}, '%')))
+		</if>
+	</select>
+
+	<select id="getList" resultMap="UserInfoMap">
+		select u.id, u.user_name, u.actu_name, g.org_id, o.org_name from wsd_sys_user u
+		left join wsd_sys_userorg g on u.id=g.user_id and g.main_org = 1
+		left join wsd_sys_org o on o.id=g.org_id
+		<if test="findContent !=null and findContent != ''">
+			where upper(u.user_name) like concat('%', #{findContent}, '%') or upper(u.actu_name) like concat('%', #{findContent}, '%')
+			or u.id in(select g.user_id from wsd_sys_userorg g where g.org_id in(
+			select o.id from wsd_sys_org o where upper(o.org_name) like concat('%', #{findContent}, '%')))
+		</if>
+		order by u.user_name
+	</select>
+
+	<select id="getListById" resultMap="UserInfoMap">
+		select u.id, u.user_name, u.actu_name, g.org_id, o.org_name
+		from wsd_sys_user u
+		left join wsd_sys_userorg g on u.id=g.user_id and g.main_org = 1
+		left join wsd_sys_org o on o.id=g.org_id
+		where
+		<choose>
+			<when test="userIds != null and userIds.size() > 0">
+				u.id in
+				<foreach collection="userIds" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				1 = 2
+			</otherwise>
+		</choose>
+		order by u.user_name
+	</select>
+
+</mapper>

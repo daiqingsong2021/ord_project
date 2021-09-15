@@ -1,0 +1,246 @@
+logging:
+  config: classpath:logback-spring.xml
+
+server:
+  port: 8765
+
+#请求和响应GZIP压缩支持
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+
+spring:
+  application:
+    name: acm-gateway
+  profiles:
+    active: localhost
+  sleuth:
+    enabled: true
+    http:
+      legacy:
+        enabled: true
+  cloud:
+    gateway:
+      locator:
+        enabled: true
+      routes:
+      # =====================================
+      - id: acm-auth-server
+        uri: lb://acm-auth-server
+        order: 8000
+        predicates:
+        - Path=/api/auth/**
+        filters:
+        - StripPrefix=2
+      - id: acm-leaf
+        uri: lb://acm-leaf
+        order: 8001
+        predicates:
+        - Path=/api/leaf/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-hbase
+        uri: lb://acm-module-hbase
+        order: 8002
+        predicates:
+        - Path=/api/hbase/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-sys
+        uri: lb://acm-module-sys
+        order: 8003
+        predicates:
+        - Path=/api/sys/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-base
+        uri: lb://acm-module-base
+        order: 8004
+        predicates:
+        - Path=/api/base/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-plan
+        uri: lb://acm-module-plan
+        order: 8005
+        predicates:
+        - Path=/api/plan/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-pre
+        uri: lb://acm-module-pre
+        order: 8006
+        predicates:
+        - Path=/api/pre/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-rsrc
+        uri: lb://acm-module-rsrc
+        order: 8007
+        predicates:
+        - Path=/api/rsrc/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-doc
+        uri: lb://acm-module-doc
+        order: 8008
+        predicates:
+        - Path=/api/doc/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-wf
+        uri: lb://acm-module-wf
+        order: 8009
+        predicates:
+        - Path=/api/wf/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-cntc
+        uri: lb://acm-module-cntc
+        order: 8010
+        predicates:
+        - Path=/api/cntc/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-comu
+        uri: lb://acm-module-comu
+        order: 8011
+        predicates:
+        - Path=/api/comu/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-cost
+        uri: lb://acm-module-cost
+        order: 8012
+        predicates:
+        - Path=/api/cost/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-busi
+        uri: lb://acm-module-busi
+        order: 8013
+        predicates:
+        - Path=/api/busi/**
+        filters:
+        - StripPrefix=2
+      - id: acm-elasticsearch
+        uri: lb://acm-elasticsearch
+        order: 8014
+        predicates:
+        - Path=/api/search/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-plan-calc
+        uri: lb://acm-module-plan-calc
+        order: 8015
+        predicates:
+        - Path=/api/plancalc/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-activiti
+        uri: lb://acm-module-activiti
+        order: 8016
+        predicates:
+        - Path=/api/act/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-dashboard
+        uri: lb://acm-module-dashboard
+        order: 8017
+        predicates:
+        - Path=/api/dashboard/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-szxm
+        uri: lb://acm-module-szxm
+        order: 8018
+        predicates:
+        - Path=/api/szxm/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-dc1
+        uri: lb://acm-module-dc1
+        order: 8019
+        predicates:
+        - Path=/api/dc1/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-dc2
+        uri: lb://acm-module-dc2
+        order: 8020
+        predicates:
+        - Path=/api/dc2/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-dc3
+        uri: lb://acm-module-dc3
+        order: 8021
+        predicates:
+        - Path=/api/dc3/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-dc4
+        uri: lb://acm-module-dc4
+        order: 8022
+        predicates:
+        - Path=/api/dc4/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-dc5
+        uri: lb://acm-module-dc5
+        order: 8023
+        predicates:
+        - Path=/api/dc5/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-hrb-sys
+        uri: lb://acm-module-hrb-sys
+        order: 8024
+        predicates:
+        - Path=/api/hrb-sys/**
+        filters:
+        - StripPrefix=2
+      - id: acm-module-processing
+        uri: lb://acm-module-processing
+        order: 8025
+        predicates:
+        - Path=/api/processing/**
+        filters:
+        - StripPrefix=2
+
+
+  main:
+    allow-bean-definition-overriding: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false
+
+
+gate:
+  ignore:
+    startWith: /auth/jwt,/szxm/app/auth/user/info,/act/modeler,/szxm/sologin,/sys/app/user/login,/sys/huawei,/sys/oauth/userinfo,/sys/sologin
+    contain: /wf/listener/
+    endWith:
+
+auth:
+  serviceId: acm-auth-server
+  user:
+    token-header: Authorization
+  client:
+    token-header: x-client-token
+    id: acm-gate  #不填则默认读取spring.application.name
+    secret: 123456

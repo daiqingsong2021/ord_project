@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.quartz.TimeTaskMapper">
+
+    <resultMap id="resultTimeTaskMap" type="com.wisdom.acm.szxm.vo.quartz.TimeTaskVo">
+        <id property="id" column="id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="jobGroup" column="job_group"/>
+        <result property="description" column="description"/>
+        <result property="beanClass" column="bean_class"/>
+        <result property="cronExpression" column="cron_expression"/>
+        <result property="jobStatus" column="job_status"/>
+        <result property="arguments" column="arguments"/>
+        <result property="jobAuto" column="job_auto"/>
+    </resultMap>
+
+    <select id="selectTimeTask" parameterType="java.util.Map" resultMap="resultTimeTaskMap">
+        SELECT a.* FROM szxm_sys_time_task a
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND (a.job_name like '%'|| #{searcher} || '%' or a.job_group like '%'|| #{searcher} || '%')
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

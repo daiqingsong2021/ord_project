@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.wf.mapper.WfDelegateProcMapper">
+
+    <resultMap id="WfDelegateProcVoMap" type="com.wisdom.acm.wf.vo.WfDelegateProcVo">
+        <result column="id" property="id" />
+        <result column="type_id" property="typeId" />
+        <result column="type_code" property="typeCode" />
+        <result column="type_name" property="typeName" />
+        <result column="url" property="url" />
+        <result column="event" property="event" />
+        <result column="module_code" property="moduleCode" />
+    </resultMap>
+
+    <select id="selectDelegateProcList"  resultMap="WfDelegateProcVoMap">
+        select p.id,b.id type_id,b.type_code,b.type_name,b.url,b.event,b.module_code
+        from wsd_wf_bizType b
+        left join wsd_wf_delegate_proc p on p.biz_type_code = b.type_code
+        where p.delegate_id = #{delegateId}
+    </select>
+
+    <!--<select id="selectDelegateWfBizTypeList"  resultMap="WfDelegateProcVoMap">-->
+        <!--select b.type_id,b.type_code,b.type_name,b.url,b.event,b.module_code-->
+        <!--from wsd_wf_bizType b-->
+    <!--</select>-->
+
+</mapper>

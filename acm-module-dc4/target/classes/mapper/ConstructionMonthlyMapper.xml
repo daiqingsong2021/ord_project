@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc4.mapper.ConstructionMonthlyMapper">
+    <resultMap id="constructionMonthlyVo" type="com.wisdom.acm.dc4.vo.ConstructionMonthlyVo">
+        <result property="id" column="id"/>
+        <result property="recordTime" column="RECORD_TIME"/>
+        <result property="line" column="LINE"/>
+        <result property="lineName" column="LINE_Name"/>
+        <result property="weeklyPlanConstructionQuantity" column="weekly_plan_construction_quantity"/>
+        <result property="weeklyActualConstructionQuantity" column="weekly_actual_construction_quantity"/>
+        <result property="dailyPlanConstructionQuantity" column="daily_plan_construction_quantity"/>
+        <result property="dailyActualConstructionQuantity" column="daily_actual_construction_quantity"/>
+        <result property="tempPlanConstructionQuantity" column="temp_plan_construction_quantity"/>
+        <result property="tempActualConstructionQuantity" column="temp_actual_construction_quantity"/>
+        <result property="repairPlanConstructionQuantity" column="repair_plan_construction_quantity"/>
+        <result property="repairActualConstructionQuantity" column="repair_actual_construction_quantity"/>
+        <result property="totalPlanConstructionQuantity" column="total_plan_construction_quantity"/>
+        <result property="totalActualConstructionQuantity" column="total_actual_construction_quantity"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="creatTime" column="creat_time"/>
+        <association property="createVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="creator"/>
+            <result property="name" column="creator_name"/>
+        </association>
+    </resultMap>
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="constructionMonthlyVo">
+        select a.*,dt.dict_name as line_name,
+        dt.dict_name as  LINE_NAME,
+        u.actu_name as creator_name
+        from odr_construction_monthly a
+        left join wsd_base_dict dt
+        on a.line = dt.dict_code and dt.TYPE_CODE = 'line'
+        left join wsd_sys_user u on a.creator=u.id
+        <where>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="lines != null and lines != '' ">
+                AND a.line in
+                <foreach collection="lines" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="recordTime != null and recordTime != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m')= #{recordTime}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+</mapper>
+

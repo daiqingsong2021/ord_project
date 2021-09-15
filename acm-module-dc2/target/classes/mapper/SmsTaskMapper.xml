@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.SmsTaskMapper">
+    <resultMap id="smsTaskMap" type="com.wisdom.acm.dc2.vo.SmsTaskVo">
+        <id property="id" column="id"></id>
+        <result property="sendChannel" column="sms_channel"></result>
+        <result property="line" column="sms_line"></result>
+        <result property="messageContent" column="sms_content"></result>
+        <result property="sendPerson" column="sms_target_type"></result>
+        <result property="smsTargetGroup" column="sms_target_group"></result>
+        <result property="sendTimeWay" column="sms_send_type"></result>
+        <result property="sendTime" column="sms_time"></result>
+        <result property="smsSendNumber" column="sms_send_number"></result>
+        <result property="smsSendStatus" column="sms_send_status"></result>
+        <result property="sendNum" column="send_num"></result>
+        <result property="receiveSuccessNum" column="receive__num"></result>
+    </resultMap>
+
+    <select id="querySmsTaskList" parameterType="java.util.Map" resultMap="smsTaskMap">
+        SELECT
+        a.id,
+        a.sms_channel,
+        a.sms_line,
+        a.sms_content,
+        a.sms_target_type,
+        a.sms_target_group,
+        a.sms_send_type,
+        a.sms_time,
+        a.sms_send_number,
+        a.sms_send_status,
+        count( b.target_number ) AS send_num,
+        sum(IF( b.receive_status, 1, 0 )) AS receive__num
+        FROM
+        odr_sms_task a
+        LEFT JOIN odr_sms_history b ON a.id = b.task_id
+        where 1=1
+        <if test="searcher != null and searcher != ''">
+            AND a.sms_content like concat('%', #{searcher}, '%')
+        </if>
+        <if test="smsTimeStart != null and smsTimeStart != ''">
+            AND a.sms_time &gt;=#{smsTimeStart}
+        </if>
+        <if test="smsTimeEnd != null and smsTimeEnd != ''">
+            AND a.sms_time &lt;=#{smsTimeEnd}
+        </if>
+        <if test="smsSendStatus != null and smsSendStatus != ''">
+            AND a.sms_send_status = #{smsSendStatus}
+        </if>
+        GROUP BY a.id
+        order by a.id desc
+    </select>
+
+    <select id="scanSmsTaskList" resultMap="smsTaskMap">
+        SELECT
+        a.id,
+        a.sms_channel,
+        a.sms_line,
+        a.sms_content,
+        a.sms_target_type,
+        a.sms_target_group,
+        a.sms_send_type,
+        a.sms_time,
+        a.sms_send_number,
+        a.sms_send_status
+        FROM
+        odr_sms_task a
+        where a.sms_send_type = 2 and a.sms_send_status = 0
+    </select>
+
+</mapper>
+

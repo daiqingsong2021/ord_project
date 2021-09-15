@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.hrb.sys.mapper.StationStationFoundationMapper">
+    <update id="updateStationDistanceFoundationList" parameterType="java.util.List">
+        <foreach collection="updateList" item="item" index="index">
+            update
+                  odr_station_station_foundation
+            <set>
+                  station_up = #{item.stationUp},
+                  station_down = #{item.stationDown},
+                  station_up_distance = #{item.stationUpDistance},
+                  station_down_distance = #{item.stationDownDistance},
+                  is_new_line = #{item.isNewLine},
+                  sum = #{item.sum}
+            </set>
+            where id = #{item.id};
+        </foreach>
+    </update>
+    <delete id="delStationStationFoundationServiceByLine" parameterType="java.util.List">
+        DELETE FROM odr_station_station_foundation
+        <where>
+            line IN
+            <foreach collection="lines" item="item" open="(" close=")"
+                     separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+
+    <resultMap id="StationStationFoundationVo" type="com.wisdom.acm.hrb.sys.vo.StationStationFoundationVo">
+        <result property="id" column="id"/>
+        <result property="sum" column="sum" />
+        <result property="stationUp" column="station_up"/>
+        <result property="stationDown" column="station_down"/>
+        <result property="stationUpDistance" column="station_up_distance"/>
+        <result property="stationDownDistance" column="station_down_distance"/>
+        <result property="isNewLine" column="is_new_line"/>
+        <result property="distanceType" column="distance_type"/>
+        <result property="line" column="line"/>
+    </resultMap>
+
+    <select id="queryStationStationFoundationByParam" parameterType="java.util.Map" resultMap="StationStationFoundationVo">
+        SELECT a.* FROM  odr_station_station_foundation a
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="distanceType != null and distanceType != '' ">
+                AND a.distance_type =#{distanceType}
+            </if>
+            <if test="stationUp != null and stationUp != '' ">
+                AND a.station_up =#{stationUp}
+            </if>
+            <if test="stationDown != null and stationDown != '' ">
+                AND a.station_down =#{stationDown}
+            </if>
+            <if test="startOrderNumber != null and startOrderNumber != '' and endOrderNumber != null and endOrderNumber != ''    ">
+                AND a.sum between #{startOrderNumber} and #{endOrderNumber}
+            </if>
+        </where>
+        order by a.sum asc
+    </select>
+
+    <select id="queryStationToStationMileage" parameterType="java.util.Map" resultMap="StationStationFoundationVo">
+        SELECT sum(a.station_down_distance) as station_down_distance ,sum(a.station_up_distance) as station_up_distance FROM  odr_station_station_foundation a
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="distanceType != null and distanceType != '' ">
+                AND a.distance_type =#{distanceType}
+            </if>
+            <if test="stationUp != null and stationUp != '' ">
+                AND a.station_up =#{stationUp}
+            </if>
+            <if test="isNewLine != null and isNewLine != '' ">
+                AND a.is_new_line =#{isNewLine}
+            </if>
+            <if test="stationDown != null and stationDown != '' ">
+                AND a.station_down =#{stationDown}
+            </if>
+            <if test="startOrderNumber != null and startOrderNumber != '' and endOrderNumber != null and endOrderNumber != ''    ">
+                AND a.sum between #{startOrderNumber} and #{endOrderNumber}
+            </if>
+        </where>
+        order by a.sum asc
+    </select>
+
+
+
+
+</mapper>

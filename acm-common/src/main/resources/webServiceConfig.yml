@@ -1,0 +1,28 @@
+# 正式地址: uuv内部人员、组织地址  http://esb.sz-mtr.com/BizTalkESB/UpdateUUV.asmx?wsdl
+webservice.uuvinner.url: http://10.10.11.87/BizTalkESB/UpdateUUV.asmx?wsdl
+#webservice.uuvinner.url: http://esb.sz-mtr.com/BizTalkESB/UpdateUUV.asmx?wsdl
+# 正式地址 外部组织地址  http://esb.sz-mtr.com/BizTalkESB/A10_003.asmx?wsdl
+webservice.outorg.url: http://10.10.11.87/BizTalkESB/A10_004.asmx?wsdl
+#webservice.outorg.url: http://esb.sz-mtr.com/BizTalkESB/A10_003.asmx?wsdl
+# 正式地址 外部人员地址  http://esb.sz-mtr.com/BizTalkESB/A10_004.asmx?wsdl
+webservice.outstaff.url: http://10.10.11.87/BizTalkESB/A10_005.asmx?wsdl
+#webservice.outstaff.url: http://esb.sz-mtr.com/BizTalkESB/A10_004.asmx?wsdl
+# 正式地址 统一待办地址 http://esb.sz-mtr.com/BizTalkESB/WF_APP_001.asmx?wsdl
+webservice.daiban.url: http://10.10.11.87/BizTalkESB/WF_APP_001.asmx?wsdl
+#webservice.daiban.url: http://esb.sz-mtr.com/BizTalkESB/WF_APP_001.asmx?wsdl
+# 正式地址 合同管理系统地址  http://esb.sz-mtr.com/BizTalkESB/A07_059.asmx?wsdl
+webservice.contract.url: http://10.10.11.86:3333/ForGC/GCService.asmx?wsdl
+#webservice.contract.url: http://esb.sz-mtr.com/BizTalkESB/A07_059.asmx?wsdl
+#正式外延接入合同的登录接口 http://esb.sz-mtr.com/BizTalkESB/A07_060.asmx?wsdl
+webservice.hetongwaiyantoken.url: http://10.10.11.87/BizTalkESB/A07_081.asmx?wsdl
+#webservice.hetongwaiyantoken.url: http://esb.sz-mtr.com/BizTalkESB/A07_060.asmx?wsdl
+#正式外延接入合同的登录接口 参数key  DDB67EAB-A6E1-4F52-A838-826F9E9A8E4A
+webservice.hetongwaiyantoken.key: DDB67EAB-A6E1-4F52-A838-826F9E9A8E4A
+#正式账号 企业服务总线账号 IEPMSAdmin
+#webservice.esb.username: IEMPAdmin
+webservice.esb.username: IEPMSAdmin
+#正式账号 企业服务总线密码 111111
+webservice.esb.password: 111111
+#正式环境 企业服务总线  外部人员、组织请求中 appid B10
+#webservice.esb.appId: 14
+webservice.esb.appId: 14

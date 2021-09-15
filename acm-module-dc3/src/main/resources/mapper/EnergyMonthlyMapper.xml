@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc3.mapper.EnergyMonthlyMapper">
+
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultType="com.wisdom.acm.dc3.po.EnergyMonthlyPo">
+        select a.*
+        from odr_energy_Monthly a
+        <where>
+            <if test="line != null and line != '' ">
+                AND a.LINE =#{line}
+            </if>
+            <if test="linePeriod != null and linePeriod != '' ">
+                AND a.LINE_PERIOD =#{linePeriod}
+            </if>
+            <if test="up2MonthRecordTime != null and up2MonthRecordTime != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{up2MonthRecordTime}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+
+
+</mapper>
+

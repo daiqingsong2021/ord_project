@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.wf.mapper.WfBizTypeMapper">
+
+    <resultMap id="WfBizTypeVo" type="com.wisdom.acm.wf.vo.WfBizTypeVo">
+        <result column="id" property="id"/>
+        <result column="type_code" property="typeCode"/>
+        <result column="type_name" property="typeName"/>
+        <result column="url" property="url"/>
+        <result column="event" property="event"/>
+        <result column="module_code" property="moduleCode"/>
+    </resultMap>
+
+    <select id="selectWfTypeList" resultMap="WfBizTypeVo" >
+        select id,module_code,type_code,type_name,url,event,creat_time
+        from wsd_wf_biztype
+        order by creat_time desc
+    </select>
+
+    <select id="selectWfTypeVo" resultMap="WfBizTypeVo" >
+        select id,module_code,type_code,type_name,url,event
+        from wsd_wf_biztype
+        where id = #{id}
+    </select>
+
+
+    <select id="selectWfTypeBySearch" resultMap="WfBizTypeVo" >
+        select id,module_code,type_code,type_name,url,event,creat_time
+        from wsd_wf_biztype
+        <where>
+            <if test="search.searcher != '' and search.searcher != null">
+                (concat(type_code) like concat('%',#{search.searcher},'%')
+                 or
+                 concat(type_name) like concat('%',#{search.searcher},'%'))
+            </if>
+        </where>
+        order by creat_time desc
+    </select>
+
+</mapper>

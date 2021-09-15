@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.processing.mapper.representation.DailyRepresentationMapper">
+    <resultMap id="dailyRepresentationVo" type="com.wisdom.acm.processing.vo.representation.DailyRepresentationVo">
+        <result property="title" column="MOUDLE_TITLE" />
+        <result property="describe" column="DESCRIPTION" />
+    </resultMap>
+    <select id="queryDailyRepresentationList" parameterType="java.util.Map" resultMap="dailyRepresentationVo">
+          select MOUDLE_TITLE,DESCRIPTION from odr_moudle_daily_representation where line=#{line} and  record_time=#{recordTime}
+    </select>
+
+</mapper>
+

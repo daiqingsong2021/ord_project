@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.PeopleMapper">
+
+    <resultMap id="resultPeopleVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="name" column="name"/>
+        <result property="telPhone" column="telphone"/>
+        <result property="idCard" column="id_card"/>
+        <result property="totalClassHour" column="total_class_hour"/>
+        <result property="bornDate" column="born_date"/>
+        <result property="orgName" column="org_name"/>
+        <result property="orgId" column="org_id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="sysUserCode" column="sys_user_code"/>
+        <result property="gzkh" column="gzkh"/>
+        <result property="score" column="score"/>
+        <result property="fileCount" column="file_count"/>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type" />
+            <result property="name" column="type_name"/>
+        </association>
+        <association property="sexVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="sex" />
+            <result property="name" column="sex_name"/>
+        </association>
+        <association property="peoTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="peo_type" />
+            <result property="name" column="peo_type_name"/>
+        </association>
+        <association property="jobVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="job" />
+            <result property="name" column="job"/>
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status" />
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="workTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="work_type" />
+            <result property="name" column="work_type"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="resultSectionPeopleKQVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleVo">
+        <id property="id" column="id"/>
+        <result property="projInfoId" column="proj_info_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="name" column="name"/>
+        <result property="telPhone" column="telphone"/>
+        <result property="idCard" column="id_card"/>
+        <result property="totalClassHour" column="total_class_hour"/>
+        <result property="bornDate" column="born_date"/>
+        <result property="orgName" column="org_name"/>
+        <result property="orgId" column="org_id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="sysUserCode" column="sys_user_code"/>
+        <result property="gzkh" column="gzkh"/>
+        <result property="score" column="score"/>
+        <result property="fileCount" column="file_count"/>
+
+        <result property="isQq" column="is_qq"/>
+        <result property="isQj" column="is_qj"/>
+        <result property="jlRq" column="jl_rq"/>
+        <association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="type" />
+            <result property="name" column="type_name"/>
+        </association>
+        <association property="sexVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="sex" />
+            <result property="name" column="sex_name"/>
+        </association>
+        <association property="peoTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="peo_type" />
+            <result property="name" column="peo_type_name"/>
+        </association>
+        <association property="jobVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="job" />
+            <result property="name" column="job_name"/>
+        </association>
+        <association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="status" />
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="workTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="work_type" />
+            <result property="name" column="work_type"/>
+        </association>
+    </resultMap>
+
+    <delete id="deleteSpeciWorkByPeoId" parameterType="java.util.List">
+        DELETE FROM szxm_rygl_speci_worker
+        <where>
+            people_id IN
+            <foreach collection="peopleIds" item="id" open="(" close=")"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="selectPeople" parameterType="java.util.Map" resultMap="resultPeopleVo">
+        select t.id,
+        t.proj_info_id,
+        t.project_id,
+        t.section_id,
+        t.name,
+        t.telphone,
+        t.id_card,
+        t.total_class_hour,
+        t.born_date,
+        t.org_id,
+        t.org_name,
+        t.gzkh,
+        t.score,
+        t.type,
+        t.type_name,
+        t.sex,
+        t.sex_name,
+        t.peo_type,
+        t.peo_type_name,
+        t.job,
+        t.status,
+        t.status_name,
+        count(r.file_id) as file_count
+        from (SELECT a.*,
+        (case a.peo_type
+        when '0' then
+        '分包'
+        when '1' then
+        '自有'
+        end) as peo_type_name,
+        (case a.status
+        when '0' then
+        '退场'
+        when '1' then
+        '进场'
+        end) as status_name,
+        (case a.sex
+        when '0' then
+        '女'
+        when '1' then
+        '男'
+        end) as sex_name,
+        dt.dict_name as type_name,
+        b.org_name,
+        b.id as org_id
+        FROM szxm_rygl_people a
+        left join szxm_rygl_projinfo b
+        on a.proj_info_id = b.id
+        left join wsd_base_dict dt
+        on a.type = dt.dict_code
+        and dt.TYPE_CODE = 'szxm.rygl.peopleType'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND ((a.name like '%'|| #{searcher} || '%') or (a.telphone like '%'|| #{searcher} || '%'))
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.PROJECT_ID =#{projectId}
+            </if>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.proj_info_id =#{projInfoId}
+            </if>
+            <if test="type != null and type != '' ">
+                AND a.type = #{type}
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc ) t
+        left join (select r.id,r.file_id,r.biz_id from wsd_doc_file f
+        inner join wsd_doc_file_relation r on r.file_id = f.id
+        where r.biz_type = 'STAFF-PROJINFO-PERSON' and f.del = 0) r
+        on t.id = r.biz_id
+        group by t.id,
+        t.proj_info_id,
+        t.project_id,
+        t.section_id,
+        t.name,
+        t.telphone,
+        t.id_card,
+        t.total_class_hour,
+        t.born_date,
+        t.org_name,
+        t.org_id,
+        t.org_name,
+        t.gzkh,
+        t.score,
+        t.type,
+        t.type_name,
+        t.sex,
+        t.sex_name,
+        t.peo_type,
+        t.peo_type_name,
+        t.job,
+        t.status,
+        t.status_name
+        order by t.job
+    </select>
+
+
+    <select id="selectOrgPeople" parameterType="java.util.Map" resultMap="resultPeopleVo">
+        SELECT a.*,(case a.peo_type when '0' then '分包' when '1' then '自有'  end) as peo_type_name,(case a.status
+        when '0' then
+        '退场'
+        when '1' then
+        '进场'
+        end) as status_name,(case a.sex when '0' then '女' when '1' then '男'  end) as sex_name,
+        dt.dict_name as type_name,b.work_type
+        FROM SZXM_RYGL_PEOPLE a left join SZXM_RYGL_SPECI_WORKER b on a.id=b.people_id
+        left join wsd_base_dict dt
+        on a.type = dt.dict_code
+        and dt.TYPE_CODE = 'szxm.rygl.peopleType'
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="typeList != null">
+                AND a.type IN
+                <foreach collection="typeList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+
+    <select id="selectAllKqPeople" parameterType="java.util.Map" resultMap="resultPeopleVo">
+        SELECT distinct a.*,
+        (case a.peo_type
+        when '0' then
+        '分包'
+        when '1' then
+        '自有'
+        end) as peo_type_name,
+        (case a.status
+        when '0' then
+        '退场'
+        when '1' then
+        '进场'
+        end) as status_name,
+        (case a.sex
+        when '0' then
+        '女'
+        when '1' then
+        '男'
+        end) as sex_name,
+        (case a.type
+        when '0' then
+        '管理人员'
+        when '1' then
+        '特殊工种'
+        when '2' then
+        '普通人员'
+        when '3' then
+        '施工作业队长'
+        when '4' then
+        '施工作业队施工人员'
+        end) as type_name,
+        b.org_name,
+        b.id as org_id,
+        u.id as sys_user_id,
+        u.user_name as sys_user_code
+        FROM szxm_rygl_people a
+        inner join szxm_rygl_projinfo b on a.proj_info_id = b.id
+        left join wsd_sys_user u on a.telphone=u.phone
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND ((a.name like '%'|| #{searcher} || '%') or (a.telphone like '%'|| #{searcher} || '%'))
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.project_id = #{projectId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                AND a.section_id = #{sectionId}
+            </if>
+            <if test="sectionList != null">
+                AND a.section_id IN
+                <foreach collection="sectionList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ryId != null and ryId != '' ">
+                AND a.id = #{ryId}
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="type != null and type != '' ">
+                AND a.type = #{type}
+            </if>
+            <if test="typeList != null">
+                AND a.type IN
+                <foreach collection="typeList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ryIds != null">
+                AND a.id IN
+                <foreach collection="ryIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <resultMap id="addPeopleVo" type="com.wisdom.acm.szxm.vo.rygl.PeopleVo">
+        <id property="id" column="id"/>
+        <result property="orgName" column="org_name"/>
+        <result property="name" column="name"/>
+        <result property="telPhone" column="telphone"/>
+        <association property="jobVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="job_code" />
+            <result property="name" column="job_name"/>
+        </association>
+        <association property="sexVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="sex" />
+            <result property="name" column="sex_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAddressBookPeople" parameterType="java.util.Map" resultMap="addPeopleVo">
+         SELECT a.id id,
+        a.name name,
+        b.org_name as org_name,
+        a.telphone,
+        a.job job_code,
+        dt.dict_name job_name,
+        to_char(a.sex) as sex,
+        case when a.sex=1 then '男' when a.sex=0 then '女' end as sex_name
+        FROM szxm_rygl_people a
+        inner join szxm_rygl_projinfo b
+        on a.proj_info_id = b.id
+        left join wsd_base_dict dt
+        on a.job = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        <where>
+            <if test="searcher != null and searcher != '' ">
+                AND a.name like '%'|| #{searcher} || '%'
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                AND a.section_id = #{sectionId}
+            </if>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.PROJ_INFO_ID = #{projInfoId}
+            </if>
+        </where>
+        order by a.job
+    </select>
+
+    <select id="selectPeopleByIDCard" parameterType="java.util.Map" resultMap="resultPeopleVo">
+         SELECT a.id id,
+        a.name name,
+        b.org_name as org_name,
+        a.id_card,
+        a.telphone,
+        a.job job_code,
+        dt.dict_name job_name,
+        to_char(a.sex) as sex,
+        case when a.sex=1 then '男' when a.sex=0 then '女' end as sex_name
+        FROM szxm_rygl_people a
+        inner join szxm_rygl_projinfo b
+        on a.proj_info_id = b.id
+        left join wsd_base_dict dt
+        on a.job = dt.dict_code
+        and dt.TYPE_CODE = 'base.position.type'
+        <where>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+            <if test="idCard != null and idCard != '' ">
+                AND a.id_card = #{idCard}
+            </if>
+        </where>
+        order by a.job
+    </select>
+
+
+    <select id="selectSectionPeople" parameterType="java.util.Map" resultMap="resultSectionPeopleKQVo">
+
+        Select t.Id,
+        t.Proj_Info_Id,
+        t.Project_Id,
+        t.Section_Id,
+        t.Name,
+        t.Telphone,
+        t.Type,
+        t.Type_Name,
+        t.Sex,
+        t.Sex_Name,
+        t.Job,
+        t.Job_Name,
+        t.Status,
+        t.Status_Name,
+        t.is_qq,
+        t.is_qj,
+        t.jl_rq
+        From (Select a.*,
+        (Case a.Peo_Type
+        When '0' Then
+        '分包'
+        When '1' Then
+        '自有'
+        End) As Peo_Type_Name,
+        (Case a.Status
+        When '0' Then
+        '退场'
+        When '1' Then
+        '进场'
+        End) As Status_Name,
+        (Case a.Sex
+        When '0' Then
+        '女'
+        When '1' Then
+        '男'
+        End) As Sex_Name,
+        Dt.Dict_Name As Type_Name,
+        Dtt.Dict_Name As job_Name,
+        b.Org_Name,
+        b.Id As Org_Id,
+        r.is_qq,
+        r.is_qj,
+        r.jl_rq
+        From Szxm_Rygl_People a
+        Left Join Szxm_Rygl_Projinfo b
+        On a.Proj_Info_Id = b.Id
+        Left Join szxm_rygl_glrykq_record r
+        On r.people_id=a.id
+        Left Join Wsd_Base_Dict Dt
+        On a.Type = Dt.Dict_Code
+        And Dt.Type_Code = 'szxm.rygl.peopleType'
+        Left Join Wsd_Base_Dict Dtt
+        On a.job = Dtt.Dict_Code
+        And Dtt.Type_Code = 'base.position.type'
+
+        <where>
+            r.jl_rq= to_number(to_char(sysdate,'yyyymmdd'))
+
+            <if test="searcher != null and searcher != '' ">
+                AND ((a.name like '%'|| #{searcher} || '%') or (a.telphone like '%'|| #{searcher} || '%'))
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="projectId != null and projectId != '' ">
+                AND a.PROJECT_ID =#{projectId}
+            </if>
+            <if test="projInfoId != null and projInfoId != '' ">
+                AND a.proj_info_id =#{projInfoId}
+            </if>
+            <if test="type != null and type != '' ">
+                AND a.type = #{type}
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.status = #{status}
+            </if>
+
+        </where>
+        order by a.CREAT_TIME desc ) t
+    </select>
+
+    <select id="getSysOrgIdBySectionId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select sys_org_id from szxm_rygl_projinfo where section_id=#{sectionId} and sys_org_id is not null
+    </select>
+
+    <select id="getLwryInfoByOrgId" parameterType="java.lang.Integer" resultType="com.wisdom.acm.szxm.vo.rygl.LwryHolidayVo">
+        select distinct b.user_id as peopleId,a.org_name as workOrgName,c.actu_name as peopleName
+        from wsd_sys_org a
+        left join wsd_sys_userorg b on a.id=b.org_id
+        left join wsd_sys_user c on b.user_id=c.id
+        where a.id=#{sysOrgId}
+    </select>
+
+
+    <select id="selectPeopleListByOrgName"  parameterType="java.util.Map"   resultMap="resultPeopleVo">
+
+        SELECT distinct
+        p.id,
+        p.proj_info_id,
+        p.project_id,
+        p.section_id,
+        p.name,
+        p.telphone,
+        p.id_card,
+        p.total_class_hour,
+        p.born_date,
+        p.gzkh,
+        p.score,
+        p.type,
+        (case p.type
+        when '0' then
+        '管理人员'
+        when '1' then
+        '特殊工种'
+        when '2' then
+        '普通人员'
+        when '3' then
+        '施工作业队长'
+        when '4' then
+        '施工作业队施工人员'
+        end) as type_name,
+        p.sex,
+        (case a.sex
+        when '0' then
+        '女'
+        when '1' then
+        '男'
+        end) as sex_name,
+        p.peo_type,
+        p.job,
+        p.status
+        from szxm_rygl_people_entrydetail ed
+        Left Join szxm_rygl_people_entry e On e.id=ed.entry_id
+        Left Join szxm_rygl_people p On p.id=ed.people_id
+
+        <where>
+            <if test="projectId != null and projectId != '' ">
+                and p.project_id =#{projectId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                and ed.section_id =#{sectionId}
+            </if>
+            <if test="orgName != null and orgName != '' ">
+                and e.org_name =#{orgName}
+            </if>
+            And  p.status='1' And ed.people_id Is Not Null
+
+
+        </where>
+    </select>
+</mapper>
+

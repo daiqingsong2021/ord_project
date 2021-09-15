@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseClassifyMapper">
+
+    <resultMap id="resultClassifyValueList" type="com.wisdom.acm.base.vo.classify.BaseClassifyTreeVo">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="classify_code" property="classifyCode"/>
+        <result column="classify_name" property="classifyName"/>
+        <result column="classify_type" property="classifyType"/>
+        <result column="bo_code" property="boCode"/>
+    </resultMap>
+
+    <select id="selectClassifyValueList" resultMap="resultClassifyValueList">
+        select c.id,c.parent_id,c.classify_code,c.classify_name,c.classify_type,c.bo_code
+        from wsd_base_classify c where c.parent_id = #{classifyId}
+    </select>
+
+</mapper>

@@ -1,0 +1,14 @@
+#redis-cache 相关
+redis:
+  host: localhost
+  port: 6379
+  pool:
+    maxActive: 300
+    maxIdle: 100
+    maxWait: 1000
+  password: 
+  timeout: 2000
+  database: 0
+  sysName: acm-module-sys
+  enable: true
+  expire: 720  #分钟

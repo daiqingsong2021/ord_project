@@ -1,0 +1,102 @@
+swagger: '2.0'
+info:
+  title: ACM新产品API
+  description: 文档管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: file
+  description: 文件接口
+- name: temp
+  description: 临时文档
+- name: corp
+  description: 企业文档
+- name: project
+  description: 项目文档
+- name: favorite
+  description: 收藏夹
+- name: recyclebin
+  description: 回收站
+
+produces:
+- application/json
+paths:
+  /doc/file/reations/{bizId}/{bizType}/list:
+    get:
+      tags:
+      - doc
+      description: 根据参数获取文件信息
+      summary: 根据参数获取文件信息
+      operationId: queryFileInfoByBiz
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: bizId
+        in: path
+        description: bizId
+        required: true
+        type: integer
+      - name: bizType
+        in: path
+        description: bizType
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DocFileInfoVo'
+
+
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+
+
+  DocFileInfoVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      size:
+        type: string
+        description: 文件大小
+      fileName:
+        type: string
+        description: 文件名称
+      version:
+        type: string
+        description: 版本
+      fileUrl:
+        type: string
+        description: 地址
+      creatTime:
+        type: string
+        description: 创建时间
+      groupName:
+        type: string
+        description: 组
+      remoteFileName:
+        type: string
+        description: 远程文件名称
+      suffix:
+        type: string
+        description: 文件后缀名

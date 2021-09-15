@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.sysscore.SubjectTemplateMapper">
+
+    <resultMap id="subjectTemplateVoMap" type="com.wisdom.acm.szxm.vo.sysscore.SubjectTemplateVo">
+        <id property="id" column="id"/>
+        <result property="groupCode" column="group_code"/>
+        <result property="groupTitle" column="group_title"/>
+        <result property="moduleCode" column="module_code"/>
+        <result property="moduleTitle" column="module_title"/>
+        <association property="rolesVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="rid" />
+            <result property="code" column="type" />
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectSubjectTemplateList" parameterType="java.util.Map" resultMap="subjectTemplateVoMap">
+      SELECT a.id,
+        a.group_code,
+        a.group_title,
+        a.module_code,
+        a.module_title,
+        r.id as rid,
+        r.role_code as code,
+        r.role_name as name
+        FROM szxm_sys_subjective_template a
+        left join wsd_sys_role r on instr(a.raters,r.id)>0
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="groupCode != null and groupCode != '' ">
+                AND a.group_code = #{groupCode}
+            </if>
+            <if test="moduleCode != null and moduleCode != '' ">
+                AND a.module_code = #{moduleCode}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+
+    <select id="isInSubjectTemplate"  resultMap="subjectTemplateVoMap">
+      SELECT a.id,
+        a.group_code,
+        a.group_title,
+        a.module_code,
+        a.module_title,
+        r.id as rid,
+        r.role_code as code,
+        r.role_name as name
+        FROM szxm_sys_subjective_template a
+        left join wsd_sys_role r on instr(a.raters,r.id)>0
+        <where>
+            <if test="moduleCode != null and moduleCode != '' ">
+                AND a.module_code = #{moduleCode}
+            </if>
+        </where>
+        order by a.CREAT_TIME desc
+    </select>
+</mapper>
+

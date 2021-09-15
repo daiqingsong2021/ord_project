@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.processing.mapper.energy.EnergyDailyMapper">
+    <resultMap id="dailyReportVo" type="com.wisdom.acm.processing.vo.energy.EnergyVo">
+        <id property="line" column="line"/>
+        <result property="drdz" column="drdz"/>
+        <result property="drqy" column="drqy"/>
+        <result property="line" column="line"/>
+        <result property="drsh" column="drsh"/>
+        <result property="dzbl" column="dzbl"/>
+        <result property="qybl" column="qybl"/>
+        <result property="shbl" column="shbl"/>
+        <result property="dzdl" column="dzdl"/>
+        <result property="bydzzdh" column="bydzzdh"/>
+        <result property="byqyzdh" column="byqyzdh"/>
+        <result property="byljsh" column="byljsh"/>
+        <result property="yljzdl" column="yljzdl"/>
+        <result property="mrdqydhzklc" column="mrdqydhzklc"/>
+        <result property="qydhyylc" column="qydhyylc"/>
+    </resultMap>
+    <select id="queryEnergyVo" parameterType="java.util.Map" resultMap="dailyReportVo">
+      select
+				a.line,
+				sum(a.MOTIVE_POWER_CONSUMPTION) as drdz,
+				sum(a.TOW_POWER_CONSUMPTION) as drqy,
+				sum(a.LOSS_POWER_CONSUMPTION) as drsh,
+				sum(a.MOTIVE_POWER_RATE) as dzbl,
+				sum(a.TOW_POWER_RATE) as qybl,
+				sum(a.LOSS_POWER_RATE) as shbl,
+				sum(a.TOTAL_POWER_CONSUMPTION) as dzdl,
+				b.MOTIVE_POWER_CONSUMPTION as bydzzdh,
+				b.TOW_POWER_CONSUMPTION as byqyzdh,
+				b.LOSS_POWER_CONSUMPTION as byljsh,
+				b.TOTAL_POWER_CONSUMPTION as yljzdl,
+        (sum(a.TOW_POWER_CONSUMPTION)/tr.CARRYING_KILOMETRES) as mrdqydhzklc,
+		(sum(a.TOW_POWER_CONSUMPTION)/tr.OPERATING_KILOMETRES) as qydhyylc
+      from odr_energy_daily a  left join odr_energy_monthly b on a.line=b.line
+	  and a.line=#{line} and a.RECORD_TIME=#{recordTime} and b.RECORD_TIME=#{monthlyTime}
+      inner join odr_train_daily tr on a.line=tr.line and tr.RECORD_TIME=#{recordTime} and a.RECORD_TIME=tr.RECORD_TIME and tr.line=#{line}
+      where a.RECORD_TIME=#{recordTime} and a.line=#{line}
+    </select>
+    <select id="queryEnergyDailyVo" parameterType="java.util.Map" resultMap="dailyReportVo">
+     select
+                a.line,
+				sum(a.MOTIVE_POWER_CONSUMPTION) as drdz,
+				sum(a.TOW_POWER_CONSUMPTION) as drqy,
+				(sum(a.MOTIVE_POWER_CONSUMPTION)-sum(a.TOW_POWER_CONSUMPTION)) as drsh,
+				100*(sum(a.MOTIVE_POWER_CONSUMPTION)/(sum(a.MOTIVE_POWER_CONSUMPTION)+sum(a.TOW_POWER_CONSUMPTION))) as dzbl,
+				100*(sum(a.TOW_POWER_CONSUMPTION)/(sum(a.MOTIVE_POWER_CONSUMPTION)+sum(a.TOW_POWER_CONSUMPTION))) as qybl,
+				100*((sum(a.MOTIVE_POWER_CONSUMPTION)-sum(a.TOW_POWER_CONSUMPTION))/(sum(a.MOTIVE_POWER_CONSUMPTION)+sum(a.TOW_POWER_CONSUMPTION))) as shbl,
+				(sum(a.MOTIVE_POWER_CONSUMPTION)+sum(a.TOW_POWER_CONSUMPTION)) as dzdl,
+                (sum(a.TOW_POWER_CONSUMPTION)/tr.CARRYING_KILOMETRES) as mrdqydhzklc,
+		        (sum(a.TOW_POWER_CONSUMPTION)/tr.OPERATING_KILOMETRES) as qydhyylc
+      from odr_energy_daily a 
+      left join odr_train_daily tr on a.line=tr.line and tr.RECORD_TIME=#{recordTime} and a.RECORD_TIME=tr.RECORD_TIME and tr.line=#{line}
+      where a.RECORD_TIME=#{recordTime} and a.line=#{line}
+    </select>
+    <select id="queryEnergyMonthlyVo" parameterType="java.util.Map" resultMap="dailyReportVo">
+      select sum(b.MOTIVE_POWER_CONSUMPTION) AS bydzzdh,
+      sum(b.TOW_POWER_CONSUMPTION) AS byqyzdh,
+      sum(b.LOSS_POWER_CONSUMPTION) AS byljsh,
+      sum(b.TOTAL_POWER_CONSUMPTION) AS yljzdl from
+      odr_energy_monthly b 
+      where b.RECORD_TIME=#{monthlyTime} and b.line=#{line}
+    </select>
+</mapper>

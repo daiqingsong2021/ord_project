@@ -1,0 +1,457 @@
+swagger: '2.0'
+info:
+  title: SZXM - JHGLAPI
+  description: SZXM计划管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: user
+  description: 用户管理
+- name: workApply
+  description: 开工申请
+
+produces:
+- application/json
+paths:
+  /auth/jwt/token:
+    post:
+      tags:
+      - user
+      description: 获取token
+      summary: 获取token
+      operationId: userToken
+      parameters:
+      - in: body
+        name: body
+        description: 更新的用户对象
+        required: true
+        schema:
+          $ref: '#/definitions/UserNamePwdVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/login/user/info:
+    get:
+      tags:
+      - user
+      description: 用户登录
+      summary: 用户登录
+      operationId: getUserInfo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserLoginVo'
+
+  /szxm/jhgl/workApply/queryWorkApplyList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - workApply
+      summary: 查询开工申请数据
+      description: 开工申请数据
+      operationId: queryWorkApplyList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: status
+          in: query
+          description: 状态
+          type: string
+        - name: applyCode
+          in: query
+          description: 编码
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/WorkApplyVo'
+
+  /szxm/jhgl/workApply/queryFlowWorkApplyList:
+    get:
+      tags:
+        - workApply
+      description:  查询开工申请流程用
+      summary: 查询开工申请流程用
+      operationId: queryFlowWorkApplyList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 标段ID列表
+          type: string
+        - name: status
+          in: query
+          description: 状态
+          type: string
+        - name: applyCode
+          in: query
+          description: 编码
+          type: string
+          required: false
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/WorkApplyVo'
+
+  /szxm/jhgl/workApply/queryWorkApply/{id}:
+    get:
+      tags:
+        - workApply
+      summary: 根据主键id查询开工申请信息
+      description: 根据主键id查询开工申请信息
+      operationId: workApply
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/WorkApplyVo'
+
+  /szxm/jhgl/workApply/dyWorkApply:
+    post:
+      tags:
+        - workApply
+      summary: 根据主键id查询开工申请信息然后打印数据
+      description: 根据主键id查询开工申请信息然后打印数据
+      operationId: dyWorkApply
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: query
+          description: 主键ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: 返回 Object
+          schema:
+            $ref: '#/definitions/WorkApplyVo'
+
+  /szxm/jhgl/workApply/addWorkApply:
+    post:
+      tags:
+        - workApply
+      description: 增加开工申请数据
+      summary: 增加开工申请数据
+      operationId: addWorkApply
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加开工申请数据
+          required: true
+          schema:
+            $ref: '#/definitions/WorkApplyAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/WorkApplyVo'
+
+  /szxm/jhgl/workApply/updateWorkApply:
+    put:
+      tags:
+        - workApply
+      summary: 修改开工申请
+      description: 修改开工申请
+      operationId: updateWorkApply
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改开工申请入参
+          required: true
+          schema:
+            $ref: '#/definitions/WorkApplyUpdateForm'
+      responses:
+        200:
+          description: 返回修改VO Object
+          schema:
+            $ref: '#/definitions/WorkApplyVo'
+
+  /szxm/jhgl/workApply/delWorkApply:
+    delete:
+      tags:
+        - workApply
+      summary: 删除开工申请
+      description: 删除开工申请
+      operationId: delWorkApply
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: delWorkApply入参
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  SysUserLoginVo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      isOpen:
+        type: integer
+        description: 三员管理状态（0：未开启  1：开启）
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 菜单类型(1:组件 2:菜单  3:分组 4:模块)
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      group:
+        type: integer
+        description: 组
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 跟新时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+      children:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  WorkApplyVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      applyCode:
+        type: string
+        description: 编号
+      applyWorkDay:
+        type: string
+        description: 开工申请日期
+      sectionCodeName:
+        type: string
+        description: 标段
+      projectName:
+        type: string
+        description: 项目名称
+      sgdw:
+        type: string
+        description: 施工单位
+      contract:
+        type: string
+        description: 合同号
+      initiator:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间
+
+  WorkApplyAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      applyCode:
+        type: string
+        description: 编号
+      applyWorkDay:
+        type: string
+        description: 申请开工日期
+
+  WorkApplyUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      applyCode:
+        type: string
+        description: 编号
+      applyWorkDay:
+        type: string
+        description: 申请开工日期
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id

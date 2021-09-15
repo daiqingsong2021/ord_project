@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc5.mapper.FaultDailyMapper">
+
+    <select id="selectFaultDailyByParams" parameterType="java.util.Map" resultType="com.wisdom.acm.dc5.vo.FaultDailyVo">
+        select a.id,a.LINE as line,dt.dict_name as lineName,
+        a.record_day as recordDay,a.major_vehicle as majorVehicle,a.major_power as majorPower,
+        a.major_signal as majorSignal,a.major_communication as majorCommunication,a.major_construction as majorConstruction,
+        a.major_mechatronics as majorMechatronics,a.major_afc as majorAfc,a.major_other as majorOther,a.status as status
+        from odr_fault_daily a
+        left join wsd_base_dict dt on a.line = dt.dict_code and dt.TYPE_CODE = 'line'
+        where 1=1
+            <if test="line != null and line != '' ">
+                AND a.LINE =#{line}
+            </if>
+            <if test="lines != null and lines != '' ">
+                AND a.LINE in
+                <foreach collection="lines" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="status != null and status != '' ">
+                AND a.STATUS =#{status}
+            </if>
+            <if test="recordDay != null and recordDay != '' ">
+                AND a.RECORD_DAY = #{recordDay}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.RECORD_DAY <![CDATA[  <= ]]> #{endTime}
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.RECORD_DAY <![CDATA[  >= ]]> #{startTime}
+            </if>
+        order by a.RECORD_DAY desc
+    </select>
+
+    <select id="selectDaily2MonthlyByParams" parameterType="java.util.Map" resultType="com.wisdom.acm.dc5.vo.FaultMonthlyVo">
+        SELECT a.LINE as line,
+        date_format(a.RECORD_DAY,'%Y-%m') as recordMonth,
+        SUM(a.major_vehicle) AS majorVehicle,
+        SUM(a.MAJOR_POWER) AS majorPower,
+        SUM(a.MAJOR_signal) AS majorSignal,
+        SUM(a.MAJOR_communication) AS majorCommunication,
+        SUM(a.MAJOR_construction) AS majorConstruction,
+        SUM(a.MAJOR_Mechatronics) AS majorMechatronics,
+        SUM(a.MAJOR_AFC) AS majorAfc,
+        SUM(a.MAJOR_OTHER) AS majorOther
+        FROM odr_fault_daily a
+        where a.status = 'APPROVED' and a.RECORD_DAY BETWEEN #{startTime} AND #{endTime}
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.LINE =#{line}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        GROUP BY a.LINE
+    </select>
+
+
+</mapper>
+

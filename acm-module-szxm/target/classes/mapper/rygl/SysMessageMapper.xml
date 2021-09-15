@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.SysMessageMapper">
+
+	<resultMap id="GeneralVo" type="com.wisdom.base.common.vo.GeneralVo">
+		<id property="id" column="role_id"/>
+		<result property="code" column="role_code"/>
+		<result property="name" column="role_name"/>
+	</resultMap>
+
+	<resultMap id="GeneralUserVo" type="com.wisdom.base.common.vo.GeneralVo">
+		<id property="id" column="id"/>
+		<result property="code" column="USER_NAME"/>
+		<result property="name" column="ACTU_NAME"/>
+	</resultMap>
+
+	<resultMap id="resultUserVo" type="com.wisdom.base.common.vo.GeneralVo">
+		<id property="id" column="id"/>
+		<result property="code" column="user_code"/>
+		<result property="name" column="user_name"/>
+	</resultMap>
+
+	<resultMap id="resultUserMainOrgVoMap" type="com.wisdom.base.common.vo.GeneralVo">
+		<result property="id" column="id"/>
+		<result property="name" column="org_name"/>
+	</resultMap>
+
+	<insert id="addSysMessage" parameterType="com.wisdom.acm.szxm.po.SysMessageRecvPo">
+		INSERT INTO
+		wsd_sys_message(ID,TITLE,CONTENT_,SEND_USER,SEND_TIME,TYPE,CLAIM_DEAL_TYPE,CLAIM_DEAL_TIME,PARENT_ID,OPT_TYPE,DEL,SOURCE,COLLECT)
+		VALUES(
+		#{id},#{title},#{content},#{sendUser},#{sendTime},#{type},#{claimDealType},#{claimDealTime},#{parentId},#{optType},#{del},#{source},#{collect}
+		)
+	</insert>
+
+
+	<insert id="addSysMessageUser" parameterType="com.wisdom.acm.szxm.po.SysMessageUserPo">
+        INSERT INTO
+		WSD_SYS_MESSAGE_USER(ID,message_id,recv_user,recv_time,type,real_status,del,collect)
+		VALUES(
+		#{id},#{messageId},#{recvUser},#{recvTime},#{type},#{realStatus},#{del},#{collect}
+		)
+	</insert>
+
+
+	<select id="queryTeamRoles" resultMap="GeneralVo">
+	    select uo.id,uo.user_id,uo.org_id,uor.role_id,r.role_code,r.role_name
+        from wsd_sys_userorg uo
+        inner join wsd_sys_org o on o.id = uo.org_id and o.biz_type = 'project' and o.biz_id = #{projectId}
+        left join wsd_sys_userorg_role uor on uo.user_id=uor.user_id and uo.org_id=uor.org_id
+        left join wsd_sys_role r on r.id=uor.role_id
+        where uo.user_id= #{userId}
+	</select>
+
+	<select id="queryTeamUsers" resultMap="GeneralUserVo">
+     select distinct u.*  from  wsd_sys_userorg uo
+ inner join wsd_sys_user u
+    on u.id = uo.user_id
+ inner join wsd_sys_org o
+    on uo.org_id = o.id
+   where o.id=#{sectionId} or o.parent_id=#{sectionId} or exists(select 1 from SZXM_SYS_SECTION_RELATION sr where sr.sgb_id=#{sectionId} and sr.jlb_id=o.parent_id)
+	</select>
+
+	<select id="queryProjectUsers" resultMap="GeneralUserVo">
+     select distinct u.*  from  wsd_sys_userorg uo
+ inner join wsd_sys_user u
+    on u.id = uo.user_id
+ inner join wsd_sys_org o
+    on uo.org_id = o.id
+   where o.biz_id=#{projectId}
+	</select>
+
+	<select id="queryTeamUsersOutUser" resultMap="GeneralUserVo">
+     select distinct u.*  from  wsd_sys_userorg uo
+ inner join wsd_sys_user u
+    on u.id = uo.user_id
+ inner join wsd_sys_org o
+    on uo.org_id = o.id
+   where o.id=#{id}
+	</select>
+
+	<select id="queryCompanyInnerUsers" resultMap="GeneralUserVo">
+     select distinct u.*  from  wsd_sys_userorg uo
+ inner join wsd_sys_user u
+    on u.id = uo.user_id
+ inner join wsd_sys_org o
+    on uo.org_id = o.id
+   where o.id in (select id from wsd_sys_org where id in (getChildList(#{id}))
+	</select>
+
+	<select id="selectCompany" resultMap="resultUserMainOrgVoMap">
+        select t.id, t.org_name from wsd_sys_org t
+        where t.parent_id <![CDATA[  <> ]]> 0
+        and t.org_type = '0' and id in (getChildList(#{id}))
+        order by t.org_level
+	</select>
+
+	<select id="selectUserInfo" resultMap="resultUserVo">
+        select u.id,u.user_name,u.user_code
+        from
+            wsd_sys_user u
+        where u.id = #{userId}
+    </select>
+
+	<select id="selectUserMainOrg" resultMap="resultUserMainOrgVoMap">
+        select r.id, r.org_name
+        from  wsd_sys_org r
+            left join wsd_sys_userorg o on o.org_id = r.id
+        where rownum = 1 and o.user_id = #{userId} and o.main_org = 1
+    </select>
+</mapper>
+

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.base.mapper.BaseTmpldelvMapper" >
+
+  <sql id="baseSelectSql">
+    select t.id, t.type_id, t.parent_id, t.delv_title, t.delv_num, t.delv_version, t.delv_type, d.dict_name type_name, t.delv_desc, t.type, t.creat_time, t.creator, u.actu_name from wsd_base_tmpldelv t
+    left join wsd_sys_user u on t.creator = u.id
+    left join wsd_base_dict d on t.delv_type=d.dict_code and d.type_code='plan.delv.type'
+  </sql>
+
+  <resultMap id="BaseResultMap" type="com.wisdom.acm.base.vo.tmpldelv.BaseTmpldelvVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="delv_title" property="delvTitle" jdbcType="VARCHAR" />
+    <result column="delv_num" property="delvNum" jdbcType="VARCHAR" />
+    <result column="delv_version" property="delvVersion" jdbcType="VARCHAR" />
+    <result column="delv_desc" property="delvDesc" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" />
+    <association property="delvType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+      <result column="delv_type" property="id" />
+      <result column="type_name" property="name"/>
+    </association>
+    <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+      <result column="creator" property="id" />
+      <result column="actu_name" property="name"/>
+    </association>
+  </resultMap>
+
+
+  <select id="selectTmpldelvList" resultMap="BaseResultMap">
+    <include refid="baseSelectSql"></include>
+    <!-- <where>
+       <if test="searchMap.delvTitle!=null">
+         and t.delv_title like '%${searchMap.delvTitle}%'
+       </if>
+       <if test="searchMap.delvNum!=null">
+         and t.delv_num like '%${searchMap.delvNum}%'
+       </if>
+       <if test="searchMap.delvVersion!=null">
+         and t.delv_version like '%${searchMap.delvVersion}%'
+       </if>
+       <if test="searchMap.delvType!=null">
+         and t.delv_type like '%${searchMap.delvType}%'
+       </if>
+       <if test="searchMap.delvDesc!=null">
+         and t.delv_desc like '%${searchMap.delvDesc}%'
+       </if>
+       <if test="searchMap.type!=null">
+         and t.type like '%${searchMap.type}%'
+       </if>
+     </where>-->
+  </select>
+
+    <select id="selectTmpldelvAssignList" resultMap="BaseResultMap">
+        <include refid="baseSelectSql"></include>
+        where t.id != #{value}
+    </select>
+
+  <select id="selectTmpldelvById" resultMap="BaseResultMap">
+    <include refid="baseSelectSql"></include>
+    where t.id = #{value}
+  </select>
+
+  <select id="selectDelvByTypeId" resultMap="BaseResultMap">
+    <include refid="baseSelectSql"></include>
+    where t.type_id = #{value}
+  </select>
+
+</mapper>

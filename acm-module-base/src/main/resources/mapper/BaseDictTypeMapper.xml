@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseDictTypeMapper">
+
+    <!--<resultMap id="resultGbTypeMap" type="com.wisdom.acm.base.po.BaseDictTypePo">-->
+    <resultMap id="resultGbTypeMap" type="com.wisdom.acm.base.vo.dict.BaseDictTypeVo">
+        <id property="id" column="ID"/>
+        <result property="boCode" column="BO_CODE"/>
+        <result property="typeCode" column="type_code"/>
+        <result property="typeName" column="type_name"/>
+        <result property="builtIn" column="built_in"/>
+    </resultMap>
+
+    <resultMap id="resultGbTypeInfoMap" type="com.wisdom.acm.base.vo.dict.BaseDictTypeInfoVo">
+        <id property="id" column="id"/>
+        <result property="typeCode" column="type_code"/>
+        <result property="typeName" column="type_name"/>
+        <result property="creatTime" column="creat_time"/>
+        <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+            <result property="id" column="user_id"/>
+            <result property="name" column="actu_name"/>
+        </association>
+    </resultMap>
+
+
+    <select id="selectDictTypeDateListByDictCode" resultMap="resultGbTypeMap">
+        select o.id,o.bo_code,o.type_name,o.type_code,o.built_in,o.sort_num
+        from wsd_base_dict_type o
+        where o.bo_code = #{boCode}
+        order by o.sort_num desc
+    </select>
+
+    <select id="selectDictTypeDateList" resultMap="resultGbTypeMap">
+        select o.id,o.bo_code,o.type_name,o.type_code,o.built_in,o.sort_num
+        from wsd_base_dict_type o
+        order by o.bo_code,o.sort_num desc
+    </select>
+
+    <select id="selectGbNameByGbCode" resultType="java.lang.String">
+        SELECT o.type_name FROM wsd_base_dict_type o where o.type_code = #{typeCode}
+    </select>
+
+    <select id="selectDictTypeInfoById" resultMap="resultGbTypeInfoMap">
+        SELECT o.id,o.bo_code,o.type_name,o.type_code,o.creat_time,o.creator user_id,u.actu_name FROM wsd_base_dict_type o
+        left join wsd_sys_user u on u.id = o.creator
+        where o.id = #{id}
+        order by o.bo_code desc
+    </select>
+
+    <select id="selectDictTypeCodesByIds" parameterType="java.util.List" resultType="java.lang.String">
+         select o.type_code from wsd_base_dict_type o where o.id in
+         <foreach collection="ids" separator="," index="index" close=")" open="(" item="item">
+             #{item}
+         </foreach>
+    </select>
+</mapper>

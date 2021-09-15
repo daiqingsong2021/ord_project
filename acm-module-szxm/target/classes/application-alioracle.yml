@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    name: test
+    url: jdbc:oracle:thin:@//${ORACLE_HOST:192.168.2.179}:${ORACLE_PORT:1521}/${DATABASE_NAME:XE}
+    username: ${USER_NAME:acm_cloud_test}
+    password: ${PASSWD:acm_cloud_test}
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    # driver-class-name: oracle.jdbc.OracleDriver
+
+mybatis:
+  basepackage: com.wisdom.acm.szxm.mapper
+  mapper-locations: classpath*:mapper/**/Oracle/*MapperOracle.xml,classpath*:mapper/**/*Mapper.xml
+  configuration:
+    jdbc-type-for-null: varchar
+
+

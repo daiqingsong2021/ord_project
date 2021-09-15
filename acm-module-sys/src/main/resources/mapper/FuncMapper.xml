@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.FuncMapper">
+
+    <resultMap id="resultFuncVoMap" type="com.wisdom.acm.sys.vo.SysFuncVo">
+        <id property="id" column="id"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="func_code" property="funcCode"/>
+        <result column="func_name" property="funcName"/>
+        <result column="short_code" property="shortCode"/>
+        <result column="creat_time" property="creatTime"/>
+        <result column="last_upd_time" property="lastUpdTime"/>
+        <association property="del" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="del"/>
+            <result property="name" column="delName"/>
+        </association>
+    </resultMap>
+
+
+    <select id="selectFuncPoById" resultType="com.wisdom.acm.sys.po.SysFuncPo">
+        select f.id,f.func_name funcName,f.short_code shortCode,f.func_code funcCode,f.menu_id menuId,f.del from wsd_sys_func f where f.id = #{funcId}
+    </select>
+
+    <select id="selectFuncVoById" resultMap="resultFuncVoMap">
+        select f.id,f.menu_id,f.func_code,f.short_code,f.func_name,f.del,(case f.del when 0 then '未激活' when 1 then '激活' end) as delName,f.creat_time,f.last_upd_time  from wsd_sys_func f where f.menu_id = #{menuId}
+        order by f.sort_num asc
+    </select>
+
+    <select id="selectFuncByIds" resultMap="resultFuncVoMap">
+        select f.id,f.menu_id,f.func_code,f.short_code,f.func_name,f.del,(case f.del when 0 then '未激活' when 1 then '激活' end) as
+        delName from wsd_sys_func f where f.menu_id in
+        <foreach collection="funcIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+        order by f.sort_num asc
+    </select>
+
+    <select id="selectFuncVoOneById" resultMap="resultFuncVoMap">
+        select f.id,f.menu_id,f.func_code,f.short_code,f.func_name,f.del,(case f.del when 0 then '未激活' when 1 then '激活' end) as delName from wsd_sys_func f where f.id = #{funcId}
+    </select>
+
+    <delete id="deleteFuncByMenuIds" parameterType="java.lang.Integer">
+        delete from wsd_sys_func where menu_id in
+        <foreach collection="menuIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectFuncVoByFuncId" resultMap="resultFuncVoMap">
+         select f.id,f.menu_id,f.func_code,f.short_code,f.func_name,f.del,(case f.del when 0 then '未激活' when 1 then '激活' end) as delName
+          from wsd_sys_func f where f.id = #{funcId}
+    </select>
+
+    <select id="selectByFuncCodes" resultType="com.wisdom.acm.sys.po.SysFuncPo">
+        select * from wsd_sys_func t
+        <where>
+            <if test="funcCodes != null and funcCodes.size > 0">
+                AND ( func_code IN
+                <foreach collection="funcCodes" item="funcCode" index="index"  open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 0">) OR func_code IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{funcCode}
+                </foreach> )
+            </if>
+        </where>
+    </select>
+</mapper>

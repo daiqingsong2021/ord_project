@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.DailyRepresentationMapper">
+
+    <resultMap id="dailyRepresentationVo" type="com.wisdom.acm.dc2.vo.DailyRepresentationVo">
+        <result property="id" column="id"/>
+        <result property="recordTime" column="record_time" />
+        <result property="line" column="LINE"/>
+        <result property="moudleTitle" column="MOUDLE_TITLE"/>
+        <result property="description" column="description"/>
+        <result property="picturePath" column="PICTURE_PATH"/>
+        <association property="createrVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="creator"/>
+            <result property="name" column="ACTU_NAME"/>
+        </association>
+    </resultMap>
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="dailyRepresentationVo">
+        SELECT
+        a.id,
+        a.record_time,
+        a.line,
+        a.moudle_title,
+        a.description,
+        a.creator,
+        a.PICTURE_PATH,
+        dt.dict_name AS line_name,
+        u.ACTU_NAME AS ACTU_NAME
+        FROM
+        odr_moudle_daily_representation a
+        LEFT JOIN wsd_sys_user u ON a.CREATOR = u.ID
+        LEFT JOIN wsd_base_dict dt ON a.line = dt.dict_code
+        AND dt.TYPE_CODE = 'line'
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="lines != null and lines != '' ">
+                AND a.line in
+                <foreach collection="lines" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="recordTime != null and recordTime != '' ">
+                AND a.RECORD_TIME =#{recordTime}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  <= ]]> str_to_date(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  >= ]]> str_to_date(#{startTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.RECORD_TIME desc
+    </select>
+</mapper>
+

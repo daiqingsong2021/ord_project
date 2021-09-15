@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseBoMapper">
+
+    <resultMap id="resultBoMap" type="com.wisdom.acm.base.vo.BaseBoVo">
+        <id property="id" column="ID"/>
+        <result property="boCode" column="bo_code"/>
+        <result property="boName" column="bo_name"/>
+    </resultMap>
+
+    <select id="queryBoList" parameterType="int" resultMap="resultBoMap">
+      select b.id, b.bo_code, b.bo_name, b.bo_type from wsd_base_bo b where b.bo_type = #{value}
+    </select>
+
+</mapper>

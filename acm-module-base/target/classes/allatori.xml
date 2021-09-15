@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <input>
+        <jar in="../acm-module-base.jar" out="../acm-module-base-obfuscated.jar"/>
+    </input>
+    <keep-names>
+        <class access="protected+">
+            <field access="protected+"/>
+            <method access="protected+"/>
+        </class>
+    </keep-names>
+    <property name="log-file" value="log.xml"/>
+    <expiry date="2019/12/31" string="LICENSE已过期! EXPIRED!"/>
+    <property name="fields-naming" value="real"/>
+    <ignore-classes>
+        <class template="class *spring*" />
+        <class template="class *springframework*" />
+        <class template="class *activiti*" />
+        <class template="class *aopalliance*" />
+        <class template="class *javax*" />
+        <class template="class *jni*" />
+        <class template="class *alibaba*"/>
+        <class template="class *fasterxml*"/>
+        <class template="class *fastjson*"/>
+        <class template="class *persistence*"/>
+        <class template="class *apache*"/>
+        <class template="class *poi*"/>
+        <class template="class *google*"/>
+        <class template="class *mybatis*"/>
+        <class template="class com.wisdom.base.common.po.*" />
+        <class template="class com.wisdom.base.common.vo.*" />
+        <class template="class com.wisdom.acm.base.po.*" />
+        <class template="class com.wisdom.acm.base.controller.*" />
+        <class template="class com.wisdom.acm.base.config.*" />
+        <class template="class com.wisdom.acm.base.mapper.*" />
+        <class template="class com.wisdom.acm.license.RegisterBundleAspect" />
+        <class template="class com.wisdom.acm.base.ACMBaseApplication" />
+    </ignore-classes>
+
+</config>

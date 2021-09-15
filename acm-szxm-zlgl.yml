@@ -1,0 +1,1622 @@
+swagger: '2.0'
+info:
+  title: 质量管理
+  description: 苏州项目质量管理API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: quaSuperv
+  description: 质量报监
+- name: quaSystem
+  description: 质量管理单元
+- name: quaInsp
+  description: 质量报验
+- name: quaConce
+  description: 隐蔽工程
+- name: deviceForensics
+  description: 特种设备验收
+
+produces:
+- application/json
+paths:
+  /szxm/zlgl/deviceForensics/queryDeviceForensicsList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - deviceForensics
+      description: 查询特种设备验收数据
+      summary: 查询特种设备验收数据
+      operationId: queryDeviceForensicsList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，多个以“,”相隔
+          type: string
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: fileStatus
+          in: query
+          description: 附件状态 1 已上传 0 未上传
+          type: string
+        - name: status
+          in: query
+          description: 状态
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceForensicsVo'
+
+  /szxm/zlgl/deviceForensics/queryFlowDeviceForensicsList:
+    get:
+      tags:
+        - deviceForensics
+      description: 搜索流程特种设备验收数据
+      summary: 搜索流程特种设备验收数据
+      operationId: queryFlowDeviceForensicsList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，多个以“,”相隔
+          type: string
+        - name: ids
+          in: query
+          description: 主键ID(如传了主键ID，其他参数可不传)
+          type: string
+          required: false
+        - name: searcher
+          in: query
+          description: 查询条件
+          type: string
+        - name: fileStatus
+          in: query
+          description: 附件状态 1 已上传 0 未上传
+          type: string
+        - name: status
+          in: query
+          description: 状态（必填）
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceForensicsVo'
+
+  /szxm/zlgl/deviceForensics/queryDeviceForensicsById/{id}:
+    get:
+      tags:
+        - deviceForensics
+      description: 查询单个特种设备验收数据
+      summary: 查询单个特种设备验收数据
+      operationId: queryDeviceForensicsById
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            items:
+              $ref: '#/definitions/DeviceForensicsVo'
+
+  /szxm/zlgl/deviceForensics/addDeviceForensics:
+    post:
+      tags:
+        - deviceForensics
+      description: 增加特种设备验收
+      summary: 增加特种设备验收
+      operationId: addDeviceForensics
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加特种设备验收
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceForensicsAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DeviceForensicsVo'
+
+  /szxm/zlgl/deviceForensics/updateDeviceForensics:
+    put:
+      tags:
+        - deviceForensics
+      description: 修改特种设备验收
+      summary: 修改特种设备验收
+      operationId: updateDeviceForensics
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改特种设备验收
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceForensicsUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DeviceForensicsVo'
+
+  /szxm/zlgl/deviceForensics/deleteDeviceForensics:
+    delete:
+      tags:
+        - deviceForensics
+      description: 删除特种设备验收
+      summary: 删除特种设备验收
+      operationId: deleteDeviceForensics
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/zlgl/quaSuperv/queryQuaSuperv/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - quaSuperv
+      description: 查询报监详情
+      summary: 查询报监详情
+      operationId: queryQuaSuperv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: false
+      - name: projectId
+        in: query
+        description: 项目ID
+        required: true
+        type: integer
+      - name: sectionIds
+        in: query
+        description: 标段ID列表，多个以“,”相隔
+        type: string
+      - name: registerNum
+        in: query
+        description: 登记证号
+        type: string
+      - name: fileStatus
+        in: query
+        description: 附件状态 1 已上传 0 未上传
+        type: string
+      - name: isConfirm
+        in: query
+        description: 确认状态 1 已确认 0 未确认
+        type: string
+      - name: type
+        in: query
+        description: 报监类型 0 质量报监 1 安全报监  2 施工许可证 3 安全监督销项 4 竣工备案
+        type: string
+        required: true
+      - name: createTimeStart
+        in: query
+        description: 创建开始时间 yyyy-MM-dd
+        type: string
+      - name: createTimeEnd
+        in: query
+        description: 创建完成时间  yyyy-MM-dd
+        type: string
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/QuaSupervVo'
+
+  /szxm/zlgl/quaSuperv/addQuaSuperv:
+    post:
+      tags:
+      - quaSuperv
+      description: 增加质量报监信息
+      summary: 增加质量报监信息
+      operationId: addQuaSuperv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 增加的报监信息对象
+        required: true
+        schema:
+          $ref: '#/definitions/QuaSupervAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaSupervVo'
+
+  /szxm/zlgl/quaSuperv/updateQuaSuperv:
+    put:
+      tags:
+      - quaSuperv
+      description: 修改报监信息 只有确认状态下才能修改
+      summary: 修改报监信息 只有确认状态下才能修改
+      operationId: updateQuaSuperv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 修改报监信息对象
+        required: true
+        schema:
+          $ref: '#/definitions/QuaSupervUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaSupervVo'
+
+  /szxm/zlgl/quaSuperv/deleteQuaSuperv:
+    delete:
+      tags:
+      - quaSuperv
+      description: 删除质量报监 确认状态下无法删除
+      summary: 删除质量报监 确认状态下无法删除
+      operationId: deleteQuaSuperv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 删除的id
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/zlgl/quaSuperv/{supervisorId}/queryQuaSupervDescList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - quaSuperv
+      description: 报监情况说明
+      summary: 报监情况说明
+      operationId: queryQuaSupervDescList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: supervisorId
+          in: path
+          description: 质量报监ID
+          type: integer
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/QuaSupervDescVo'
+
+  /szxm/zlgl/quaSuperv/addQuaSupervDesc:
+    post:
+      tags:
+        - quaSuperv
+      description: 增加报监情况说明
+      summary: 增加报监情况说明
+      operationId: addQuaSupervDesc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 更新的用户对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaSupervDescAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaSupervDescVo'
+
+  /szxm/zlgl/quaSuperv/deleteQuaSupervDesc:
+    delete:
+      tags:
+        - quaSuperv
+      description: 删除报监情况说明
+      summary: 删除报监情况说明
+      operationId: deleteQuaSupervDesc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/zlgl/quaSuperv/updateQuaSupervDesc:
+    put:
+      tags:
+        - quaSuperv
+      description: 修改报监情况说明
+      summary: 修改报监情况说明
+      operationId: updateQuaSupervDesc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaSupervDescUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaSupervDescVo'
+
+  /szxm/zlgl/quaSystem/selectQuaSystemList:
+    get:
+      tags:
+        - quaSystem
+      description: 查询质量管理单元
+      summary: 查询质量管理单元
+      operationId: selectQuaSystemList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuaSystemVo'
+
+  /szxm/zlgl/quaSystem/addQuaSystem:
+    post:
+      tags:
+        - quaSystem
+      description: 增加质量管理单元
+      summary: 增加质量管理单元
+      operationId: addQuaSystem
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加的质量管理单元对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaSystemAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaSystemVo'
+
+  /szxm/zlgl/quaSystem/updateQuaSystem:
+    put:
+      tags:
+        - quaSystem
+      description: 修改质量管理单元
+      summary: 修改质量管理单元
+      operationId: updateQuaSystem
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改质量管理单元对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaSystemUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaSystemVo'
+
+
+  /szxm/zlgl/quaSystem/deleteQuaSystem:
+    delete:
+      tags:
+        - quaSystem
+      description: 删除质量管理单元
+      summary: 删除质量管理单元
+      operationId: deleteQuaSystem
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/zlgl/quaSystem/downQuaSystem:
+    post:
+      tags:
+      - quaSystem
+      summary: 质量管理单元导出（格式为XSLX文件）
+      description: 质量管理单元导出（格式为XSLX文件）
+      operationId: downQuaSystem
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/zlgl/quaSystem/uploadQuaSystemFile:
+    post:
+      tags:
+      - quaSystem
+      summary: 质量管理单元导入
+      description: 质量管理单元导入
+      operationId: uploadQuaSystemFile
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目ID
+        type: integer
+        required: true
+      responses:
+        200:
+          description: 操作（返回错误日志ID,errorId,错误编码：1007）
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /szxm/zlgl/quaInsp/queryQuaInsp/{pageSize}/{currentPageNum}:
+    post:
+      tags:
+        - quaInsp
+      description: 查询质量报验
+      summary: 查询质量报验
+      operationId: queryQuaInsp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段ID列表，多个以“,”相隔
+          type: string
+        - name: checkType
+          in: query
+          description: 验收分类 数据字典szxm.zlgl.systype的code，注意查询，验收分类要屏蔽 分项
+          type: string
+        - name: checkTimeStart
+          in: query
+          description: 验收时间开始 yyyy
+          type: string
+        - name: checkTimeEnd
+          in: query
+          description: 验收时间完成 yyyy
+          type: string
+        - name: engineName
+          in: query
+          description: 工程名称
+          type: string
+        - name: status
+          in: query
+          description: 流程状态 取数据字典base.flow.status的code
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: 质量体系Ids,选中节点，向下递归找到其所有子节点数据，组成id的数组
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+              description: 质量体系的id
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuaInspVo'
+
+  /szxm/zlgl/quaInsp/queryFlowQuaInsp:
+    post:
+      tags:
+      - quaInsp
+      description: 查询质量报验 流程用
+      summary: 查询质量报验 流程用
+      operationId: queryFlowQuaInsp
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: false
+      - name: projectId
+        in: query
+        description: 项目ID
+        required: false
+        type: integer
+      - name: sectionIds
+        in: query
+        description: 标段ID列表，多个以“,”相隔
+        type: string
+      - name: checkType
+        in: query
+        description: 验收分类 数据字典szxm.zlgl.systype的code，注意查询，验收分类要屏蔽 分项
+        type: string
+      - name: checkTimeStart
+        in: query
+        description: 验收时间开始 yyyy
+        type: string
+      - name: checkTimeEnd
+        in: query
+        description: 验收时间完成 yyyy
+        type: string
+      - name: engineName
+        in: query
+        description: 工程名称
+        type: string
+      - name: status
+        in: query
+        description: 流程状态 取数据字典base.flow.status的code
+        type: string
+      - name: ids
+        in: query
+        description: 主键ID(如传了主键ID，其他参数可不传)
+        type: string
+        required: false
+      - in: body
+        name: body
+        description: 质量体系Ids,选中节点，向下递归找到其所有子节点数据，组成id的数组，如有主键IDs，此不传就行
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+            description: 质量体系的id
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuaInspVo'
+
+  /szxm/zlgl/quaInsp/addQuaInsp:
+    post:
+      tags:
+        - quaInsp
+      description: 增加报验信息
+      summary: 增加报验信息
+      operationId: addQuaInsp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加报验信息对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaInspAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaInspVo'
+
+  /szxm/zlgl/quaInsp/updateQuaInsp:
+    put:
+      tags:
+        - quaInsp
+      description: 修改报验信息
+      summary: 修改报验信息
+      operationId: updateQuaInsp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改报验信息对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaInspUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaInspVo'
+
+  /szxm/zlgl/quaInsp/deleteQuaInsp:
+    delete:
+      tags:
+        - quaInsp
+      description: 删除质量报验
+      summary: 删除质量报验
+      operationId: deleteQuaInsp
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/zlgl/quaConce/queryQuaConce/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - quaConce
+      description: 查询隐蔽工程报验
+      summary: 查询隐蔽工程报验
+      operationId: queryQuaConce
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: false
+        - name: projectId
+          in: query
+          description: 项目ID
+          required: true
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 标段IDS，多个以“,”相隔
+          type: string
+          required: false
+        - name: status
+          in: query
+          description: 状态 取数据字典的code ：base.flow.status
+          type: string
+          required: false
+        - name: engineName
+          in: query
+          description: 隐蔽工程名称
+          type: string
+          required: false
+        - name: fileStatus
+          in: query
+          description: 附件状态 1 已上传 0 未上传
+          type: string
+          required: false
+        - name: checkTimeStart
+          in: query
+          description: 验收时间开始 yyyy
+          type: string
+          required: false
+        - name: checkTimeEnd
+          in: query
+          description: 验收时间结束 yyyy
+          type: string
+          required: false
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuaConceVo'
+
+  /szxm/zlgl/quaConce/queryFlowQuaConce:
+    get:
+      tags:
+      - quaConce
+      description: 查询隐蔽工程报验 流程用
+      summary: 查询隐蔽工程报验  流程用
+      operationId: queryFlowQuaConce
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: false
+      - name: projectId
+        in: query
+        description: 项目ID
+        required: false
+        type: integer
+      - name: sectionIds
+        in: query
+        description: 标段IDS，多个以“,”相隔
+        type: string
+        required: false
+      - name: status
+        in: query
+        description: 状态 取数据字典的code ：base.flow.status
+        type: string
+        required: false
+      - name: engineName
+        in: query
+        description: 隐蔽工程名称
+        type: string
+        required: false
+      - name: fileStatus
+        in: query
+        description: 附件状态 1 已上传 0 未上传
+        type: string
+        required: false
+      - name: checkTimeStart
+        in: query
+        description: 验收时间开始 yyyy
+        type: string
+        required: false
+      - name: checkTimeEnd
+        in: query
+        description: 验收时间结束 yyyy
+        type: string
+        required: false
+      - name: ids
+        in: query
+        description: 主键ID(如传了主键ID，其他参数可不传)
+        type: string
+        required: false
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuaConceVo'
+
+  /szxm/zlgl/quaConce/getQuaConce/{id}:
+    get:
+      tags:
+      - quaConce
+      description: 查询单个隐蔽工程报验
+      summary: 查询单个隐蔽工程报验
+      operationId: getQuaConce
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: false
+      - name: id
+        in: path
+        description: 主键ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回列表
+          schema:
+            items:
+              $ref: '#/definitions/QuaConceVo'
+
+  /szxm/zlgl/quaConce/addQuaConce:
+    post:
+      tags:
+        - quaConce
+      description: 增加隐蔽工程报验
+      summary: 增加隐蔽工程报验
+      operationId: addQuaConce
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 增加隐蔽工程报验对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaConceAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaConceVo'
+
+  /szxm/zlgl/quaConce/updateQuaConce:
+    put:
+      tags:
+        - quaConce
+      description: 修改隐蔽工程报验
+      summary: 修改隐蔽工程报验
+      operationId: updateQuaConce
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 修改隐蔽工程报验对象
+          required: true
+          schema:
+            $ref: '#/definitions/QuaConceUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/QuaConceVo'
+
+  /szxm/zlgl/quaConce/deleteQuaConce:
+    delete:
+      tags:
+        - quaConce
+      description: 删除隐蔽工程报验
+      summary: 删除隐蔽工程报验
+      operationId: deleteQuaConce
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的id
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  QuaSupervVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      sectionId:
+        type: integer
+        description: 标段ID
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionName:
+        type: string
+        description: 标段名称
+      projectName:
+        type: string
+        description: 项目名称
+      sgdw:
+        type: string
+        description: 施工单位
+      yzdb:
+        type: string
+        description: 业主代表
+      jldw:
+        type: string
+        description: 监理单位
+      isConfirmedVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 确认状态（0：未确认  1：已确认）
+      fileStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 附件状态（0：未上传  1：已上传）
+      registerNum:
+        type: string
+        description: 登记证号
+      creater:
+        type: string
+        description: 创建人
+      createTime:
+        type: string
+        description: 创建时间
+      fileCount:
+        type: interger
+        description: 文件数
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 报监类型（0 质量报监 1 安全报监  2 施工许可证 3 安全监督销项 4 竣工备案）
+
+
+
+  QuaSupervAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID 必填
+      sectionId:
+        type: integer
+        description: 标段ID必填
+      type:
+        type: string
+        description: 报监类型 必填 0 质量报监 1 安全报监  2 施工许可证 3 安全监督销项 4 竣工备案
+
+
+  QuaSupervUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 报监ID
+      registerNum:
+        type: string
+        description: 登记证号
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  QuaSupervDescVo:
+    properties:
+      id:
+        type: integer
+        description: 主键 ID
+      supervisorId:
+        type: integer
+        description: 质量报监ID
+      supervisorDesc:
+        type: string
+        description: 报监内容描述
+      registerNum:
+        type: string
+        description: 登记证号（只有增加，修改，填写状态为完成的时候才会返回）
+      descStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态（0：进行中  1：已完成）
+      creater:
+        type: string
+        description: 填报人
+      creatTime:
+        type: string
+        description: 填报时间
+
+  QuaSupervDescAddForm:
+    properties:
+      supervisorId:
+        type: integer
+        description: 报监ID 必填
+      supervisorDesc:
+        type: string
+        description: 报监内容描述
+      descStatus:
+        type: integer
+        description: 状态（0：进行中  1：已完成） 必填
+      registerNum:
+        type: string
+        description: 登记证号 如果状态变为已完成，则登记证号必填
+
+  QuaSupervDescUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键 ID
+      supervisorId:
+        type: integer
+        description: 报监ID 必填
+      supervisorDesc:
+        type: string
+        description: 报监内容描述
+      descStatus:
+        type: integer
+        description: 状态（0：进行中  1：已完成） 必填
+      registerNum:
+        type: string
+        description: 登记证号 如果状态变为已完成，则登记证号必填
+
+  QuaSystemVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父id
+      projectId:
+        type: integer
+        description: 项目id
+      unitName:
+        type: string
+        description: 单元名称
+      typeNoVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 类型
+      children:
+        description: 子节点，如没有返回空数组[]
+        type: array
+        items:
+          $ref: '#/definitions/QuaSystemVo'
+
+  QuaSystemAddForm:
+    properties:
+      parentId:
+        type: integer
+        description: 父id 必填 根节点传0
+      projectId:
+        type: integer
+        description: 项目ID 必填
+      unitName:
+        type: string
+        description: 单元名称
+      typeNo:
+        type: string
+        description: 类型 取数据字典 szxm.zlgl.systype 的code
+
+  QuaSystemUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id 必填
+      projectId:
+        type: integer
+        description: 项目ID
+      unitName:
+        type: string
+        description: 单元名称
+      typeNo:
+        type: string
+        description: 类型 取数据字典 szxm.zlgl.systype 的code
+
+  QuaInspVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      quaSysId:
+        type: integer
+        description: 质量管理单元ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: integer
+        description: 标段ID
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionName:
+        type: string
+        description: 标段名称
+      engineName:
+        type: string
+        description: 工程名称
+      initiatorName:
+        type: string
+        description: 发起人名称
+      initTime:
+        type: string
+        description: 发起时间
+      checkTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 验收分类 数据字典：szxm.zlgl.systype
+      checkTime:
+        type: string
+        description: 验收时间 yyyy-MM-dd
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      selfOpinion:
+        type: string
+        description: 自评意见
+
+  QuaInspAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      quaSysId:
+        type: integer
+        description: 质量体系ID
+      checkType:
+        type: string
+        description: 验收分类 取左侧质量体系树 typeNoVo的code
+      checkTime:
+        type: string
+        description: 验收时间 yyyy-MM-dd
+      engineName:
+        type: string
+        description: 工程名称
+      selfOpinion:
+        type: string
+        description: 自评意见
+
+  QuaInspUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: ID
+      quaSysId:
+        type: integer
+        description: 质量体系ID
+      checkTime:
+        type: string
+        description: 验收时间
+      engineName:
+        type: string
+        description: 工程名称
+      selfOpinion:
+        type: string
+        description: 自评意见
+
+  QuaConceVo:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      projectId:
+        type: string
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      sectionId:
+        type: string
+        description: 标段ID
+      sectionCode:
+        type: string
+        description: 标段编号
+      sectionName:
+        type: string
+        description: 标段名称
+      initiatorName:
+        type: string
+        description: 发起人
+      initTime:
+        type: string
+        description: 发起时间
+      checkTime:
+        type: string
+        description: 验收时间 yyyy-MM-dd
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 流程状态
+      belongSta:
+        type: string
+        description: 所属站code，以逗号相隔
+      belongStaVoList:
+        type: object
+        $ref: '#/definitions/GeneralVoList'
+        description: 所属站 Vo List
+      fileStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 文件状态 1 已上传 0 未上传
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      selfOpinion:
+        type: string
+        description: 自评意见
+
+  QuaConceAddForm:
+    properties:
+      projectId:
+        type: string
+        description: 工程ID
+      sectionId:
+        type: string
+        description: 标段ID
+      checkTime:
+        type: string
+        description: 验收时间 yyyy-MM-dd
+      belongSta:
+        type: string
+        description: 所属站，站点code ，以","相隔
+      engineName:
+        type: string
+        description: 工程名称
+      selfOpinion:
+        type: string
+        description: 自评意见
+
+  QuaConceUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: ID
+      checkTime:
+        type: string
+        description: 验收时间 yyyy-MM-dd
+      belongSta:
+        type: string
+        description: 所属站，站点code ，以","相隔
+      engineName:
+        type: string
+        description: 工程名称
+      selfOpinion:
+        type: string
+        description: 自评意见
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  GeneralVoList:
+    type: array
+    items:
+      type: object
+      $ref: '#/definitions/GeneralVo'
+      description: GeneralVoList
+
+  DeviceForensicsVo:
+    properties:
+      id:
+        type: integer
+        description: 主键 ID
+      projectId:
+        type: integer
+        description: 项目id
+      sectionId:
+        type: integer
+        description: 标段id
+      projectName:
+        type: string
+        description: 项目名称
+      sectionName:
+        type: string
+        description: 标段名称
+      initiator:
+        type: string
+        description: 发起人
+      initiatorId:
+        type: integer
+        description: 发起人ID
+      initTime:
+        type: string
+        description: 发起时间
+      deviceName:
+        type: string
+        description: 设备名称
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceNum:
+        type: integer
+        description: 设备数量
+      location:
+        type: string
+        description: 位置
+      reason:
+        type: string
+        description: 原因
+      fileCount:
+        type: string
+        description: 附件数
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      isForensicsVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否验收（0未取证，0未取证）
+      isPayVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 是否交付（0未交付，1已交付）
+      fileStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 附件状态 0 未上传 1 已上传
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 流程状态
+
+  DeviceForensicsAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      sectionId:
+        type: integer
+        description: 标段id
+      deviceName:
+        type: string
+        description: 设备名称
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceNum:
+        type: integer
+        description: 设备数量
+      location:
+        type: string
+        description: 位置
+      reason:
+        type: string
+        description: 原因
+      isPay:
+        type: string
+        description: 是否交付（0没有1有）
+      isForensics:
+        type: string
+        description: 是否取证（0没有1有）
+
+  DeviceForensicsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键
+      deviceName:
+        type: string
+        description: 设备名称
+      deviceCode:
+        type: string
+        description: 设备编码
+      deviceNum:
+        type: integer
+        description: 设备数量
+      location:
+        type: string
+        description: 位置
+      reason:
+        type: string
+        description: 原因
+      isPay:
+        type: string
+        description: 是否交付（0没有1有）
+      isForensics:
+        type: string
+        description: 是否取证（0没有1有）
+
+
+
+

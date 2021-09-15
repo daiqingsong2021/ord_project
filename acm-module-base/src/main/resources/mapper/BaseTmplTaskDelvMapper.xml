@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseTmplTaskDelvMapper">
+    <sql id="baseSelectSql">
+      select l.id,l.task_id,l.delv_id,t.delv_title,t.delv_num,t.delv_type,
+      d.dict_name type_name,l.creator, u.actu_name,l.creat_time
+      from wsd_base_tmpltaskdelv l, wsd_base_tmpldelv t
+      left join wsd_sys_user u on t.creator = u.id
+      left join wsd_base_dict d on t.delv_type=d.dict_code and d.type_code='plan.delv.type'
+      where l.delv_id = t.id
+    </sql>
+
+    <resultMap id="baseTmplTaskDelvVoMap" type="com.wisdom.acm.base.vo.tmpltask.BaseTmplTaskDelvVo" >
+        <id column="id" property="id" />
+        <result column="task_id" property="taskId" />
+        <result column="delv_title" property="delvName" />
+        <result column="delv_num" property="delvCode" />
+        <result column="creat_time" property="creatTime" />
+        <association property="delvType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result column="delv_type" property="id" />
+            <result column="type_name" property="name"/>
+        </association>
+        <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="creator" property="id" />
+            <result column="actu_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectTmplTaskDelvList" parameterType="int" resultMap="baseTmplTaskDelvVoMap">
+       <include refid="baseSelectSql"></include>
+       and l.task_id = #{taskId}
+    </select>
+
+    <select id="selectTmplTaskDelvListByTmplId" parameterType="int" resultMap="baseTmplTaskDelvVoMap">
+        <include refid="baseSelectSql"></include>
+        and l.task_id in(select k.id from wsd_base_tmpltask k where k.tmpl_id=#{tmplId})
+    </select>
+
+    <select id="selectTaskDelvById" parameterType="int" resultMap="baseTmplTaskDelvVoMap">
+        <include refid="baseSelectSql"></include>
+        and l.id = #{id}
+    </select>
+
+    <select id="selectTaskDelvByIds" parameterType="int" resultMap="baseTmplTaskDelvVoMap">
+        <include refid="baseSelectSql"></include>
+        and l.id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="selectTaskDelvByTaskDelv" parameterType="map" resultMap="baseTmplTaskDelvVoMap">
+        <include refid="baseSelectSql"></include>
+        and l.task_id = #{taskId} and l.delv_id = #{delvId}
+    </select>
+
+</mapper>

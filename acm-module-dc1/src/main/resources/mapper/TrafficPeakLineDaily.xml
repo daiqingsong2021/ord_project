@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc1.mapper.TrafficPeakLineDailyMapper">
+    <delete id="delTrafficPeakLineDailyByDates" parameterType="java.lang.String">
+        DELETE FROM odr_traffic_peak_line_daily
+        <where>
+            record_time IN
+            <foreach collection="recordTimes" item="date" open="(" close=")"
+                     separator=",">
+                #{date}
+            </foreach>
+        </where>
+    </delete>
+    <resultMap id="TrafficPeakLineDailyVo" type="com.wisdom.acm.dc1.vo.TrafficPeakLineDailyVo">
+        <id property="id" column="id"/>
+        <result property="recordTime" column="recordTime"/>
+        <result property="line" column="line"/>
+        <result property="linePeriod" column="linePeriod"/>
+        <result property="morningPeakTrafficVolume" column="morningPeakTrafficVolume"/>
+        <result property="eveningPeakTrafficVolume" column="eveningPeakTrafficVolume"/>
+        <result property="transectUpVolume" column="transectUpVolume"/>
+        <result property="transectDownVolume" column="transectDownVolume"/>
+    </resultMap>
+    <select id="queryTrafficPeakLineDailyVos" parameterType="java.util.Map" resultMap="TrafficPeakLineDailyVo">
+        SELECT
+         a.id AS id,
+         a.record_time AS recordTime,
+         a.line AS line,
+         a.line_period AS linePeriod,
+        sum(a.morning_peak_traffic_volume) AS morningPeakTrafficVolume ,
+        sum(a.evening_peak_traffic_volume) AS eveningPeakTrafficVolume ,
+        sum(a.transect_up_volume) AS transectUpVolume ,
+        sum(a.transect_down_volume) AS transectDownVolume
+        FROM odr_traffic_peak_line_daily a
+        <where>
+            <if test="yearMonth !=null and yearMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{yearMonth}
+            </if>
+        </where>
+        group by a.line
+        ORDER BY a.CREAT_TIME DESC
+    </select>
+</mapper>

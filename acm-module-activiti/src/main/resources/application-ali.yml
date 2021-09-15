@@ -1,0 +1,44 @@
+spring:
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port:  ${RABBIT_MQ_PORT:5672}
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    statusPageUrlPath: /actuator/info
+    healthCheckUrlPath: /actuator/health
+    # docker 部署开启
+    prefer-ip-address: true
+    ip-address: ${DEPLOY_HOST:192.168.2.68}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    #服务刷新时间配置，每隔这个时间会主动心跳一次，默认30s
+    lease-renewal-interval-in-seconds: 2
+    #服务过期时间配置,超过这个时间没有接收到心跳EurekaServer就会将这个实例剔除，默认90s
+    lease-expiration-duration-in-seconds: 6
+  client:
+    serviceUrl:
+      #defaultZone: http://127.0.0.1:8761/eureka/
+      # docker 部署开启
+      defaultZone: http://${EUREKA_HOST:192.168.2.68}:${EUREKA_PORT:8761}/eureka/
+    fetch-registry: true
+    #eureka client刷新本地缓存时间，默认30s
+    registry-fetch-interval-seconds: 4
+
+#redis-cache 相关
+redis:
+  pool:
+    maxActive: 300
+    maxIdle: 100
+    maxWait: 1000
+  host: ${REDIS_HOST:192.168.2.68}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:1!TdNh0pXjitc5gf}
+  timeout: 2000
+  # 服务或应用名
+  sysName: acm-module-activiti
+  enable: true
+  database: 0
+  expire: 720 #分钟
+

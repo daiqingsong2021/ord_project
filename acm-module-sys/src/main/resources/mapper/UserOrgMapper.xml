@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.UserOrgMapper">
+
+    <resultMap id="userOrgVo" type="com.wisdom.acm.sys.vo.SysOrgUserVo">
+        <result property="userOrgId" column="id"/>
+        <result property="orgId" column="org_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="position" column="position"/>
+        <result property="professional" column="professional"/>
+        <result property="sort" column="sort_num"/>
+    </resultMap>
+
+    <resultMap id="resultUserOrgVo" type="com.wisdom.base.common.vo.sys.UserOrgVo">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="actuName" column="actu_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="orgId" column="org_id"/>
+        <result property="orgCode" column="org_code"/>
+        <result property="orgName" column="org_name"/>
+        <result property="position" column="position"/>
+        <result property="professional" column="professional"/>
+        <result property="bizType" column="biz_type"/>
+        <result property="bizId" column="biz_id"/>
+        <result property="orgType" column="org_type"/>
+    </resultMap>
+
+    <resultMap id="resultOrgUserVoMap" type="com.wisdom.acm.sys.vo.SysOrgUserTreeVo">
+        <result property="id" column="user_id"/>
+        <result property="parentId" column="org_id"/>
+        <result property="name" column="actu_name"/>
+        <result property="code" column="user_name"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="selectListByUserId" resultMap="resultUserOrgVo">
+        select uo.id,uo.user_id,u.actu_name,u.user_name,uo.org_id,o.org_code,o.org_name,
+          uo.position,uo.professional,o.biz_id,o.extended_column_3 as org_type
+        from wsd_sys_userorg uo
+        inner join wsd_sys_user u on u.id = uo.user_id
+        inner join wsd_sys_org o on o.id = uo.org_id
+        where 1=1
+        <choose>
+            <when test="bizType != null and bizType != ''">
+                and o.biz_type = #{bizType}
+            </when>
+            <otherwise>
+                and o.biz_type is null
+            </otherwise>
+        </choose>
+        and uo.user_id = #{userId}
+    </select>
+
+    <select id="selectListByOrgId" resultMap="userOrgVo">
+        select uo.id,uo.user_id,uo.org_id,uo.position,uo.professional,uo.sort_num
+        from wsd_sys_userorg uo
+        <where>
+            uo. org_id = #{orgId}
+        </where>
+        ORDER BY uo.sort_num
+    </select>
+
+    <delete id="deleteByOrgId" parameterType="java.util.List">
+        delete from wsd_sys_userorg where org_id in
+        <foreach collection="orgIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserOrgRelationByUserIdsAndOrgId" >
+        delete from wsd_sys_userorg where org_id = #{orgId} and user_id in
+        <foreach collection="userIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserOrgRelationByUserIds" parameterType="java.util.List">
+        delete from wsd_sys_userorg where user_id in
+        <foreach collection="userIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectListByOrgIds" resultMap="userOrgVo">
+        select uo.id,uo.user_id,uo.org_id
+        from wsd_sys_userorg uo inner join wsd_sys_user u on uo.user_id = u.id
+        <where>
+            uo.org_id in
+            <foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="selectOrgUsers" resultMap="resultOrgUserVoMap">
+        SELECT
+            s.user_id,
+            s.org_id,
+            u.user_name,
+            u.actu_name,
+            'user' AS type
+        FROM
+            wsd_sys_userorg s
+        inner join wsd_sys_org o on o.id = s.org_id
+        inner join wsd_sys_user u on u.id = s.user_id
+        WHERE
+            o.biz_id IS NULL and s.main_org = 1 and u.user_type = 1 and u.status = 1
+        ORDER BY
+          u.sort_num ASC
+    </select>
+
+
+    <resultMap id="resultOrgUserTreeMap" type="com.wisdom.acm.sys.vo.SysUserVo">
+        <id property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="actuName" column="actu_name"/>
+        <association property="status" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="status"/>
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="sex" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="sex"/>
+            <result property="name" column="sex_name"/>
+        </association>
+        <association property="staffStatus" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="staff_status"/>
+            <result property="name" column="staff_status_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectUserByOrgId" resultMap="resultOrgUserTreeMap">
+        select
+        u.id,u.user_name,u.actu_name,(case u.sex when 0 then '女' when 1 then '男' end) as sex_name,u.sex,u.status,u.staff_status,
+        (case u.status when 0 then '锁定' when 1 then '正常' end) as status_name ,(case u.staff_status when '0' then '离职' when '1'
+        then '在岗' end) as staff_status_name
+        from
+        wsd_sys_user u
+        inner join wsd_sys_userorg o ON o.user_id = u.id
+        <where>
+            o.org_id = #{orgId}
+            <if test="searchForm.searcher != null and searchForm.searcher != ''">
+                (u.user_name like concat('%',#{searchForm.searcher},'%')
+                or
+                u.actu_name like concat('%',#{searchForm.searcher},'%'))
+            </if>
+        </where>
+        order by u.sort_num asc
+    </select>
+
+    <select id="selectUserOrgNextSort" resultType="java.lang.Integer">
+        select ifnull(max(o.sort_num),0) + 1
+        from wsd_sys_userorg o
+        where o.org_id = #{orgId}
+    </select>
+
+    <select id="selectUserMainOrg" resultMap="resultUserMainOrgVoMap">
+        select r.id, r.org_name
+        from  wsd_sys_org r
+            left join wsd_sys_userorg o on o.org_id = r.id
+        where o.user_id = #{userId} and o.main_org = 1 limit 1
+    </select>
+    <select id="queryTeamUsersOutUser" resultMap="GeneralUserVo">
+     select distinct u.*  from  wsd_sys_userorg uo
+            inner join wsd_sys_user u
+            on u.id = uo.user_id
+            inner join wsd_sys_org o
+            on uo.org_id = o.id
+            where o.id=#{id}
+	</select>
+    <resultMap id="resultUserMainOrgVoMap" type="com.wisdom.base.common.vo.GeneralVo">
+        <result property="id" column="id"/>
+        <result property="name" column="org_name"/>
+    </resultMap>
+    <resultMap id="GeneralUserVo" type="com.wisdom.base.common.vo.GeneralVo">
+        <id property="id" column="id"/>
+        <result property="code" column="USER_NAME"/>
+        <result property="name" column="ACTU_NAME"/>
+    </resultMap>
+</mapper>

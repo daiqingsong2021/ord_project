@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc3.mapper.EnergyDetailMapper">
+
+    <resultMap id="EnergyDetailVo" type="com.wisdom.acm.dc3.vo.EnergyDetailVo">
+        <result property="id" column="id"/>
+        <result property="recordTime" column="RECORD_TIME"/>
+        <result property="line" column="LINE"/>
+        <result property="lineName" column="LINE_NAME"/>
+        <result property="linePeriod" column="LINE_PERIOD"/>
+        <result property="subStation" column="SUBSTATION"/>
+        <result property="switchgear" column="SWITCHGEAR"/>
+        <result property="powerConsumption" column="POWER_CONSUMPTION"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="dailyId" column="DAILY_ID"/>
+        <association property="powerTypeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="POWER_TYPE"/>
+            <result property="name" column="POWER_TYPE_NAME"/>
+        </association>
+    </resultMap>
+
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="EnergyDetailVo">
+        select a.*,dt.dict_name as LINE_NAME,
+        (case a.POWER_TYPE
+        when '0' then '主变电所'
+        when '1' then '动照'
+        when '2' then '牵引'    end ) as POWER_TYPE_NAME
+        from odr_energy_detail a
+        left join wsd_base_dict dt
+        on a.line = dt.dict_code and dt.TYPE_CODE = 'line'
+        <where>
+            <if test="dailyId != null and dailyId != '' ">
+                AND a.DAILY_ID =#{dailyId}
+            </if>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="powerType != null and powerType != '' ">
+                AND a.POWER_TYPE =#{powerType}
+            </if>
+            <if test="recordTime != null and recordTime != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m-%d') =#{recordTime}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by a.CREAT_TIME asc
+    </select>
+
+</mapper>
+

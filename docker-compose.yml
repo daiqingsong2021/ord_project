@@ -1,0 +1,58 @@
+version: '2'
+services:
+  eureka:
+    image: ag/acm-center
+    ports:
+      - "8761:8761"
+  acm-auth-server:
+    image: ag/acm-auth-server
+    ports:
+      - "9777:9777"
+    depends_on:
+      - eureka
+    environment:
+      - EUREKA_HOST=eureka
+      - EUREKA_PORT=8761
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_HOST=5672
+  acm-module-sys:
+    image: ag/acm-module-sys
+    ports:
+      - "8762:8762"
+    links:
+      - acm-auth-server
+    entrypoint: ./wait-for-it.sh acm-auth-server:9777 -t 600 --
+    command: java -Djava.security.egd=file:/dev/./urandom -jar /app.jar
+    environment:
+      - EUREKA_HOST=eureka
+      - EUREKA_PORT=8761
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_HOST=5672
+  acm-gate:
+    image: ag/acm-gate
+    ports:
+      - "8765:8765"
+    links:
+      - acm-auth-server
+    entrypoint: ./wait-for-it.sh acm-auth-server:9777 -t 600 --
+    command: java -Djava.security.egd=file:/dev/./urandom -jar /app.jar
+    environment:
+      - EUREKA_HOST=eureka
+      - EUREKA_PORT=8761
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_HOST=5672
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./.docker/redis:/var/lib/redis

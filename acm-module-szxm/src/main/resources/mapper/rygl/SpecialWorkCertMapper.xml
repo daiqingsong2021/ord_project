@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.SpecialWorkCertMapper">
+
+    <resultMap id="specialWorkCertVo" type="com.wisdom.acm.szxm.vo.rygl.SpecialWorkCertVo">
+        <id property="id" column="id"/>
+        <result property="specialWorkerId" column="special_worker_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="sectionId" column="section_id"/>
+        <result property="certNum" column="cert_num"/>
+        <result property="certVerifyUrl" column="cert_verify_url"/>
+        <result property="warnPeriod" column="warn_period"/>
+        <result property="certName" column="cert_name"/>
+        <result property="certGlId" column="cert_gl_id"/>
+        <result property="certExpirationTime" column="cert_expiration_time"/>
+        <result property="warnDate" column="warn_date"/>
+        <result property="certFirstPublishTime" column="cert_f_ptime"/>
+        <result property="peopleId" column="people_id"/>
+        <result property="peopleName" column="people_name"/>
+        <result property="orgName" column="org_name"/>
+        <result property="fileCount" column="file_count"/>
+    </resultMap>
+
+    <select id="selectSpecialWorkCert" parameterType="java.util.Map" resultMap="specialWorkCertVo">
+        select a.id,a.special_worker_id,
+        a.project_id,
+        a.section_id,
+        a.cert_num,
+        a.cert_verify_url,
+        a.cert_name,
+        a.cert_gl_id,
+        a.cert_expiration_time,
+        a.cert_f_ptime,
+        a.warn_period,
+        a.warn_date,
+        count(r.file_id) as file_count
+        from (select a.id,
+        a.special_worker_id,
+        a.project_id,
+        a.section_id,
+        a.cert_num,
+        b.cert_verify_url,
+        b.cert_name,
+        a.cert_gl_id,
+        a.cert_expiration_time,
+        a.cert_f_ptime,
+        b.warn_period,
+        (a.cert_expiration_time - b.warn_period) as warn_date
+        from szxm_rygl_sw_cert a
+        inner join szxm_rygl_cert_gl b
+        on a.cert_gl_id = b.id) a
+        left join wsd_doc_file_relation r
+        on a.id = r.biz_id
+        and r.biz_type = 'STAFF-SPECIALTYPE-CERTIFICATE'
+        <where>
+            <if test="specialWorkerId != null and specialWorkerId != '' ">
+                AND a.special_worker_id =#{specialWorkerId}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="userId != null and userId != '' ">
+                AND a.people_id = #{userId}
+            </if>
+        </where>
+        group by a.id,
+        a.special_worker_id,
+        a.project_id,
+        a.section_id,
+        a.cert_num,
+        a.cert_verify_url,
+        a.cert_name,
+        a.cert_gl_id,
+        a.cert_expiration_time,
+        a.cert_f_ptime,
+        a.warn_period,
+        a.warn_date
+    </select>
+
+    <select id="selectSwWorkWithWorker" parameterType="java.util.Map" resultMap="specialWorkCertVo">
+            SELECT a.id,
+               a.special_worker_id,
+               a.project_id,
+               a.section_id,
+               a.cert_num,
+               e.cert_verify_url,
+               e.cert_name,
+               a.cert_gl_id,
+               a.cert_expiration_time,
+               e.warn_period,
+               (a.cert_expiration_time-e.warn_period) as warn_date,
+               b.people_id,c.name as people_name,d.org_name
+          FROM szxm_rygl_sw_cert a inner join szxm_rygl_cert_gl e on a.cert_gl_id=e.id
+          left join szxm_rygl_speci_worker b
+            on a.special_worker_id = b.id
+           left join szxm_rygl_people c
+           on b.people_id=c.id
+           left join szxm_rygl_projinfo d
+           on c.proj_info_id=d.id
+    </select>
+    <select id="selectWorkCertByUserId" parameterType="java.util.Map" resultMap="specialWorkCertVo">
+        select a.id,a.special_worker_id,
+        a.project_id,
+        a.section_id,
+        a.cert_num,
+        a.cert_verify_url,
+        a.cert_name,
+        a.cert_gl_id,
+        a.cert_expiration_time,
+        a.cert_f_ptime,
+        a.warn_period,
+        a.warn_date,
+        count(r.file_id) as file_count
+        from (select a.id,
+        a.special_worker_id,
+        a.project_id,
+        a.section_id,
+        a.cert_num,
+        b.cert_verify_url,
+        b.cert_name,
+        a.cert_gl_id,
+        a.cert_expiration_time,
+        a.cert_f_ptime,
+        b.warn_period,
+        sw.people_id,
+        (a.cert_expiration_time - b.warn_period) as warn_date
+        from szxm_rygl_sw_cert a
+        inner join szxm_rygl_cert_gl b
+        on a.cert_gl_id = b.id
+        left join szxm_rygl_speci_worker sw
+        On sw.id = a.special_worker_id
+        ) a
+        left join wsd_doc_file_relation r
+        on a.id = r.biz_id
+        and r.biz_type = 'STAFF-SPECIALTYPE-CERTIFICATE'
+        <where>
+            <if test="specialWorkerId != null and specialWorkerId != '' ">
+                AND a.special_worker_id =#{specialWorkerId}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="userId != null and userId != '' ">
+                AND a.people_id = #{userId}
+            </if>
+            <if test="sectionId != null and sectionId != '' ">
+                AND a.section_id = #{sectionId}
+            </if>
+        </where>
+        group by a.id,
+        a.special_worker_id,
+        a.project_id,
+        a.section_id,
+        a.cert_num,
+        a.cert_verify_url,
+        a.cert_name,
+        a.cert_gl_id,
+        a.cert_expiration_time,
+        a.cert_f_ptime,
+        a.warn_period,
+        a.warn_date
+    </select>
+</mapper>
+

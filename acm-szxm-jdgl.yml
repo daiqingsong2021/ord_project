@@ -1,0 +1,968 @@
+swagger: '2.0'
+info:
+  title: SZXM - JDGLAPI
+  description: SZXM进度管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+  - http
+basePath: /api
+tags:
+  - name: user
+    description: 用户管理
+  - name: stopRework
+    description: 进度管理----停复工管理模块
+  - name: dispatchSheet
+    description: 进度管理----派工单模块
+
+produces:
+  - application/json
+paths:
+  /auth/jwt/token:
+    post:
+      tags:
+        - user
+      description: 获取token
+      summary: 获取token
+      operationId: userToken
+      parameters:
+        - in: body
+          name: body
+          description: 更新的用户对象
+          required: true
+          schema:
+            $ref: '#/definitions/UserNamePwdVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /sys/login/user/info:
+    get:
+      tags:
+        - user
+      description: 用户登录
+      summary: 用户登录
+      operationId: getUserInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/SysUserLoginVo'
+
+  /szxm/jdgl/stopRework/queryStopReworkList/{applyType}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - stopRework
+      description: 搜索停复工令和申请数据，列表项目ID单传，标段ID多个以"，"相隔
+      summary: 搜索停复工令和申请数据列表
+      operationId: queryStopReworkList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          type: integer
+        - name: applyType
+          in: path
+          description: 令or申请
+          required: true
+          type: string
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StopReworkVo'
+
+  /szxm/jdgl/stopRework/queryFlowStopReworkList:
+    get:
+      tags:
+        - stopRework
+      description: 搜索流程相关停复工数据
+      summary: 搜索流程相关停复工数据
+      operationId: queryFlowStopReworkList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: ids
+          in: query
+          description: 主键ID
+          type: integer
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StopReworkVo'
+
+  /szxm/jdgl/stopRework/queryStopRework/{id}:
+    get:
+      tags:
+        - stopRework
+      summary: 查询单个停复工令和申请基础信息
+      description: 查询单个停复工令和申请基础信息
+      operationId: queryStopRework
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/StopReworkVo'
+
+  /szxm/jdgl/stopRework/addStopRework:
+    post:
+      tags:
+        - stopRework
+      description: 添加停复工令或者申请
+      summary: 添加停复工令或者申请
+      operationId: addStopRework
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加停复工令或者申请
+          required: true
+          schema:
+            $ref: '#/definitions/StopRewordAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/StopReworkVo'
+
+  /szxm/jdgl/stopRework/updateStopRework:
+    put:
+      tags:
+        - stopRework
+      description: 修改停复工令或者申请
+      summary: 修改停复工令或者申请
+      operationId: updateStopRework
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/StopReworkUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/StopReworkVo'
+
+  /szxm/jdgl/stopRework/delStopRework:
+    delete:
+      tags:
+        - stopRework
+      description: 删除停复工令或者申请
+      summary: 删除停复工令或者申请
+      operationId: delStopRework
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/jdgl/dispatch/queryDailySheetList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - dispatchSheet
+      description: 搜索日派工单数据，列表项目ID单传，标段ID多个以"，"相隔
+      summary: 搜索日派工单数据列表
+      operationId: queryDailySheetList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DispatchDailyVo'
+
+  /szxm/jdgl/dispatch/queryFlowDailySheetList:
+    get:
+      tags:
+        - dispatchSheet
+      description: 搜索流程相关日派工单数据
+      summary: 搜索流程相关日派工单数据
+      operationId: queryFlowDailySheetList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+          required: true
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          required: false
+          type: string
+        - name: ids
+          in: query
+          description: 主键IDs
+          type: string
+          required: false
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DispatchDailyVo'
+
+  /szxm/jdgl/dispatch/queryDailySheet/{id}:
+    get:
+      tags:
+        - dispatchSheet
+      summary: 查询单个日派工单基础信息
+      description: 查询单个日派工单基础信息
+      operationId: queryDailySheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回VO Object
+          schema:
+            $ref: '#/definitions/DispatchDailyVo'
+
+  /szxm/jdgl/dispatch/addDailySheet:
+    post:
+      tags:
+        - dispatchSheet
+      description: 添加日派工单基础信息
+      summary: 添加日派工单基础信息
+      operationId: addDailySheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加日派工单基础信息
+          required: true
+          schema:
+            $ref: '#/definitions/DispatchDailyAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/DispatchDailyVo'
+
+  /szxm/jdgl/dispatch/updateDailySheet:
+    put:
+      tags:
+        - dispatchSheet
+      description: 修改日派工单基础信息
+      summary: 修改日派工单基础信息
+      operationId: updateDailySheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 日派工单基础信息
+          required: true
+          schema:
+            $ref: '#/definitions/DispatchDailyUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DispatchDailyVo'
+
+  /szxm/jdgl/dispatch/delDailySheet:
+    delete:
+      tags:
+        - dispatchSheet
+      description: 删除日派工单基础信息
+      summary: 删除日派工单基础信息
+      operationId: delDailySheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/jdgl/dispatch/queryDetailSheetList/{dailySheetId}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+        - dispatchSheet
+      description: 搜索派工单明细数据，列表项目ID单传，标段ID多个以"，"相隔
+      summary: 搜索派工单明细数据列表
+      operationId: queryDetailSheetList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: query
+          description: 项目ID
+          type: integer
+        - name: sectionIds
+          in: query
+          description: 项目ID单传，标段ID多个以"，"相隔
+          type: integer
+        - name: dailySheetId
+          in: path
+          description: 日派工单ID
+          required: true
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DispatchDetailVo'
+
+  /szxm/jdgl/dispatch/queryDetailSheet/{id}:
+    get:
+      tags:
+        - dispatchSheet
+      summary: 查询单个派工明细基础信息
+      description: 查询单个派工明细基础信息
+      operationId: queryDetailSheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 主键ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 返回VO Object
+          schema:
+            $ref: '#/definitions/DispatchDetailVo'
+
+  /szxm/jdgl/dispatch/addDetailSheet:
+    post:
+      tags:
+        - dispatchSheet
+      description: 添加派工明细基础信息
+      summary: 添加派工明细基础信息
+      operationId: addDetailSheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 添加派工明细基础信息
+          required: true
+          schema:
+            $ref: '#/definitions/DispatchDetailAddForm'
+      responses:
+        200:
+          description: 操作返回前端Object数据
+          schema:
+            $ref: '#/definitions/DispatchDetailVo'
+
+  /szxm/jdgl/dispatch/updateDetailSheet:
+    put:
+      tags:
+        - dispatchSheet
+      description: 修改派工明细基础信息
+      summary: 修改派工明细基础信息
+      operationId: updateDetailSheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 派工明细基础信息
+          required: true
+          schema:
+            $ref: '#/definitions/DispatchDetailUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DispatchDetailVo'
+
+  /szxm/jdgl/dispatch/delDetailSheet:
+    delete:
+      tags:
+        - dispatchSheet
+      description: 删除派工明细基础信息
+      summary: 删除派工明细基础信息
+      operationId: delDetailSheet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: Content-Type
+          in: header
+          description: Content-Type
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 删除的ids
+          required: true
+          schema:
+            $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  SysUserLoginVo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      isOpen:
+        type: integer
+        description: 三员管理状态（0：未开启  1：开启）
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+
+  SysMenuVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      parentId:
+        type: integer
+        description: 父Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuType:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 菜单类型(1:组件 2:菜单  3:分组 4:模块)
+      url:
+        type: string
+        description: 菜单链接
+      i18n:
+        type: string
+        description: 国际化
+      group:
+        type: integer
+        description: 组
+      creatTime:
+        type: string
+        description: 创建时间
+      lastUpdTime:
+        type: string
+        description: 跟新时间
+      hidden:
+        type: integer
+        description: 是否隐藏（1：隐藏 0：不隐藏）
+      share:
+        type: integer
+        description: 是否共享（1：共享 0：不共享）
+      isMenu:
+        type: integer
+        description: 是否为菜单（1：是 0：不是）
+      active:
+        type: integer
+        description: 是否激活（1：激活 0：未激活）
+      children:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/SysMenuVo'
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  StopReworkVo:
+    properties:
+      projectName:
+        type: string
+        description: 项目名称
+      id:
+        type: integer
+        description: 主键ID
+      applyNum:
+        type: string
+        description: 编号
+      contract:
+        type: string
+        description: 合同号
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      jldw:
+        type: string
+        description: 监理单位
+      remark:
+        type: string
+        description: 备注
+      creator:
+        type: string
+        description: 创建人
+      creatTime:
+        type: string
+        description: 创建时间
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      content:
+        type: string
+        description: 内容
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 类别 0停工，1复工
+      applyTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 停复工令还是申请（0是申请，1是停复工令）
+
+  StopRewordAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      applyNum:
+        type: string
+        description: 申请编号（必填）
+      contract:
+        type: string
+        description: 合同号（必填）
+      content:
+        type: string
+        description: 申请内容说明
+      remark:
+        type: string
+        description: 备注
+      type:
+        type: string
+        description: 是复工还是停工（必填 0是停工，1是复工）
+      applyType:
+        type: string
+        description: 停复工令还是申请（必填 0是申请，1是停复工令）
+
+  StopReworkUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键（必填）
+      applyNum:
+        type: string
+        description: 申请编号（必填）
+      contract:
+        type: string
+        description: 合同号（必填）
+      content:
+        type: string
+        description: 申请内容说明
+      remark:
+        type: string
+        description: 备注
+
+  DispatchDailyVo:
+    properties:
+      projectName:
+        type: string
+        description: 项目名称
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态
+      dispatchTime:
+        type: string
+        description: 派工日期
+      leaderId:
+        type: integer
+        description: leaderId
+      leaderName:
+        type: string
+        description: 带班领导姓名
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionName:
+        type: string
+        description: 标段名称
+      sgdw:
+        type: string
+        description: 施工单位
+      remark:
+        type: string
+        description: 备注
+      sheetNum:
+        type: string
+        description: 派工单编号
+      sheetName:
+        type: string
+        description: 派工单名称
+
+  DispatchDailyAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      remark:
+        type: string
+        description: 备注
+      sheetName:
+        type: string
+        description: 派工单名称（必填）
+      dispatchTime:
+        type: string
+        description: 派工日期（必填）
+      leaderId:
+        type: integer
+        description: 带班领导id
+      leaderName:
+        type: string
+        description: 带班领导
+      sheetNum:
+        type: string
+        description: 带班领导
+
+  DispatchDailyUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键（必填）
+      remark:
+        type: string
+        description: 备注
+      sheetName:
+        type: string
+        description: 派工单名称（必填）
+      dispatchTime:
+        type: string
+        description: 派工日期（必填）
+      leaderId:
+        type: integer
+        description: 带班领导id
+      leaderName:
+        type: string
+        description: 带班领导
+      sheetNum:
+        type: string
+        description: 带班领导
+
+  DispatchDetailVo:
+    properties:
+      remark:
+        type: string
+        description: 备注
+      workContent:
+        type: string
+        description: 工作内容
+      worker:
+        type: string
+        description: 工作人员
+      workerId:
+        type: integer
+        description: 工作人员ID
+      taskName:
+        type: string
+        description: 对应工序
+      workSpace:
+        type: string
+        description: 工作区域
+
+  DispatchDetailAddForm:
+    properties:
+      sectionId:
+        type: integer
+        description: 标段ID（必填）
+      projectId:
+        type: integer
+        description: 项目ID（必填）
+      remark:
+        type: string
+        description: 备注
+      workContent:
+        type: string
+        description: 工作内容
+      taskId:
+        type: integer
+        description: 对应工序ID
+      taskName:
+        type: string
+        description: 对应工序
+      dailySheetId:
+        type: integer
+        description: 日派工单ID
+      workSpace:
+        type: string
+        description: 工作区域
+      workManAddForms:
+        type: array
+        description: 被考核人信息
+        items:
+          $ref: '#/definitions/WorkManAddForm'
+
+  DispatchDetailUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID（必填）
+      remark:
+        type: string
+        description: 备注
+      workContent:
+        type: string
+        description: 工作内容
+      workerId:
+        type: integer
+        description: 工作人员ID
+      worker:
+        type: string
+        description: 工作人员
+      taskId:
+        type: integer
+        description: 对应工序ID
+      taskName:
+        type: string
+        description: 对应工序
+      workSpace:
+        type: string
+        description: 工作区域
+
+  WorkManAddForm:
+    properties:
+      worker:
+        type: string
+        description: 工作人员（必填）
+      workerId:
+        type: integer
+        description: 工作人员ID（必填）

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    name: test
+    # useUnicode=true&characterEncoding=UTF8
+    url: jdbc:oracle:thin:@//${ORACLE_HOST:192.168.2.179}:${ORACLE_PORT:1521}/XE
+    username: acm_cloud_test
+    password: acm_cloud_test
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+
+mybatis:
+  basepackage: com.wisdom.acm.leaf.mapper
+  xmlLocation: classpath:mapper/**/*.xml
+  mapper-locations: "classpath*:mapper/*.xml"
+  configuration:
+    jdbc-type-for-null: varchar
+
+

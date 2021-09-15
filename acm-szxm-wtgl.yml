@@ -1,0 +1,889 @@
+swagger: '2.0'
+info:
+  title: 问题管理
+  description: 问题管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+- http
+basePath: /api
+tags:
+- name: question
+  description: 项目问题
+
+produces:
+- application/json
+paths:
+  /szxm/ques/queryQuestionList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - question
+      description: 获取问题列表
+      summary: 获取问题列表
+      operationId: queryQuestionList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目id
+        required: false
+        type: integer
+      - name: sectionIds
+        in: query
+        description: 标段ID列表，逗号相隔
+        type: string
+        required: false
+      - name: bizType
+        in: query
+        description: 问题来源 对应数据字典：comu.question.biztype
+        required: false
+        type: string
+      - name: title
+        in: query
+        description: 问题标题
+        required: false
+        type: string
+      - name: status
+        in: query
+        description: 问题状态 对应数据字典 comu.question.status
+        required: false
+        type: string
+      - name: type
+        in: query
+        description: 问题类型 对应数据字典 comu.question.type
+        required: false
+        type: string
+      - name: priority
+        in: query
+        description: 问题优先级 对应数据字典 comu.question.priority
+        required: false
+        type: string
+      - name: startTime
+        in: query
+        description: 问题创建开始时间(yyyy-MM-dd)
+        type: string
+        required: false
+      - name: endTime
+        in: query
+        description: 问题创建完成时间(yyyy-MM-dd)
+        type: string
+        required: false
+      - name: bizId
+        in: query
+        description: 业务ID 这个在问题页签内传
+        required: false
+        type: integer
+      - name: pageSize
+        in: path
+        description: 分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuestionVo'
+
+  /szxm/ques/getReviewIngQuestionList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - question
+      description: 获取待我审核问题列表
+      summary: 获取待我审核问题列表
+      operationId: getReviewIngAppQuestionList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目id
+        required: false
+        type: integer
+      - name: sectionIds
+        in: query
+        description: 标段ID列表，逗号相隔
+        type: string
+        required: false
+      - name: bizType
+        in: query
+        description: 问题来源 对应数据字典：comu.question.biztype
+        required: false
+        type: string
+      - name: title
+        in: query
+        description: 问题标题
+        required: false
+        type: string
+      - name: type
+        in: query
+        description: 问题类型 对应数据字典 comu.question.type
+        required: false
+        type: string
+      - name: priority
+        in: query
+        description: 问题优先级 对应数据字典 comu.question.priority
+        required: false
+        type: string
+      - name: startTime
+        in: query
+        description: 问题创建开始时间(yyyy-MM-dd)
+        type: string
+        required: false
+      - name: endTime
+        in: query
+        description: 问题创建完成时间(yyyy-MM-dd)
+        type: string
+        required: false
+      - name: pageSize
+        in: path
+        description: 分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuestionVo'
+
+  /szxm/ques/getProcessIngQuestionList/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - question
+      description: 获取待我处理问题列表
+      summary: 获取待我处理问题列表
+      operationId: getReviewIngAppQuestionList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: query
+        description: 项目id
+        required: false
+        type: integer
+      - name: sectionIds
+        in: query
+        description: 标段ID列表，逗号相隔
+        type: string
+        required: false
+      - name: bizType
+        in: query
+        description: 问题来源 对应数据字典：comu.question.biztype
+        required: false
+        type: string
+      - name: title
+        in: query
+        description: 问题标题
+        required: false
+        type: string
+      - name: type
+        in: query
+        description: 问题类型 对应数据字典 comu.question.type
+        required: false
+        type: string
+      - name: priority
+        in: query
+        description: 问题优先级 对应数据字典 comu.question.priority
+        required: false
+        type: string
+      - name: startTime
+        in: query
+        description: 问题创建开始时间(yyyy-MM-dd)
+        type: string
+        required: false
+      - name: endTime
+        in: query
+        description: 问题创建完成时间(yyyy-MM-dd)
+        type: string
+        required: false
+      - name: pageSize
+        in: path
+        description: 分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuestionVo'
+
+  /szxm/ques/getQuestion/{id}:
+    get:
+      tags:
+      - question
+      summary: 查询单个问题
+      description: 查询单个问题
+      operationId: getQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: id
+        in: path
+        description: 主键ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 返回VO Object
+          schema:
+            $ref: '#/definitions/QuestionVo'
+
+  /szxm/ques/{questionId}/queryQuestionRecordList:
+    get:
+      tags:
+      - question
+      description: 获取问题记录列表
+      summary: 获取问题记录列表
+      operationId: queryQuestionRecordList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuestionRecordVo'
+
+  /szxm/ques/addQuestion:
+    post:
+      tags:
+      - question
+      summary: 新增问题
+      description: 新增问题
+      operationId: addQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 新增问题body
+        required: true
+        schema:
+          $ref: '#/definitions/QuestionAddForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/updateQuestion:
+    put:
+      tags:
+      - question
+      summary: 修改问题
+      description: 修改问题
+      operationId: updateQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 修改问题body
+        required: true
+        schema:
+          $ref: '#/definitions/QuestionUpdateForm'
+      responses:
+        200:
+          description: 返回增加VO Object
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/deleteQuestion:
+    delete:
+      tags:
+      - question
+      summary: 删除问题
+      description:
+      operationId: deleteQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: Content-Type
+        in: header
+        description: Content-Type
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 修改的问题对象
+        required: true
+        schema:
+          $ref: '#/definitions/deleteVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/publishQuestion:
+    post:
+      tags:
+      - question
+      description: 发布问题
+      summary: 发布问题
+      operationId: publishQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: questionId
+        in: path
+        description: 问题ID
+        required: true
+        type: integer
+      - in: body
+        name: body
+        description: 发布问题body
+        required: true
+        schema:
+          $ref: '#/definitions/QuestionPublishForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/handleQuestion:
+    post:
+      tags:
+      - question
+      description: 处理问题
+      summary: 处理问题
+      operationId: handleQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 处理问题body
+        required: true
+        schema:
+          $ref: '#/definitions/QuestionHandleForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/forwardQuestion:
+    post:
+      tags:
+      - question
+      description: 转发问题
+      summary: 转发问题
+      operationId: forwardQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 转发问题body
+        required: true
+        schema:
+          $ref: '#/definitions/QuestionForwardForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/verifyQuestion:
+    post:
+      tags:
+      - question
+      description: 审核问题
+      summary: 审核问题
+      operationId: verifyQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 审核问题body
+        required: true
+        schema:
+          $ref: '#/definitions/QuestionVerifyForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/hangUpQuestion/{questionId}:
+    post:
+      tags:
+      - question
+      description: 挂起问题
+      summary: 挂起问题
+      operationId: hangUpQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: questionId
+        in: path
+        description: 问题ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /szxm/ques/cancelHangUpQuestion/{questionId}:
+    post:
+      tags:
+      - question
+      description: 取消挂起问题
+      summary: 取消挂起问题
+      operationId: cancelHangUpQuestion
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: questionId
+        in: path
+        description: 问题ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  GeneralVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  UserVo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+      userCode:
+        type: string
+        description: code
+      phone:
+        type: string
+        description: code
+
+  deleteVo:
+    type: array
+    items:
+      type: integer
+      description: 删除的id
+
+  QuestionVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      sectionId:
+        type: integer
+        description: 标段ID
+      sectionCode:
+        type: string
+        description: 标段号
+      sectionName:
+        type: string
+        description: 标段名称
+      projectId:
+        type: integer
+        description: 项目ID
+      projectName:
+        type: string
+        description: 项目名称
+      title:
+        type: string
+        description: 问题标题
+      bizId:
+        type: integer
+        description: 业务ID
+      bizTypeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 问题来源，code是码值，name是名称（数据字典：comu.question.biztype）
+      typeVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 问题类型（数据字典：comu.question.type）
+      priorityVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 问题优先级（数据字典：comu.question.priority）
+      orgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 责任主体
+      userVo:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 责任人
+      currentUserOrgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 当前处理人所属组织
+      currentUserVo:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 当前处理人
+      lastUserOrgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 问题上一步处理人所属组织
+      lastUserVo:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 问题上一步处理人
+      createrOrgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 创建人所属组织
+      createrVo:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 创建人
+      createTime:
+        type: string
+        description: 创建时间 yyyy-MM-dd HH:mm:ss
+      endTime:
+        type: string
+        description: 问题结束日期（只有状态为关闭才有值） yyyy-MM-dd
+      handleTime:
+        type: string
+        description: 要求处理日期 yyyy-MM-dd
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 问题状态（数据字典：comu.question.status）
+      lastStatusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 问题上一步状态（数据字典：comu.question.status）
+      remark:
+        type: string
+        description: 问题说明
+      handle:
+        type: string
+        description: 处理要求
+
+  QuestionAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID
+      sectionId:
+        type: integer
+        description: 标段ID
+      bizId:
+        type: integer
+        description: 业务ID 问题管理增加可不传
+      bizType:
+        type: string
+        description: 必填，问题来源 问题页签读菜单code 问题管理增加读 comu.question.biztype
+      title:
+        type: string
+        description: 问题标题
+      type:
+        type: string
+        description: 问题类型 必填  comu.question.type
+      orgId:
+        type: integer
+        description: 责任主体orgId 必填，选择系统组织的树即可
+      userId:
+        type: integer
+        description: 责任人Id 必填
+      priority:
+        type: string
+        description: 问题优先级   comu.question.priority
+      handleTime:
+        type: string
+        description: 要求处理日期 必填 yyyy-MM-dd
+      remark:
+        type: string
+        description: 问题说明 必填
+      handle:
+        type: string
+        description: 处理要求 必填
+      fileIds:
+        type: array
+        description: 附件
+        items:
+          type: integer
+
+  QuestionUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 问题ID
+      bizType:
+        type: string
+        description: 必填，问题来源 （PC端问题页签置灰的，原来是什么就传什么 问题管理读 comu.question.biztype）
+      title:
+        type: string
+        description: 问题标题
+      type:
+        type: string
+        description: 问题类型 必填  comu.question.type
+      orgId:
+        type: integer
+        description: 责任主体orgId 必填，选择系统组织的树即可
+      userId:
+        type: integer
+        description: 责任人Id 必填
+      priority:
+        type: string
+        description: 问题优先级   comu.question.priority
+      handleTime:
+        type: string
+        description: 要求处理日期 必填 yyyy-MM-dd
+      remark:
+        type: string
+        description: 问题说明 必填
+      handle:
+        type: string
+        description: 处理要求 必填
+      fileIds:
+        type: array
+        description: 附件
+        items:
+          type: integer
+
+  QuestionHandleForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID 取问题的项目ID 如有
+      sectionId:
+        type: integer
+        description: 标段ID 取问题的标段ID 如有
+      questionId:
+        type: integer
+        description: 问题的ID
+      orgId:
+        type: integer
+        description: 组织机构ID，选择系统组织的树即可 必填(默认填充问题上一步处理人所在组织机构)
+      userId:
+        type: integer
+        description: 审核人Id 必填 (默认填充问题上一步处理人)
+      remark:
+        type: string
+        description: 处理说明
+      fileIds:
+        type: array
+        description: 附件
+        items:
+          type: integer
+
+  QuestionForwardForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID 取问题的项目ID
+      sectionId:
+        type: integer
+        description: 标段ID 取问题的标段ID
+      questionId:
+        type: integer
+        description: 问题的ID
+      orgId:
+        type: integer
+        description: 组织机构ID，选择系统组织的树即可 必填
+      userId:
+        type: integer
+        description: 下一步处理人Id 必填
+      remark:
+        type: string
+        description: 说明 默认填充：（已转发相关人员进行处理）
+
+  QuestionPublishForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID 取问题的项目ID 如有
+      sectionId:
+        type: integer
+        description: 标段ID 取问题的标段ID 如有
+      questionId:
+        type: integer
+        description: 问题的ID 必填
+      orgId:
+        type: integer
+        description: 处理机构ID，有项目，选择项目团队组织 必填(默认填充问题的责任组织)
+      userId:
+        type: integer
+        description: 处理人Id 必填 (默认填充问题的责任人)
+      remark:
+        type: string
+        description: 处理说明 必填
+
+  QuestionVerifyForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目ID 取问题的项目ID
+      sectionId:
+        type: integer
+        description: 标段ID 取问题的标段ID
+      questionId:
+        type: integer
+        description: 问题的ID
+      orgId:
+        type: integer
+        description: 处理机构/审核机构ID，有项目，选择项目团队组织 （审核未否的情况下：处理人，组织机构默认填充问题上一步的处理人，处理人所属组织）
+      userId:
+        type: integer
+        description: 处理人Id/下一步审核人ID（审核未否的情况下：处理人，组织机构默认填充问题上一步的处理人，处理人所属组织）
+      isPass:
+        type: string
+        description: 是否审核通过 0否 1是（审核为是的情况下：如果当前用户不是问题创建人，则显示组织结构，下一步审核人，
+          下一步审核人，组织机构默认填充问题创建人，及其所在的组织机构（且是必填）
+          如果当前用户是问题创建人，则不显示组织结构，下一步审核人）
+      remark:
+        type: string
+        description: 审核说明
+      fileIds:
+        type: array
+        description: 附件
+        items:
+          type: integer
+
+  QuestionRecordVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      sectionId:
+        type: integer
+        description: 标段ID
+      projectId:
+        type: integer
+        description: 项目ID
+      questionId:
+        type: integer
+        description: 问题ID
+      remark:
+        type: string
+        description: 处理说明
+      orgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 下一节点处理人所属组织
+      userVo:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 下一节点处理人
+      createrOrgVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 创建人所属组织
+      createrVo:
+        type: object
+        $ref: '#/definitions/UserVo'
+        description: 创建人
+      createTime:
+        type: string
+        description: 创建时间 yyyy-MM-dd HH:mm:ss
+      statusVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 状态（数据字典：comu.question.status）
+      actionVo:
+        type: object
+        $ref: '#/definitions/GeneralVo'
+        description: 动作(0新建、1发布、2处理、3转发、4驳回、5确认、6挂起、7关闭)
+      fileCount:
+        type: string
+        description: 文件数量

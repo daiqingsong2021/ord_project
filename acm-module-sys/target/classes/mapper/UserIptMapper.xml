@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.UserIptMapper">
+
+    <select id="queryUserIptRelation" resultType="com.wisdom.acm.sys.po.SysUserIptPo">
+        select i.user_id userId,i.ipt_id iptId from wsd_sys_useript i where i.ipt_id in
+        <foreach collection="iptIds" close=")" item="item" index="index" open="(" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectUserIptRelationExist" resultType="com.wisdom.acm.sys.po.SysUserIptPo">
+        select i.user_id userId,i.ipt_id iptId from wsd_sys_useript i where i.ipt_id = #{iptId} and i.user_id = #{userId}
+    </select>
+
+    <delete id="deleteUserByIptId" parameterType="java.util.List">
+        delete from wsd_sys_useript
+        where ipt_id in
+        <foreach collection="iptIds" item="item" open="(" close=")" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <resultMap id="resultIptUserTreeMap" type="com.wisdom.acm.sys.vo.SysIptUserVo">
+        <id property="id" column="ID"/>
+        <result property="userName" column="user_name"/>
+        <result property="actuName" column="actu_name"/>
+        <association property="sex" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="id" column="sex"/>
+            <result property="name" column="sexName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectUserByIptId" resultMap="resultIptUserTreeMap">
+        SELECT
+        u.id,u.user_name,u.actu_name,(case u.sex when 0 then '女' when 1 then '男' end) as sexName
+        FROM
+        wsd_sys_useript o left join wsd_sys_user u on o.user_id = u.id
+        <where>
+            o.ipt_id = #{iptId}
+            <if test="searchForm.searcher != null and searchForm.searcher != ''">
+                (u.user_name like concat('%',#{searchForm.searcher},'%')
+                or
+                u.actu_name like concat('%',#{searchForm.searcher},'%'))
+            </if>
+        </where>
+        order by u.sort_num asc
+    </select>
+
+    <delete id="deleteIptUserByUserIdAndIptId">
+        delete from wsd_sys_useript where ipt_id = #{iptId} and user_id in
+        <foreach collection="userIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserIptRelationByUserIds">
+        delete from wsd_sys_useript where user_id in
+        <foreach collection="userIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

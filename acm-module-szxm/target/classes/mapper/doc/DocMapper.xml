@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.szxm.mapper.doc.DocMapper">
+        <resultMap id="DocumentVo" type="com.wisdom.acm.szxm.vo.doc.DocumentVo">
+            <result column="id" property="id" />
+            <result column="isFolder" property="isFolder" />
+            <result column="title" property="title" />
+            <result column="fileId" property="fileId" />
+            <result column="size_" property="size"/>
+            <result column="status" property="status"/>
+            <result column="name_" property="name" />
+            <association property="section" javaType="com.wisdom.acm.szxm.vo.doc.SimpleVo">
+                <result column="sectionId" property="id" />
+                <result column="sectionName" property="name" />
+            </association>
+        </resultMap>
+
+    <select id="selectDocumentVoList" resultMap="DocumentVo">
+        select f.id,f.name as title,1 as isFolder,
+        null as size_,null as fileId,null as status,null as sectionId, null as sectionName,null as name_
+        from wsd_doc_folder f
+        where f.project_id = #{projectId} and f.parent_id = #{folderId}
+        <if test=" key != null and key != ''">
+            and f.name like concat('%',#{key},'%')
+        </if>
+        union all
+        select d.id,d.doc_title as title,0 as isFolder,df.size_,df.file_id as fileId,case when d.status = 'EDIT' then 0 when d.status = 'APPROVAL' then 1
+        when d.status = 'RELEASE' then 2 end status,s.section_id as sectionId,o.org_name as sectionName,df.file_name as name_
+        from wsd_doc d
+        left join wsd_plan_project p on p.id = d.project_id
+        left join wsd_doc_folder f on f.id = d.folder_id
+        left join (
+          select max(id) file_id,file_name,doc_id,size_ from wsd_doc_file group by file_name,doc_id,size_
+        ) df on df.doc_id = d.id
+        left join wsd_doc_section s on d.id = s.doc_id
+        left join wsd_sys_org o on o.id = s.section_id and o.extended_column_1 = 'section'
+        where d.del = 0 and d.project_id = #{projectId} and d.folder_id = #{folderId}
+        <if test=" key != null and key != ''">
+            and d.doc_title like concat('%',#{key},'%')
+        </if>
+    </select>
+
+    <resultMap id="DocumentInfo" type="com.wisdom.acm.szxm.vo.doc.DocumentInfo">
+        <result column="id" property="id" />
+        <result column="name_" property="name" />
+        <result column="code" property="code" />
+        <result column="category" property="category" />
+        <result column="type_" property="type" />
+        <result column="version" property="version" />
+        <result column="creater" property="creater" />
+        <result column="uploadDate" property="uploadDate" />
+        <result column="lastUpdateDate" property="lastUpdateDate" />
+        <result column="isFolder" property="isFolder" />
+        <result column="title" property="title" />
+        <result column="fileId" property="fileId" />
+        <result column="size_" property="size"/>
+        <result column="status" property="status"/>
+        <result column="security" property="security"/>
+        <result column="domain_" property="domain"/>
+        <result column="favorite" property="favorite"/>
+        <association property="folder" javaType="com.wisdom.acm.szxm.vo.doc.SimpleVo">
+            <result column="folderId" property="id" />
+            <result column="folderName" property="name" />
+        </association>
+        <association property="uploadBy" javaType="com.wisdom.acm.szxm.vo.doc.Person">
+            <result column="uploadById" property="id" />
+            <result column="uploadByName" property="name" />
+        </association>
+        <association property="org" javaType="com.wisdom.acm.szxm.vo.doc.SimpleVo">
+            <result column="orgId" property="id" />
+            <result column="orgName" property="name" />
+        </association>
+        <association property="section" javaType="com.wisdom.acm.szxm.vo.doc.SimpleVo">
+            <result column="sectionId" property="id" />
+            <result column="sectionName" property="name" />
+        </association>
+        <association property="wbsOrTask" javaType="com.wisdom.acm.szxm.vo.doc.WbsOrTaskVo">
+            <result column="wbsOrTaskId" property="id" />
+            <result column="wbsOrTaskName" property="name" />
+            <result column="isWbs" property="isWbs" />
+        </association>
+    </resultMap>
+
+
+
+    <select id="selectDocumentInfo" resultMap="DocumentInfo">
+        select d.id,d.doc_title as title,0 as isFolder,d.doc_num as code,d.doc_type as category,d.version,d.author as creater,d.creator as uploadById,u.actu_name as uploadByName,
+        d.creat_time as uploadDate,d.last_upd_time as lastUpdateDate,d.folder_id as folderId,fd.name as folderName,
+        o.id as orgId, o.org_name as orgName,t.id as wbsOrTaskId,t.task_name as wbsOrTaskName, 0 as isWbs,d.secuty_level as security, d.profession as domain_,
+        d.doc_classify as type_,df.size_,df.file_id as fileId,df.file_name as name_,case when d.status = 'EDIT' then 0 when d.status = 'APPROVAL' then 1
+        when d.status = 'RELEASE' then 2 end status,s.section_id as sectionId,so.org_name as sectionName
+        from wsd_doc d
+        left join wsd_sys_user u on u.id = d.creator
+        left join (
+            select max(id) file_id,file_name,doc_id,size_ from wsd_doc_file group by file_name,doc_id,size_
+        ) df on df.doc_id = d.id
+        left join wsd_doc_relation re on re.doc_id = d.id
+        left join wsd_plan_task t on t.id = re.biz_id and re.biz_type = 'task'
+        left join wsd_sys_org o on o.id = d.org_id
+        left join wsd_doc_folder fd on fd.id = d.folder_id
+        left join wsd_doc_section s on d.id = s.doc_id
+        left join wsd_sys_org so on so.id = s.section_id and so.extended_column_1 = 'section'
+        where d.id = #{docId}
+    </select>
+
+    <select id="getFavoriteIdByDocId" resultType="java.lang.Integer">
+        select r.favorite_id
+        from wsd_doc_favorite_relation r
+        left join wsd_doc_favorite f on r.favorite_id = f.id
+        where r.doc_id = #{docId}
+    </select>
+</mapper>

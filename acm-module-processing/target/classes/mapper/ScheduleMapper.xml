@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.processing.mapper.train.TrainScheduleMapper">
+    <resultMap id="scheduleVo" type="com.wisdom.acm.processing.vo.train.ScheduleVo">
+        <id property="drskbbh" column="drskbbh"/>
+        <result property="sfz" column="sfz"/>
+        <result property="zdz" column="zdz"/>
+        <result property="sfzsj" column="sfzsj"/>
+        <result property="zdzsj" column="zdzsj"/>
+        <result property="drskbsxlcs" column="drskbsxlcs"/>
+    </resultMap>
+    <select id="queryScheduleVo" parameterType="java.util.Map" resultMap="scheduleVo">
+        select s.SCHEDULE_CODE as drskbbh,
+			   s.START_STATION as sfz,
+			   s.END_STATION as zdz,
+			   s.START_DRIVE_TIME as sfzsj,
+		       s.END_DRIVE_TIME as zdzsj,
+			   s.MAX_ONLINE_TRAIN as drskbsxlcs
+        from odr_train_daily a left join odr_train_schedule s  on a.SCHEDULE_ID=s.id
+        where  a.line=#{line} and a.RECORD_TIME=#{recordTime}
+    </select>
+</mapper>

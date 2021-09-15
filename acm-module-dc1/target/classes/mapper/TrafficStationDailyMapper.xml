@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.dc1.mapper.TrafficStationDailyMapper">
+    <delete id="delTrafficStationDailyByDates" parameterType="java.lang.String">
+        DELETE FROM odr_traffic_station_daily
+        <where>
+            record_time IN
+            <foreach collection="recordTimes" item="date" open="(" close=")"
+                     separator=",">
+                #{date}
+            </foreach>
+        </where>
+    </delete>
+    <resultMap id="TrafficStationDailyVo" type="com.wisdom.acm.dc1.vo.TrafficStationDailyVo">
+        <id property="id" column="id"/>
+        <result property="creatTime" column="creatTime"/>
+        <result property="sortNum" column="sortNum"/>
+        <result property="creator" column="creator"/>
+        <result property="recordTime" column="recordTime"/>
+        <result property="line" column="line"/>
+        <result property="linePeriod" column="linePeriod"/>
+        <result property="station" column="station"/>
+        <result property="arrivalVolume" column="arrivalVolume"/>
+        <result property="arrivalVolumeAverage" column="arrivalVolumeAverage"/>
+        <result property="outboundVolume" column="outBoundVolume"/>
+        <result property="outboundVolumeAverage" column="outBoundVolumeAverage"/>
+        <result property="totalVolume" column="totalVolume"/>
+        <result property="recordTime" column="recordTime"/>
+        <result property="rate" column="rate"/>
+        <result property="stationNum" column="stationNum"/>
+    </resultMap>
+    <select id="queryTrafficStationDailys" parameterType="java.util.Map" resultMap="TrafficStationDailyVo">
+        SELECT
+                a.station_num AS stationNum,
+                a.creat_time AS creatTime,
+                a.sort_num AS sortNum,
+                a.line AS line,
+                a.line_period AS linePeriod,
+                a.record_time AS recordTime,
+                a.station AS station,
+                sum(a.ARRIVAL_VOLUME) AS arrivalVolume ,
+                avg(a.ARRIVAL_VOLUME) AS arrivalVolumeAverage,
+                sum(a.OUTBOUND_VOLUME) AS outboundVolume ,
+                avg(a.OUTBOUND_VOLUME) AS outboundVolumeAverage,
+                sum(a.TOTAL_VOLUME) AS totalVolume
+        FROM odr_traffic_station_daily a
+        <where>
+            <if test="yearMonth !=null and yearMonth != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m') =#{yearMonth}
+            </if>
+        </where>
+          group by a.station ,a.line
+          ORDER BY a.CREAT_TIME DESC
+    </select>
+    <select id="queryStationDailyList" parameterType="java.util.Map" resultMap="TrafficStationDailyVo">
+        select
+                       a.id as id,
+                       a.station_num as stationNum,
+                       a.creat_time as creatTime,
+                       a.sort_num as sortNum,
+                       a.creator as creator,
+                       a.line as line,
+                       a.line_period as linePeriod,
+                       a.record_time as recordTime,
+					   a.station as station,
+					   a.arrival_volume as arrivalVolume,
+					   a.outbound_volume as outboundVolume,
+					   a.total_volume as totalVolume,
+	                   a.total_volume*100/(select sum(total_volume)
+	                   from odr_traffic_station_daily
+	                   b where a.CREAT_TIME=b.CREAT_TIME) as rate
+        from odr_traffic_station_daily a
+                <where>
+                    <if test="line != null and line != '' ">
+                        AND a.line = #{line}
+                    </if>
+                    <if test="station != null and station != '' ">
+                        AND a.station = #{station}
+                    </if>
+                    <if test="endTime != null and endTime != '' ">
+                        AND a.init_time <![CDATA[  <= ]]> to_date(#{endTime},'yyyy-MM-dd')
+                    </if>
+                    <if test="startTime != null and startTime != '' ">
+                        AND a.init_time <![CDATA[  >= ]]> to_date(#{startTime},'yyyy-MM-dd')
+                    </if>
+                </where>
+                order by a.creat_time desc
+    </select>
+</mapper>

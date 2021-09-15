@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc4.mapper.ConstructionDailyMapper">
+    <resultMap id="ConstructionDailyVo" type="com.wisdom.acm.dc4.vo.ConstructionDailyVo">
+        <result property="id" column="id"/>
+        <result property="recordTime" column="RECORD_TIME"/>
+        <result property="line" column="LINE"/>
+        <result property="lineName" column="LINE_Name"/>
+        <result property="weeklyPlanConstructionQuantity" column="weekly_plan_construction_quantity"/>
+        <result property="weeklyActualConstructionQuantity" column="weekly_actual_construction_quantity"/>
+        <result property="dailyPlanConstructionQuantity" column="daily_plan_construction_quantity"/>
+        <result property="dailyActualConstructionQuantity" column="daily_actual_construction_quantity"/>
+        <result property="tempPlanConstructionQuantity" column="temp_plan_construction_quantity"/>
+        <result property="tempActualConstructionQuantity" column="temp_actual_construction_quantity"/>
+        <result property="repairPlanConstructionQuantity" column="repair_plan_construction_quantity"/>
+        <result property="repairActualConstructionQuantity" column="repair_actual_construction_quantity"/>
+        <result property="totalPlanConstructionQuantity" column="total_plan_construction_quantity"/>
+        <result property="totalActualConstructionQuantity" column="total_actual_construction_quantity"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="reviewTime" column="REVIEW_TIME"/>
+        <association property="reviewStatusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="REVIEW_STATUS"/>
+            <result property="name" column="status_name"/>
+        </association>
+        <association property="createVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="creator"/>
+            <result property="name" column="creator_name"/>
+        </association>
+        <association property="reviewerVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+            <result property="code" column="reviewer"/>
+            <result property="name" column="reviewer_name"/>
+        </association>
+    </resultMap>
+
+
+
+
+
+    <resultMap id="ConstructionDaily2MonthVo" type="com.wisdom.acm.dc4.vo.ConstructionDailyVo">
+        <result property="weeklyActualConstructionQuantity" column="weekly_actual_construction_quantity"/>
+        <result property="dailyPlanConstructionQuantity" column="daily_plan_construction_quantity"/>
+        <result property="dailyActualConstructionQuantity" column="daily_actual_construction_quantity"/>
+        <result property="tempPlanConstructionQuantity" column="temp_plan_construction_quantity"/>
+        <result property="tempActualConstructionQuantity" column="temp_actual_construction_quantity"/>
+        <result property="repairPlanConstructionQuantity" column="repair_plan_construction_quantity"/>
+        <result property="repairActualConstructionQuantity" column="repair_actual_construction_quantity"/>
+    </resultMap>
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="ConstructionDailyVo">
+        select a.*,dt.dict_name as line_name, (case a.review_status
+        when 'INIT' then '新建'
+        when 'REJECT' then '被驳回'
+        when 'APPROVAL' then '审批中'
+        when 'APPROVED' then '已发布' end    ) as status_name,
+        dt.dict_name as  LINE_NAME,
+        u.actu_name as creator_name,
+        uc.actu_name as reviewer_name
+        from odr_construction_daily a
+        left join wsd_base_dict dt
+        on a.line = dt.dict_code and dt.TYPE_CODE = 'line'
+        left join wsd_sys_user u on a.creator=u.id
+        left join wsd_sys_user uc on a.reviewer=uc.id
+        <where>
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="recordTime != null and recordTime != '' ">
+                AND a.RECORD_TIME = str_to_date(#{recordTime},'%Y-%m-%d')
+            </if>
+            <if test="checkReviewStatus != null and checkReviewStatus != '' ">
+                AND a.REVIEW_STATUS !=#{checkReviewStatus}
+            </if>
+            <if test="reviewStatus != null and reviewStatus != '' ">
+                AND a.REVIEW_STATUS =#{reviewStatus}
+            </if>
+            <if test="ids != null and ids != '' ">
+                AND a.id in
+                <foreach collection="ids" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="lines != null and lines != '' ">
+                AND a.line in
+                <foreach collection="lines" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  <= ]]> str_to_date(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="startTime != null and startTime != '' ">
+                AND a.RECORD_TIME <![CDATA[  >= ]]> str_to_date(#{startTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.RECORD_TIME desc
+    </select>
+
+    <select id="selectDaily2MonthByParams" parameterType="java.util.Map" resultMap="ConstructionDaily2MonthVo">
+        select
+        SUM(a.weekly_actual_construction_quantity) as weekly_actual_construction_quantity,
+        SUM(a.daily_plan_construction_quantity) AS daily_plan_construction_quantity,
+        SUM(a.daily_actual_construction_quantity) as daily_actual_construction_quantity,
+        SUM(a.temp_plan_construction_quantity) AS temp_plan_construction_quantity,
+        SUM(a.temp_actual_construction_quantity) as temp_actual_construction_quantity,
+        SUM(a.repair_plan_construction_quantity) AS repair_plan_construction_quantity,
+        SUM(a.repair_actual_construction_quantity) as repair_actual_construction_quantity
+        from odr_construction_daily a
+        <where>
+            a.REVIEW_STATUS ="APPROVED"
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="recordTime2Month != null and recordTime2Month != '' ">
+                AND date_format(a.RECORD_TIME,'%Y-%m')=#{recordTime2Month}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySumWeekPlanNum" parameterType="java.util.Map" resultType="java.lang.String">
+        select SUM(a.WEEKLY_PLAN_CONSTRUCTION_QUANTITY) as WEEKLY_PLAN_CONSTRUCTION_QUANTITY
+        from odr_construction_daily a
+        <where>
+            a.REVIEW_STATUS ="APPROVED"
+            <if test="line != null and line != '' ">
+                AND a.line =#{line}
+            </if>
+            <if test="listMonDay != null and listMonDay != '' ">
+                 and date_format(a.RECORD_TIME,'%Y-%m-%d')in
+                <foreach collection="listMonDay" item="item"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getConstructionDailyByRcIds" resultType="java.lang.Integer">
+        select id from odr_construction_daily where isnull(rc_id);
+    </select>
+
+    <select id="queryConstructionDailyExitsByid"  resultType="com.wisdom.acm.dc4.vo.ConstructionDailyRcVo">
+        SELECT
+	        r.id as rcId,
+	        r.record_time as recordTime,
+	        (case r.line when '1号线' then 1 when '3号线' then 3 end) as line,
+	        r.weekly_plan_construction_quantity as weeklyPlanConstructionQuantity,
+	        r.weekly_actual_construction_quantity as weeklyActualConstructionQuantity,
+	        r.daily_plan_construction_quantity as dailyPlanConstructionQuantity,
+	        r.daily_actual_construction_quantity as dailyActualConstructionQuantity,
+	        r.temp_plan_construction_quantity as tempPlanConstructionQuantity,
+	        r.temp_actual_construction_quantity as tempActualConstructionQuantity,
+	        r.repair_plan_construction_quantity as repairPlanConstructionQuantity,
+	        r.repair_actual_construction_quantity as repairActualConstructionQuantity,
+	        r.total_plan_construction_quantity as totalPlanConstructionQuantity,
+	        r.total_actual_construction_quantity as  totalActualConstructionQuantity,
+	        r.description
+        FROM
+	                odr_rc_construction_daily r
+        WHERE
+            NOT EXISTS (
+                SELECT
+                    1
+                FROM
+                    odr_construction_daily o
+                WHERE
+                    o.rc_id = r.id
+            )
+    </select>
+</mapper>
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCurrencyMapper" >
+    <!--<resultMap id="BaseResultMap" type="com.wisdom.acm.base.po.BaseCurrencyPo" >
+        <id column="ID" property="id" jdbcType="INTEGER" />
+        <result column="currency_name" property="currencyName" jdbcType="VARCHAR" />
+        <result column="currency_code" property="currencyCode" jdbcType="VARCHAR" />
+        <result column="currency_symbol" property="currencySymbol" jdbcType="VARCHAR" />
+        <result column="base_exch_rate" property="baseExchRate" jdbcType="DECIMAL" />
+        <result column="currency_base" property="currencyBase" jdbcType="INTEGER" />
+        <result column="last_upd_time" property="lastUpdTime" jdbcType="TIMESTAMP" />
+        <result column="last_upd_user" property="lastUpdUser" jdbcType="INTEGER" />
+        <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+        <result column="creator" property="creator" jdbcType="INTEGER" />
+        <result column="last_upd_ip" property="lastUpdIp" jdbcType="VARCHAR" />
+        <result column="wsdver" property="wsdver" jdbcType="DECIMAL" />
+        <result column="sort_num" property="sort" jdbcType="DECIMAL" />
+    </resultMap>-->
+
+    <sql id="selectInfo">
+        select c.id, c.currency_name, c.currency_code,
+               c.currency_symbol, c.creat_time,c.creat_time,c.remark,c.currency_base,
+               u.id as user_id, u.actu_name as user_name
+        from wsd_base_currency c
+        left join wsd_sys_user u on c.creator = u.id
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.wisdom.acm.base.vo.currency.BaseCurrencyVo" >
+        <id column="ID" property="id" jdbcType="INTEGER" />
+        <result column="currency_name" property="currencyName" jdbcType="VARCHAR" />
+        <result column="currency_code" property="currencyCode" jdbcType="VARCHAR" />
+        <result column="currency_symbol" property="currencySymbol" jdbcType="VARCHAR" />
+        <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+        <result column="currency_base" property="currencyBase" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <association property="creator" javaType="com.wisdom.base.common.vo.UserVo">
+            <result column="user_id" property="id" />
+            <result column="user_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectCurrencyList" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+    </select>
+
+    <select id="selectCurrencyById" parameterType="int" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+        where c.id = #{value}
+    </select>
+
+    <select id="selectDefaultCurrency" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+        where c.CURRENCY_BASE = 1
+    </select>
+
+    <select id="selectOneBaseCurrencyVo" parameterType="int" resultMap="BaseResultMap">
+        <include refid="selectInfo"></include>
+        where c.id = #{value}
+    </select>
+
+</mapper>

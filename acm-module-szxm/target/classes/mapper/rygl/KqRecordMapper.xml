@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.rygl.KqRecordMapper">
+
+	<resultMap id="holidayVoMap" type="com.wisdom.acm.szxm.vo.rygl.HolidayVo">
+		<id property="id" column="id"/>
+		<result property="projectId" column="project_id"/>
+		<result property="sectionId" column="section_id"/>
+		<result property="peopleId" column="people_id"/>
+		<result property="peopleName" column="PEOPLE_NAME"/>
+		<result property="serialId" column="serial_id"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="days" column="days"/>
+		<result property="reason" column="reason"/>
+		<result property="orgName" column="org_name"/>
+		<association property="typeVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+			<result property="code" column="type" />
+			<result property="name" column="type"/>
+		</association>
+		<association property="statusVo" javaType="com.wisdom.base.common.vo.GeneralVo">
+			<result property="code" column="status" />
+			<result property="name" column="status_name"/>
+		</association>
+	</resultMap>
+
+
+	<resultMap id="calendarVo" type="com.wisdom.base.common.vo.CalendarVo">
+		<id property="id" column="id"/>
+		<result property="projectId" column="PROJECT_ID"/>
+		<result property="calName" column="CAL_NAME"/>
+		<result property="calType" column="CAL_TYPE"/>
+		<result property="isDefault" column="is_default"/>
+		<result property="weekDays" column="week_days" jdbcType="NCLOB" typeHandler="org.apache.ibatis.type.NClobTypeHandler"/>
+		<result property="exceptions" column="exceptions" jdbcType="NCLOB" typeHandler="org.apache.ibatis.type.NClobTypeHandler"/>
+		<result property="dayHrCnt" column="DAY_HR_CNT"/>
+		<result property="weekHrCnt" column="WEEK_HR_CNT"/>
+		<result property="monthHrCnt" column="MONTH_HR_CNT"/>
+		<result property="yearHrCnt" column="YEAR_HR_CNT"/>
+	</resultMap>
+
+	<resultMap id="kqDayReportDetailVo" type="com.wisdom.acm.szxm.vo.rygl.KqDayReportDetailVo">
+		<id property="id" column="id"/>
+		<result property="day" column="JL_RQ"/>
+		<result property="queQin" column="IS_QQ"/>
+		<result property="qingJia" column="IS_QJ"/>
+		<result property="chiDao" column="IS_CD"/>
+		<result property="zaoTui" column="IS_ZT"/>
+		<result property="yiChang" column="IS_YC"/>
+	</resultMap>
+
+    <select id="queryHolidayByDate" parameterType="java.util.Map" resultMap="holidayVoMap">
+        SELECT a.* FROM szxm_rygl_holiday_records a where a.people_id=#{peopleId} and  to_date(#{curDate},'yyyy-MM-dd') <![CDATA[  >= ]]> a.startTime  and  to_date(#{curDate},'yyyy-MM-dd') <![CDATA[  <= ]]> a.endTime
+        order by a.CREAT_TIME desc
+    </select>
+
+    <insert id="addGlryKqRecord" parameterType="com.wisdom.acm.szxm.po.rygl.GlryKqRecordPo">
+		INSERT INTO
+		szxm_rygl_glrykq_record(id,project_id,section_id,people_id,PEOPLE_NAME,job,telphone,id_card,is_qq,is_qj,is_cd,is_zt,is_yc,ORG_ID,ORG_NAME,jl_rq,creat_time,start_time,end_time)
+		VALUES(
+		#{id},#{projectId},#{sectionId},#{peopleId},#{peopleName},#{job},#{telPhone},#{idCard},#{isQq},#{isQj},#{isCd},#{isZt},#{isYc},#{orgId},#{orgName},#{jlRq},sysdate,#{startTime},#{endTime}
+		)
+	</insert>
+
+    <insert id="addGlryKqRecords" useGeneratedKeys="false" parameterType="java.util.List">
+		INSERT INTO
+		szxm_rygl_glrykq_record(id,project_id,section_id,people_id,PEOPLE_NAME,job,telphone,id_card,is_qq,is_qj,
+		is_cd,is_zt,is_yc,ORG_ID,ORG_NAME,jl_rq,creat_time,start_time,end_time)
+		select A.* from(
+		<foreach collection="list" index="index" item="item" separator="UNION ALL" >
+			(SELECT
+			#{item.id},#{item.projectId},#{item.sectionId},#{item.peopleId},#{item.peopleName},#{item.job},#{item.telPhone},#{item.idCard},#{item.isQq},#{item.isQj},
+			#{item.isCd},#{item.isZt},#{item.isYc},#{item.orgId},#{item.orgName},#{item.jlRq},sysdate,decode(#{item.startTimeTemp},null,null,to_date(#{item.startTimeTemp},'yyyy-mm-dd HH24:MI:SS')),decode(#{item.endTimeTemp},null,null,to_date(#{item.endTimeTemp},'yyyy-mm-dd HH24:MI:SS'))
+			FROM dual)
+		</foreach>
+		)A
+	</insert>
+
+	<insert id="addlwryKqRecord" parameterType="com.wisdom.acm.szxm.po.rygl.LwryKqRecordPo">
+		INSERT INTO
+		SZXM_RYGL_LWRYKQ_RECORD(ID,project_id,section_id,people_id,PEOPLE_NAME,job,telphone,id_card,is_qq,ORG_ID,ORG_NAME,jl_rq,creat_time)
+		VALUES(
+		#{id},#{projectId},#{sectionId},#{peopleId},#{peopleName},#{job},#{telPhone},#{idCard},#{isQq},#{orgId},#{orgName},#{jlRq},sysdate
+		)
+	</insert>
+
+	<insert id="addlwryKqRecords" useGeneratedKeys="false" parameterType="java.util.List">
+		INSERT INTO
+		SZXM_RYGL_LWRYKQ_RECORD(ID,project_id,section_id,people_id,PEOPLE_NAME,job,telphone,
+		id_card,is_qq,ORG_ID,ORG_NAME,jl_rq,creat_time)
+		select A.* from(
+		<foreach collection="list" index="index" item="item" separator="UNION ALL" >
+			(SELECT
+			#{item.id},#{item.projectId},#{item.sectionId},#{item.peopleId},#{item.peopleName},#{item.job},#{item.telPhone},
+			#{item.idCard},#{item.isQq},#{item.orgId},#{item.orgName},#{item.jlRq},sysdate
+			FROM dual)
+		</foreach>
+		)A
+	</insert>
+
+	<select id="selectGlRyReport" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		T.PEOPLE_ID,T.PEOPLE_NAME,T.ID_CARD,T.JOB,T.ORG_NAME,T.PROJECT_ID,T.SECTION_ID,
+		COUNT (T.ID) AS days,
+		SUM (T.IS_QJ) AS qjdays,
+		SUM (T.IS_QQ) AS qqdays,
+		SUM (T.IS_CD) AS cddays,
+		SUM (T.IS_ZT) AS ztdays,
+		SUM (T.IS_YC) AS ycdays,
+		(COUNT (T.ID)-SUM (T.IS_QJ)-SUM (T.IS_QQ)) as actDays
+		FROM
+		szxm_rygl_glrykq_record T
+		<where>
+			<if test="endTime != null and endTime != '' ">
+				AND T.JL_RQ <![CDATA[  <= ]]> #{endTime}
+			</if>
+			<if test="startTime != null and startTime != '' ">
+				AND T.JL_RQ <![CDATA[  >= ]]> #{startTime}
+			</if>
+			<if test="sectionList != null">
+				AND T.section_id IN
+				<foreach collection="sectionList" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="projectId != null and projectId != '' ">
+				AND T.project_id =#{projectId}
+			</if>
+			<if test="peopleName != null and peopleName != '' ">
+				AND T.PEOPLE_NAME  like '%'|| #{peopleName} || '%'
+			</if>
+		</where>
+		GROUP BY T .PEOPLE_ID,T.PEOPLE_NAME,T.ORG_NAME,T.ID_CARD,T.JOB,T.PROJECT_ID,T.SECTION_ID
+    </select>
+
+
+	<select id="selectLwRyReport" parameterType="java.util.Map" resultType="java.util.Map">
+		select A.ORG_ID,A.ORG_NAME,A.PROJECT_ID,A.SECTION_ID,sum(A.is_qq) as qqrs,count(A.org_id) as allrs,(count(A.org_id)-sum(A.is_qq)) as actrs from(SELECT
+		T.PEOPLE_ID,T.Org_Id,T.ORG_NAME,T.Project_Id,T.Section_Id,
+		case when sum(T.Is_Qq)>0 then 1 else 0 end as is_qq
+		FROM
+		szxm_rygl_lwrykq_record T
+		<where>
+			<if test="endTime != null and endTime != '' ">
+				AND T.JL_RQ <![CDATA[  <= ]]> #{endTime}
+			</if>
+			<if test="startTime != null and startTime != '' ">
+				AND T.JL_RQ <![CDATA[  >= ]]> #{startTime}
+			</if>
+			<if test="sectionList != null">
+				AND T.section_id IN
+				<foreach collection="sectionList" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="projectId != null and projectId != '' ">
+				AND T.project_id =#{projectId}
+			</if>
+			<if test="orgName != null and orgName != '' ">
+				AND T.org_Name  like '%'|| #{orgName} || '%'
+			</if>
+		</where>
+		GROUP BY T .PEOPLE_ID,T.Org_Id,T.ORG_NAME,T.Project_Id,T.Section_Id) A group by A.Org_Id,A.ORG_NAME,A.Project_Id,A.Section_Id
+    </select>
+
+	<select id="getPmCalendar" parameterType="java.lang.String" resultMap="calendarVo">
+		select * from wsd_base_calendar t where t.id=#{id}
+	</select>
+
+	<select id="getDefaultPmCalendar" resultMap="calendarVo">
+		select * from wsd_base_calendar t where t.is_default='1'
+	</select>
+
+	<select id="getAllPmCalendar" resultMap="calendarVo">
+		select * from wsd_base_calendar
+	</select>
+
+
+	<select id="getDictonary" parameterType="java.lang.String"  resultType="java.util.Map">
+		select d.dict_code as code,d.dict_name as name from  wsd_base_dict d where d.type_code=#{id}
+	</select>
+
+	<insert id="addAllKqRecord" parameterType="com.wisdom.acm.szxm.po.rygl.AllKqRecordPo">
+		INSERT INTO szxm_rygl_all_record(id,project_id,section_id,people_id,PEOPLE_NAME,job,telphone,id_card,org_name,org_id,type,check_time)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.id},#{item.projectId},#{item.sectionId},#{item.peopleId},#{item.peopleName},#{item.job},#{item.telphone},#{item.idCard}
+			,#{item.orgName},#{item.orgId},#{item.type},#{item.checkTime}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="delGlryKqRecordByjlrq" parameterType="java.util.List">
+       delete from szxm_rygl_glrykq_record
+		<where>
+			JL_RQ IN
+			<foreach collection="jlrqs" item="jlrq" open="(" close=")"
+					 separator=",">
+				#{jlrq}
+			</foreach>
+		</where>
+	</delete>
+
+	<update id="updateGlryKqRecordByjlrq" parameterType="java.util.List">
+		update szxm_rygl_glrykq_record t set t.CREAT_TIME=to_date(to_char(to_date(t.jl_rq,'yyyymmdd'),'yyyy-mm-dd HH24:MI:SS'),'yyyy-mm-dd HH24:MI:SS')+ 1/24
+		<where>
+			JL_RQ IN
+			<foreach collection="jlrqs" item="jlrq" open="(" close=")"
+					 separator=",">
+				#{jlrq}
+			</foreach>
+		</where>
+	</update>
+
+	<delete id="delLwryKqRecordByjlrq" parameterType="java.util.List">
+			delete from SZXM_RYGL_LWRYKQ_RECORD
+		<where>
+			JL_RQ IN
+			<foreach collection="jlrqs" item="jlrq" open="(" close=")"
+					 separator=",">
+				#{jlrq}
+			</foreach>
+		</where>
+	</delete>
+
+	<update id="updateLwryKqRecordByjlrq" parameterType="java.util.List">
+		update SZXM_RYGL_LWRYKQ_RECORD t set t.CREAT_TIME=to_date(to_char(to_date(t.jl_rq,'yyyymmdd'),'yyyy-mm-dd HH24:MI:SS'),'yyyy-mm-dd HH24:MI:SS')+ 1/24
+		<where>
+			JL_RQ IN
+			<foreach collection="jlrqs" item="jlrq" open="(" close=")"
+					 separator=",">
+				#{jlrq}
+			</foreach>
+		</where>
+	</update>
+
+	<select id="selectGlRyReportDetail" parameterType="java.util.Map" resultMap="kqDayReportDetailVo">
+		SELECT
+		JL_RQ,IS_QQ,IS_QJ,IS_CD,IS_ZT,IS_YC
+		FROM
+		szxm_rygl_glrykq_record
+		where PEOPLE_ID= #{peopleId} and JL_RQ between #{startTime} and #{endTime}
+		GROUP BY JL_RQ,IS_QQ,IS_QJ,IS_CD,IS_ZT,IS_YC  order by JL_RQ
+	</select>
+
+	<select id="selectLwRyReportDetail" parameterType="java.util.Map" resultMap="kqDayReportDetailVo">
+		SELECT
+		 	JL_RQ,IS_QQ
+		FROM
+		szxm_rygl_lwrykq_record
+		where PEOPLE_ID= #{peopleId} and JL_RQ between #{startTime} and #{endTime}
+		GROUP BY JL_RQ,IS_QQ  order by JL_RQ
+	</select>
+</mapper>
+

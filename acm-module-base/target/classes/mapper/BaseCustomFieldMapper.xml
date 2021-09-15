@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.base.mapper.BaseCustomFieldMapper">
+
+    <sql id="baseSql">
+       select f.id, f.table_name, f.title, f.i18n_code, f.field_name, f.data_type, f.form_type, f.required, f.max_length,
+        f.precision_, f.formatter, f.dict_type, f.colspan, f.rowspan, f.enable, f.remarks, f.sort_num, y.type_name
+        from wsd_base_custom_field f
+        left join wsd_base_dict_type y on y.type_code = f.dict_type
+    </sql>
+
+    <resultMap id="BaseCustomFieldVo" type="com.wisdom.acm.base.vo.custom.BaseCustomFieldVo">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="i18nCode" column="i18n_code"/>
+        <result property="fieldName" column="field_name"/>
+        <result property="required" column="required"/>
+        <result property="maxLength" column="max_length"/>
+        <result property="precision" column="precision_"/>
+        <result property="formatter" column="formatter"/>
+        <result property="colspan" column="colspan"/>
+        <result property="rowspan" column="rowspan"/>
+        <result property="enable" column="enable"/>
+        <result property="remarks" column="remarks"/>
+        <result property="sort" column="sort_num"/>
+        <association property="table" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result property="id" column="table_name"/>
+        </association>
+        <association property="dataType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result property="id" column="data_type"/>
+        </association>
+        <association property="formType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result property="id" column="form_type"/>
+        </association>
+        <association property="dictType" javaType="com.wisdom.base.common.vo.DictionaryVo">
+            <result property="id" column="dict_type"/>
+            <result property="name" column="type_name"/>
+        </association>
+    </resultMap>
+
+    <select id="queryById" resultMap="BaseCustomFieldVo">
+        <include refid="baseSql"/>
+        <where>
+            f.table_name = #{tableName}
+        </where>
+    </select>
+
+    <select id="queryByTableNameAndFieldName" resultMap="BaseCustomFieldVo">
+        <include refid="baseSql"/>
+        <where>
+            f.table_name = #{tableName} and f.field_name = #{fieldName}
+        </where>
+    </select>
+
+    <select id="queryListByTableName" resultMap="BaseCustomFieldVo">
+        <include refid="baseSql"/>
+        <where>
+            f.table_name = #{tableName}
+        </where>
+        order by f.sort_num, f.field_name
+    </select>
+
+    <select id="queryEnableListByTableName" resultMap="BaseCustomFieldVo">
+        <include refid="baseSql"/>
+        <where>
+            f.enable = 1 and f.table_name = #{tableName}
+        </where>
+        order by f.sort_num, f.field_name
+    </select>
+
+    <select id="queryValueListByTableNameAndId" resultMap="BaseCustomValueVo">
+        select f.id, f.custom_01, f.custom_02, f.custom_03, f.custom_04, f.custom_05,
+               f.custom_06, f.custom_07, f.custom_08, f.custom_09, f.custom_10
+        from ${tableName} f
+        <where>
+            f.id = #{id}
+        </where>
+    </select>
+
+    <resultMap id="BaseCustomValueVo" type="com.wisdom.base.common.vo.BaseCustomVo">
+        <id property="id" column="id"/>
+        <association property="custom01" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_01"/>
+        </association>
+        <association property="custom02" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_02"/>
+        </association>
+        <association property="custom03" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_03"/>
+        </association>
+        <association property="custom04" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_04"/>
+        </association>
+        <association property="custom05" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_05"/>
+        </association>
+        <association property="custom06" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_06"/>
+        </association>
+        <association property="custom07" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_07"/>
+        </association>
+        <association property="custom08" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_08"/>
+        </association>
+        <association property="custom09" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_09"/>
+        </association>
+        <association property="custom10" javaType="com.wisdom.base.common.vo.CustomValueVo">
+            <result property="value" column="custom_10"/>
+        </association>
+    </resultMap>
+
+    <update id="saveCustomValueById" parameterType="com.wisdom.base.common.po.BaseCustomPo">
+        update ${tableName} set custom_01 = #{po.custom01},
+        custom_02 = #{po.custom02}, custom_03 = #{po.custom03}, custom_04 = #{po.custom04},
+        custom_05 = #{po.custom05}, custom_06 = #{po.custom06}, custom_07 = #{po.custom07},
+        custom_08 = #{po.custom08}, custom_09 = #{po.custom09}, custom_10 = #{po.custom10}
+        where id = #{po.id}
+    </update>
+
+</mapper>

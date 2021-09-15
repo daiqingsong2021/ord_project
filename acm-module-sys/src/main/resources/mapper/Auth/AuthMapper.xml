@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.AuthMapper">
+
+    <resultMap id="authResultMap" type="com.wisdom.acm.sys.vo.SysFuncAuthVo">
+        <result column="roleId" property="roleId"/>
+        <result column="roleCode" property="roleCode"/>
+        <result column="roleName" property="roleName"/>
+        <collection property="menuList" ofType="com.wisdom.acm.sys.vo.SysMenuVo">
+            <id property="id" column="menuId"/>
+            <result column="menuCode" property="menuCode"/>
+            <result column="menuName" property="menuName"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="generalVo" type="com.wisdom.base.common.vo.GeneralVo">
+        <result column="id" property="id"/>
+        <result column="func_code" property="code"/>
+        <result column="func_name" property="name"/>
+    </resultMap>
+
+    <select id="selectAuths" resultMap="generalVo">
+        select f.id,f.func_code,f.func_name from wsd_sys_func f
+        inner join wsd_sys_roleauth ra on ra.res_code = f.func_code
+        inner join wsd_sys_menu m on m.id = f.menu_id
+        where ra.role_id in
+        <foreach collection="roleIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+        <if test="menuCode != null and menuCode != ''">
+            and m.menu_code = #{menuCode}
+        </if>
+    </select>
+
+    <select id="selectAuthByRoleId" resultType="com.wisdom.acm.sys.po.SysRoleAuthPo">
+          SELECT
+            a.res_code resCode,a.res_type resType,a.id,a.role_id roleId
+         from wsd_sys_roleauth a where a.role_id = #{roleId}
+    </select>
+
+    <delete id="delefuncAuth">
+        delete from wsd_sys_roleauth where id in
+        <foreach collection="delAuths" item="item" index="index" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRoleAuthByRoleIds" parameterType="java.util.List">
+        delete from wsd_sys_roleauth where role_id in
+        <foreach collection="roleIds" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRoleAuthByMenuCodes">
+        delete from wsd_sys_roleauth where res_type = #{resType} and res_code in
+        <foreach collection="resCodes" separator="," index="index" close=")" open="(" item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectRoleAuthByUserId" resultType="com.wisdom.acm.sys.po.SysRoleAuthPo">
+        SELECT a.ID id,a.FUNC_ID funcId,a.MENU_ID menuId,a.ROLE_ID roleId from wsd_sys_user u LEFT JOIN wsd_sys_userrole r on u.ID = r.USER_ID LEFT JOIN wsd_sys_roleauth a
+        on a.ROLE_ID = r.ROLE_ID where u.ID = #{userId}
+    </select>
+
+    <!-- 获取权限菜单 -->
+    <sql id="auth">
+        select
+	        r.res_code
+        from
+	        wsd_sys_userorg_role a
+        left join wsd_sys_roleauth r on a.role_id = r.role_id
+        left join wsd_sys_menu m on m.menu_code = r.res_code
+        where
+          a.user_id = #{userId}
+        and r.res_type = 'menu'
+        and (m.menu_type = 1 or menu_type = 2) and m.active = 1
+    </sql>
+
+    <sql id="allauth">
+         select
+              m.menu_code
+            from
+                wsd_sys_menu m where (m.menu_type = 2 or m.menu_type = 1) and m.id not in (83,140)
+                and m.parent_id not in (83,140)
+    </sql>
+    <!-- 测试获取所有菜单 -->
+    <select id="selectAuthByUserId" resultType="java.lang.String">
+        <include refid="auth"/>
+    </select>
+
+    <select id="selectAuthBaseMenuByUserId" resultType="java.lang.String">
+        select
+	        r.res_code
+        from
+	        wsd_sys_userorg_role a
+        left join wsd_sys_roleauth r on a.role_id = r.role_id
+        left join wsd_sys_menu m on m.menu_code = r.res_code
+        where
+          a.user_id = #{userId}
+        and r.res_type = 'menu'
+        and (m.menu_type = 1 or menu_type = 2)
+        and m.menu_local = 1
+    </select>
+
+    <select id="selectOrgIdsByUserIdAndFuncCode" resultType="java.lang.Integer">
+        select distinct ur.org_id
+        from wsd_sys_userorg_role ur
+            inner join wsd_sys_roleauth a on ur.role_id = a.role_id
+        where ur.user_id = #{userId} and a.res_code=#{funcCode } and a.res_type = 'func'
+    </select>
+
+
+    <delete id="deleteByRoleIds">
+       delete from wsd_sys_roleauth
+        <where>
+            <foreach collection="idsMap" index="key" item="raIds"  separator="or">
+                id in
+                <foreach collection="raIds" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </foreach>
+        </where>
+    </delete>
+
+</mapper>

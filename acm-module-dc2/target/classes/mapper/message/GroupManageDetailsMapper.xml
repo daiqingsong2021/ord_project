@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.dc2.mapper.message.GroupManageDetailsMapper">
+
+    <resultMap id="groupManageDetailsVo" type="com.wisdom.acm.dc2.vo.message.GroupManageDetailsVo">
+        <result property="id" column="id"/>
+        <result property="groupId" column="group_id" />
+        <result property="personName" column="person_name"/>
+        <result property="personMobile" column="person_mobile" />
+        <result property="personDepartment" column="person_department" />
+        <result property="personPosition" column="person_position" />
+    </resultMap>
+
+
+    <select id="selectByParams" parameterType="java.util.Map" resultMap="groupManageDetailsVo">
+        SELECT
+        a.*
+        FROM  odr_message_group_details a
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id =#{id}
+            </if>
+            <if test="searcher != null and searcher != '' ">
+                AND ( a.person_name like  concat('%', #{searcher}, '%') OR a.person_mobile like concat('%', #{searcher}, '%'))
+            </if>
+             <if test="groupId != null and groupId != '' ">
+                AND a.group_id =#{groupId}
+            </if>
+        </where>
+        order by a.group_id asc
+    </select>
+    
+    
+<delete id="deleteGroupManageDetails" parameterType="java.util.List">
+        delete from odr_message_group_details
+        <where>
+         <if test="groupIds != null">
+                AND group_id IN
+                <foreach collection="groupIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+</delete>
+
+
+</mapper>
+

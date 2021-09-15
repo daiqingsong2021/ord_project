@@ -1,0 +1,60 @@
+import React, {Component} from 'react'
+import intl from 'react-intl-universal'
+import {Table} from 'antd'
+const locales = {
+    "en-US": require('../../api/language/en-US.json'),
+    "zh-CN": require('../../api/language/zh-CN.json')
+}
+class TableComponent extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            initDone: false,
+            data: [{
+        #foreach($column in $columns)
+            $column.key:1,
+        #end
+    }]
+    }
+    }
+
+    componentDidMount() {
+        this.loadLocales();
+    }
+
+    loadLocales() {
+        intl.init({
+            currentLocale: 'zh-CN',
+            locales,
+        })
+            .then(() => {
+                // After loading CLDR locale data, start to render
+                this.setState({initDone: true});
+            });
+    }
+
+    render() {
+        const columns = [
+            #foreach($column in $columns)
+                {
+                    title: intl.get('$column.title'),
+                    dataIndex: '$column.dataIndex',
+                    key: '$column.key',
+                },
+            #end
+        ];
+
+        return (
+            <div>
+                <Table columns={columns} dataSource={this.state.data} pagination={false}/>
+            </div>
+        )
+    }
+}
+
+export default TableComponent
+{
+    #foreach($column in $columns)
+        "$column.title" : "",
+    #end
+}

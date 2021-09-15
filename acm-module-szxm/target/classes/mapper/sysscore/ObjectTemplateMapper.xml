@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.szxm.mapper.sysscore.ObjectTemplateMapper">
+
+    <resultMap id="ObjectScoreItemVoMap" type="com.wisdom.acm.szxm.vo.sysscore.ObjectScoreItemVo">
+        <id property="id" column="id"/>
+        <result property="checkItemId" column="check_item_id"/>
+        <result property="checkTitle" column="check_title"/>
+        <result property="mainItem" column="main_item"/>
+        <result property="maxScore" column="max_score"/>
+        <result property="minScore" column="min_score"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="deductionStandard" column="deduction_standard"/>
+    </resultMap>
+
+    <select id="selectObjectTemplate" parameterType="java.util.Map" resultMap="ObjectScoreItemVoMap">
+      SELECT a.*
+        FROM szxm_sys_objective_template a
+        <where>
+            <if test="id != null and id != '' ">
+                AND a.id = #{id}
+            </if>
+            <if test="mainItem != null and mainItem != '' ">
+                AND a.main_item = #{mainItem}
+            </if>
+            <if test="checkItemId != null and checkItemId != '' ">
+                AND a.check_item_id = #{checkItemId}
+            </if>
+        </where>
+        order by a.CREAT_TIME
+    </select>
+</mapper>
+

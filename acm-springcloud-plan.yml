@@ -1,0 +1,8615 @@
+swagger: '2.0'
+info:
+  title: ACM新产品API
+  description: 策划管理、计划管理等组件API服务
+  version: 0.1.1
+host: '127.0.0.1:8765'
+schemes:
+  - http
+basePath: /api
+tags:
+  - name: rsrc
+    description: 资源管理
+  - name: doc
+    description: 文档
+  - name: cprtm
+    description: 协作团队
+  - name: eps
+    description: EPS
+  - name: contacts
+    description: 联系人
+  - name: delv
+    description: 项目交付物
+  - name: prepa
+    description: 立项管理
+  - name: project
+    description: 项目管理
+  - name: define
+    description: 计划定义
+  - name: task
+    description: 计划编制
+  - name: taskchange
+    description: 计划变更
+  - name: feedback
+    description: 进展反馈
+
+produces:
+  - application/json
+paths:
+  /plan/cprtm/assign:
+    post:
+      tags:
+        - cprtm
+      description: 协作团队分配
+      summary: 协作团队分配
+      operationId: addEpsCprtm
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CprtmAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/cprtm/delete:
+    delete:
+      tags:
+        - cprtm
+      description: 协作团队删除
+      summary: 协作团队删除
+      operationId: deleteEpsCprtm
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 协作团队Id
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/cprtm/{bizId}/{bizType}/list:
+    get:
+      tags:
+        - cprtm
+      description: 获取协作团队
+      summary: 获取协作团队
+      operationId: queryCprtmByBizId
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: bizId
+          in: path
+          description:  EPS、项目、WBS、Task的Id
+          required: true
+          type: integer
+        - name: bizType
+          in: path
+          description:  EPS、项目、WBS、Task
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CprtmVo'
+
+  /plan/eps/tree:
+    get:
+      tags:
+        - eps
+      description: 获取EPS树形
+      summary: 获取EPS树形
+      operationId: queryEPSTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PreEpsVo'
+
+  /plan/eps/{id}:
+    get:
+      tags:
+        - eps
+      description: 获取EPS信息
+      summary: 获取EPS信息
+      operationId: queryEPSInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PreEpsVo'
+
+    delete:
+      tags:
+        - eps
+      description: 删除项目群
+      summary: 删除项目群
+      operationId: deleteEPS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/eps:
+    post:
+      tags:
+        - eps
+      description: 增加项目群
+      summary: 增加项目群
+      operationId: addEPS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PreEpsAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+    put:
+      tags:
+        - eps
+      description: 修改项目群
+      summary: 修改项目群
+      operationId: updateEPS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PreEpsUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/contacts/list/{bizType}/{bizId}/{pageSize}/{currentPageNum}/{contactName}:
+    get:
+      tags:
+        - contacts
+      description: 获取联系人列表
+      summary: 获取联系人列表
+      operationId: queryContactsByBizTypeAndBizId - search
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: path
+          name: bizType
+          description: bizType
+          type: string
+          required: true
+        - name: bizId
+          in: path
+          description: bizId
+          type: integer
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: contactName
+          in: path
+          description:  姓名
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ContactsVo'
+
+  /plan/contacts/list/{bizType}/{bizId}/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - contacts
+      description: 获取联系人列表
+      summary: 获取联系人列表
+      operationId: queryContactsByBizTypeAndBizId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: bizType
+        description: bizType
+        type: string
+        required: true
+      - name: bizId
+        in: path
+        description: bizId
+        type: integer
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/ContactsVo'
+
+  /plan/contacts/{id}:
+    get:
+      tags:
+        - contacts
+      description: 获取联系人信息
+      summary: 获取联系人信息
+      operationId: queryContactsById
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 联系人Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ContactsVo'
+
+  /plan/contacts/delete:
+    delete:
+      tags:
+        - contacts
+      description: 删除联系人
+      summary: 删除联系人
+      operationId: deleteContacts
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/contacts:
+    post:
+      tags:
+        - contacts
+      description: 增加联系人
+      summary: 增加联系人
+      operationId: addContacts
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ContactsAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+    put:
+      tags:
+        - contacts
+      description: 修改联系人
+      summary: 修改联系人
+      operationId: updateContacts
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ContactsUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/{delvId}/task/{pageSize}/{currentPageNum}/{codeOrname}/list:
+    get:
+      tags:
+        - delv
+      description: 获取项目交付物相关的任务列表 - 查询条件
+      summary: 获取项目交付物相关的任务列表 - 查询条件
+      operationId: queryTaskListFromAssignByDelvId - search
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: delvId
+          in: path
+          description:  delvId
+          required: true
+          type: integer
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: codeOrname
+          in: path
+          description: 查询条件
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/PlanDelvTaskVo'
+
+  /plan/delv/{delvId}/task/{pageSize}/{currentPageNum}/list:
+    get:
+      tags:
+      - delv
+      description: 获取项目交付物相关的任务列表
+      summary: 获取项目交付物相关的任务列表
+      operationId: queryTaskListFromAssignByDelvId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: delvId
+        in: path
+        description:  delvId
+        required: true
+        type: integer
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/PlanDelvTaskVo'
+
+  /plan/prepa/list/{pageSize}/{currentPageNum}/{paCodeOrName}:
+    get:
+      tags:
+        - prepa
+      description: 获取项目立项列表
+      summary: 获取项目立项列表
+      operationId: querryAllPrepa - search
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: paCodeOrName
+          in: path
+          description: 代码/名称
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/PrePaVo'
+  /plan/prepa/list/{pageSize}/{currentPageNum}:
+    get:
+      tags:
+      - prepa
+      description: 获取项目立项列表
+      summary: 获取项目立项列表
+      operationId: querryAllPrepa
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: pageSize
+        in: path
+        description:  分页大小
+        required: true
+        type: integer
+      - name: currentPageNum
+        in: path
+        description: 当前页数
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/PrePaVo'
+  /plan/prepa/{id}:
+    get:
+      tags:
+        - prepa
+      description: 获取立项信息
+      summary: 获取立项信息
+      operationId: queryPrepaById
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 项目立项Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PrePaVo'
+
+    delete:
+      tags:
+        - prepa
+      description: 删除项目立项
+      summary: 删除项目立项
+      operationId: deletePrepa
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 项目立项Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/prepa:
+    post:
+      tags:
+        - prepa
+      description: 增加项目立项
+      summary: 增加项目立项
+      operationId: addPrepa
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PrePaAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+    put:
+      tags:
+        - prepa
+      description: 修改项目立项
+      summary: 修改项目立项
+      operationId: updatePrepa
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PrePaUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/prepa/{id}/release:
+    post:
+      tags:
+        - prepa
+      description: 发布立项
+      summary: 发布立项
+      operationId: releasePrepa
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description:  立项id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/prepa/{id}/close:
+    put:
+      tags:
+      - prepa
+      description: 关闭立项
+      summary: 关闭立项
+      operationId: updatePrepaStatus
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: token
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/project/list/{pageSize}/{currentPageNum}:
+    post:
+      tags:
+        - project
+      description: 获取项目列表
+      summary: 获取项目列表
+      operationId: queryProjects
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PreProjectSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/PreProjectVo'
+
+  /plan/project/tree:
+    post:
+      tags:
+        - project
+      description: 获取项目树形
+      summary: 获取项目树形
+      operationId: queryProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PreProjectSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PreProjectTreeVo'
+
+  /plan/project/{id}:
+    get:
+      tags:
+        - project
+      description: 获取项目信息
+      summary: 获取项目信息
+      operationId: queryProjectInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PreProjectVo'
+    delete:
+      tags:
+        - project
+      description: 删除项目
+      summary: 删除项目
+      operationId: deleteProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /plan/project:
+    post:
+      tags:
+        - project
+      description: 增加项目
+      summary: 增加项目
+      operationId: addProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PreProjectAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+    put:
+      tags:
+        - project
+      description: 修改项目
+      summary: 修改项目
+      operationId: updateProject
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PreProjectUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/project/variable:
+    put:
+      tags:
+        - project
+      description: 项目设置
+      summary: 项目设置
+      operationId: updateProjectSet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ProjectVariableUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ApiResult'
+
+  /plan/project/variable/{id}:
+    get:
+      tags:
+        - project
+      description: 获取项目变量
+      summary: 获取项目变量
+      operationId: queryProjectVariable
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanProjectVariableVo'
+
+  /plan/pbs/add:
+    post:
+      tags:
+        - delv
+      description: 增加PBS
+      summary: 增加PBS
+      operationId: addPbs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanPbsAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanPbsTreeVo'
+
+  /plan/pbs/update:
+    put:
+      tags:
+        - delv
+      description: 修改PBS
+      summary: 修改PBS
+      operationId: updatePbs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanPbsUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanPbsTreeVo'
+
+  /plan/pbs/{projectId}/select/tree:
+    get:
+      tags:
+      - delv
+      description: 获取pbs下拉列表
+      summary: 获取pbs下拉列表
+      operationId: queryPbsSelectTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: path
+        description: projectId
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SelectVo'
+              
+  /plan/pbs/{id}:
+    get:
+      tags:
+        - delv
+      description: 获取PBS
+      summary: 获取PBS
+      operationId: getPbs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanPbsVo'
+
+  /plan/delv/add:
+    post:
+      tags:
+        - delv
+      description: 增加交付物
+      summary: 增加交付物
+      operationId: addDelvPbs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanDelvAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDelvTreeVo'
+
+  /plan/delv/update:
+    put:
+      tags:
+        - delv
+      description: 修改交付物
+      summary: 修改交付物
+      operationId: updateDelvPbs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanDelvUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDelvTreeVo'
+
+  /plan/delv/{delvId}/delete:
+    delete:
+      tags:
+      - delv
+      description: 删除交付清单
+      summary: 删除交付清单
+      operationId: deleteDelv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: delvId
+        in: path
+        description: 交付物Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/{id}:
+    get:
+      tags:
+        - delv
+      description: 获取交付物
+      summary: 获取交付物
+      operationId: getDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDelvVo'
+
+  /plan/delv/{projectId}/tree:
+    get:
+      tags:
+        - delv
+      description: 获取交付物树形结构
+      summary: 获取交付物树形结构
+      operationId: queryDelvTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDelvTreeVo'
+
+  /plan/delv/edit/{projectId}/tree:
+    get:
+      tags:
+        - delv
+      description: 获取编制中交付物树形结构
+      summary: 获取编制中交付物树形结构
+      operationId: queryEditDelvTreeLitByprojectId
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDelvTreeVo'
+
+  /plan/delv/release/{projectId}/tree:
+    get:
+      tags:
+      - delv
+      description: 获取已发布交付物树形结构
+      summary: 获取已发布交付物树形结构
+      operationId: queryReleasedDelvTreeListByProjectId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: path
+        description: 项目Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDelvTreeVo'
+
+  /plan/delv/release:
+    put:
+      tags:
+        - delv
+      description: 项目交付物发布
+      summary: 项目交付物发布
+      operationId: releaseDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: ids
+          description: 交付物id集合
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/cancleReleaaseDelv:
+    put:
+      tags:
+      - delv
+      description: 项目交付物取消发布
+      summary: 项目交付物取消发布
+      operationId: cancleReleaaseDelv
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: ids
+        description: 交付物id集合
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/define/{projectIds}/tree:
+    get:
+      tags:
+        - define
+      description: 获取项目的全部计划定义树型，可以搜索
+      summary: 获取项目的全部计划定义树型，可以搜索
+      operationId: queryPlans
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectIds
+          in: path
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanDefineVo'
+
+  /plan/define/{id}/info:
+    get:
+      tags:
+        - define
+      description: 获取计划定义
+      summary: 获取计划定义
+      operationId: getPlanDefine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: 计划定义Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDefineVo'
+
+  /plan/define/add:
+    post:
+      tags:
+        - define
+      description: 增加计划定义
+      summary: 增加计划定义
+      operationId: addPlanDefine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        #   - name: tmpPlanId
+        #    in: query
+        #     type: integer
+        #    description:
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanDefineAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/define/update:
+    put:
+      tags:
+        - define
+      description: 修改计划定义
+      summary: 修改计划定义
+      operationId: updatePlanDefine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanDefineUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/define/variable/{id}/info:
+    get:
+      tags:
+        - define
+      description: 变量设置信息
+      summary: 变量设置信息
+      operationId: getVariableSetInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: path
+          name: id
+          description: id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDefineVariableVo'
+
+  /plan/define/variable/update:
+    put:
+      tags:
+        - define
+      description: 变量设置
+      summary: 变量设置
+      operationId: updateVariableSet
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanDefineVariableUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/define/{ids}/delete:
+    delete:
+      tags:
+        - define
+      description: 删除计划定义
+      summary: 删除计划定义
+      operationId: deletePlanDefine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: ids
+          in: path
+          description: token
+          type: integer
+          required: true
+        - in: body
+          name: ids
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /plan/define/{projectId}/list:
+    get:
+      tags:
+      - define
+      description: 根据项目id获取计划
+      summary: 根据项目id获取计划
+      operationId: quereyDefineByProjectId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: projectId
+        in: path
+        description: projectId
+        type: integer
+        required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanDefineSearchVo'
+
+
+  /plan/baseline/add:
+    post:
+      tags:
+        - define
+      description: 增加进度基线
+      summary: 增加进度基线
+      operationId: addBaseLine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanBaseLineAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanBaseLineListVo'
+
+
+  /plan/baseline/{blId}/info:
+    get:
+      tags:
+      - define
+      description: 根据基线id获取要更新的基线数据
+      summary: 根据基线id获取要更新的基线数据
+      operationId: queryPlanBaseLineInfoById
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: blId
+        description: blId
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanBaseLineUpdateVo'
+
+
+  /plan/baseline/update:
+    put:
+      tags:
+      - define
+      description: 修改进度基线
+      summary: 修改进度基线
+      operationId: updatePlanBaseLine
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanBaseLineUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanBaseLineListVo'
+
+
+
+  /plan/baseline/{defineId}/{id}/active:
+    put:
+      tags:
+        - define
+      description: 执行基线
+      summary: 执行基线
+      operationId: updatePlanBaseLineActive
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: defineId
+          in: path
+          description: 计划Id
+          required: true
+          type: integer
+        - name: id
+          in: path
+          description: 基线版本Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/baseline/delete:
+    delete:
+      tags:
+        - define
+      description: 删除进度基线
+      summary: 删除进度基线
+      operationId: deleteBaseLine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/define/{defineId}/baseline/list:
+    get:
+      tags:
+        - define
+      description: 获取进度基线
+      summary: 获取进度基线
+      operationId: addPlanBaseLine
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: defineId
+          in: path
+          description: 计划定义Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanBaseLineListVo'
+
+
+
+  /plan/baseline/task/{taskId}/{defineId}/info:
+    get:
+      tags:
+        - define
+      description: 获取Task基线计划
+      summary: 获取Task基线计划
+      operationId: queryTaskBaseline
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: taskId
+          required: true
+          type: integer
+        - name: defineId
+          in: path
+          description: defineId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanBaseLineInfoVo'
+
+
+  /plan/wbs/{wbsId}/info:
+    get:
+      tags:
+        - task
+      description: 获取WBS信息
+      summary: 获取WBS信息
+      operationId: queryWBS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: wbsId
+          in: path
+          description: WBS Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanWbsVo'
+
+  /plan/wbs/add:
+    post:
+      tags:
+        - task
+      description: 增加WBS
+      summary: 增加WBS
+      operationId: addWBS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanWbsAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/wbs/update:
+    put:
+      tags:
+        - task
+      description: 修改WBS
+      summary: 修改WBS
+      operationId: updateWBS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanWbsUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{projectId}/release:
+    put:
+      tags:
+        - task
+      description: 发布计划
+      summary: 发布计划
+      operationId: taskReleaseStatus
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{projectId}/cancelRelease:
+    put:
+      tags:
+        - task
+      description: 取消发布计划
+      summary: 取消发布计划
+      operationId: taskCancelReleaseStatus
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{projectId}/confirm:
+    put:
+      tags:
+        - task
+      description: 确认计划
+      summary: 确认计划
+      operationId: taskConfirmStatus
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{projectId}/cancelConfirm:
+    put:
+      tags:
+        - task
+      description: 取消确认计划
+      summary: 取消确认计划
+      operationId: taskCancelConfirmStatus
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{projectId}/release/tree:
+    get:
+      tags:
+        - task
+      description: 发布计划树
+      summary: 发布计划树
+      operationId: taskReleaseTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TaskCommonResultTreeVo'
+
+  /plan/task/{projectId}/cancelRelease/tree:
+    get:
+      tags:
+        - task
+      description: 取消发布计划树
+      summary: 取消发布计划树
+      operationId: taskCancelReleaseTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TaskCommonResultTreeVo'
+
+  /plan/task/{projectId}/confirm/tree:
+    get:
+      tags:
+        - task
+      description: 确认计划树
+      summary: 确认计划树
+      operationId: taskConfirmTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TaskCommonResultTreeVo'
+
+  /plan/task/{projectId}/cancelConfirm/tree:
+    get:
+      tags:
+        - task
+      description: 取消确认计划树
+      summary: 取消确认计划树
+      operationId: taskCancelConfirmTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: 项目Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TaskCommonResultTreeVo'
+
+  /plan/task/{taskId}/info:
+    get:
+      tags:
+        - task
+      description: 获取task信息
+      summary: 获取task信息
+      operationId: queryTask
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: taskId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskPo'
+
+  /plan/task/add:
+    post:
+      tags:
+        - task
+      description: 增加task
+      summary: 增加task
+      operationId: addTask
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/TaskAddVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/update:
+    put:
+      tags:
+        - task
+      description: 修改task
+      summary: 修改task
+      operationId: updateTask
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanTaskUpdateVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{taskId}/delete:
+    delete:
+      tags:
+      - task
+      description: 删除task
+      summary: 删除task
+      operationId: deletetask
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: path
+        name: taskId
+        description: 任务ID
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{taskId}/relation/tree:
+    get:
+      tags:
+        - task
+      description: 获取Task计划关联列表
+      summary: 获取Task计划关联列表
+      operationId: queryTaskPlanrelations
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanRelationVo'
+
+  /plan/task/{defineId}/relation/assgin/tree:
+    get:
+      tags:
+        - task
+      description: 分配计划树
+      summary: 分配计划树
+      operationId: planRelationAddTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: defineId
+          in: path
+          description: 计划定义ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanRelationAddTreeVo'
+
+  /plan/task/{taskId}/relation/assign:
+    post:
+      tags:
+        - task
+      description: 计划关联
+      summary: 计划关联
+      operationId: addPlanRelation
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: token
+          type: integer
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanRelationAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/relation/update:
+    post:
+      tags:
+      - task
+      description: 计划关联修改
+      summary: 计划关联修改
+      operationId: updatePlanRelation
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanTaskRelationUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/relation/delete:
+    delete:
+      tags:
+        - task
+      description: 删除计划关联
+      summary: 删除计划关联
+      operationId: deletePlanRelation
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{taskId}/pred/list:
+    get:
+      tags:
+        - task
+      description: 获取紧前任务列表
+      summary: 获取紧前任务列表
+      operationId: queryTaskpreds
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TaskPredVo'
+
+  /plan/task/{taskId}/follow/list:
+    get:
+      tags:
+        - task
+      description: 获取后续任务列表
+      summary: 获取后续任务列表
+      operationId: queryTaskFollows
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TaskFollowPo'
+
+  /plan/task/{defineId}/pred/assgin/tree:
+    get:
+      tags:
+        - task
+      description: 逻辑关系分配任务树
+      summary: 逻辑关系分配任务树
+      operationId: planPredAddTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: defineId
+          in: path
+          description: 计划定义Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/TaskPredAddTreeVo'
+
+  /plan/task/{taskId}/{predTaskId}/pred/add:
+    post:
+      tags:
+        - task
+      description: 增加逻辑关系分配(前置任务)
+      summary: 增加逻辑关系分配(前置任务)
+      operationId: addTaskPred
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: taskId
+          type: integer
+          required: true
+        - name: predTaskId
+          in: path
+          description: predTaskId
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/pred/update:
+    put:
+      tags:
+        - task
+      description: 修改逻辑关系
+      summary: 修改逻辑关系
+      operationId: updateTaskPred
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/TaskPredUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/pred/delete:
+    delete:
+      tags:
+        - task
+      description: 删除逻辑关系分配
+      summary: 删除逻辑关系分配
+      operationId: deleteTaskPred
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: body
+          in: body
+          description: id
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/rsrc/consumption/{taskId}/list:
+    get:
+      tags:
+      - task
+      description: 获取资源消耗列表数据
+      summary: 获取资源消耗列表数据
+      operationId: queryRsrcConsumpList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: taskId
+        in: path
+        description: task Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanResourceConsumpVo'
+
+  /plan/task/rsrc/consumption/update:
+    put:
+      tags:
+      - task
+      description: 修改资源消耗
+      summary: 修改资源消耗
+      operationId: updateRsrcConsump
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanResourceUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanResourceConsumpVo'
+
+  /plan/task/rsrc/{taskId}/list:
+    get:
+      tags:
+        - task
+      description: 获取任务分配资源
+      summary: 获取任务分配资源
+      operationId: queryTaskRsrcs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TaskRsrcVo'
+
+  /plan/task/rsrc/add:
+    post:
+      tags:
+        - task
+      description: 分配资源
+      summary: 分配资源
+      operationId: addTaskRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TaskRsrcAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/rsrc/update:
+    put:
+      tags:
+        - task
+      description: 修改资源分配
+      summary: 修改资源分配
+      operationId: updateTaskRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/TaskRsrcUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/rsrc/delete:
+    delete:
+      tags:
+        - task
+      description: 删除资源分配
+      summary: 删除资源分配
+      operationId: deleteTaskRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: body
+          in: body
+          description: id 数组
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/{pageSize}/{currentPageNum}/home/mytask:
+    post:
+      tags:
+        - task
+      description: 我的任务(首页)
+      summary: 我的任务(首页)
+      operationId: queryMyTask
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: body
+          in: body
+          description: 查询条件
+          required: true
+          schema:
+            $ref: '#/definitions/MyTaskSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MyTaskVo'
+
+
+  /plan/task/{pageSize}/{currentPageNum}/home/mywarning/overdue:
+    post:
+      tags:
+        - task
+      description: 我的预警（超期未完成）
+      summary: 我的预警（超期未完成）
+      operationId: queryOverDueMyWarning
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: body
+          in: body
+          description: 查询条件
+          required: true
+          schema:
+            $ref: '#/definitions/MyWarningSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MyWarningVo'
+
+  /plan/task/{pageSize}/{currentPageNum}/home/mywarning/begin:
+    post:
+      tags:
+        - task
+      description: 我的预警（即将开始）
+      summary: 我的预警（即将开始）
+      operationId: queryBeginMyWarning
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: body
+          in: body
+          description: 查询条件
+          required: true
+          schema:
+            $ref: '#/definitions/MyWarningSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MyWarningVo'
+
+  /plan/task/{pageSize}/{currentPageNum}/home/mywarning/complete:
+    post:
+      tags:
+        - task
+      description: 我的预警（即将完成）
+      summary: 我的预警（即将完成）
+      operationId: queryCompleteMyWarning
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: pageSize
+          in: path
+          description:  分页大小
+          required: true
+          type: integer
+        - name: currentPageNum
+          in: path
+          description: 当前页数
+          required: true
+          type: integer
+        - name: body
+          in: body
+          description: 查询条件
+          required: true
+          schema:
+            $ref: '#/definitions/MyWarningSearchForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            properties:
+              total:
+                type: integer
+                description: 总数
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/MyWarningVo'
+
+  /plan/feedback/{defineIds}/tree:
+    get:
+      tags:
+      - feedback
+      description: 获取反馈页面树
+      summary: 获取反馈页面树
+      operationId: queryPlanFeedBackTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: defineIds
+        in: path
+        description: 计划定义id,逗号隔开
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskFeedBackTreeVo'
+
+  /plan/feedback/{defineIds}/list:
+    get:
+      tags:
+      - feedback
+      description: 获取反馈页面列表
+      summary: 获取反馈页面列表
+      operationId: queryTaskProgressList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: defineIds
+        in: path
+        description: 计划定义id,逗号隔开
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskFeedbackListVo'
+
+
+  /plan/feedback/{defineIds}/release/tree:
+    get:
+      tags:
+      - feedback
+      description: 获取反馈批准页面树
+      summary: 获取反馈批准页面树
+      operationId: queryTaskProgressRelease
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: defineIds
+        in: path
+        description: 计划定义id,逗号隔开
+        required: true
+        type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskFeedbackReleaseTreeVo'
+
+  /plan/feedback/release:
+    put:
+      tags:
+        - feedback
+      description: 反馈批准
+      summary: 反馈表批准
+      operationId: feedbackReleaseStatus
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: body
+          in: body
+          description: 计划id 数组
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /plan/feedback/{taskId}/cancleRelease:
+    post:
+      tags:
+      - feedback
+      description: 根据任务id取消反馈批准
+      summary: 根据任务id取消反馈批准
+      operationId: cancleReleasePlanFeedback
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskFeedBackTreeVo'
+
+  /plan/feedback/task/{taskId}/info:
+    get:
+      tags:
+      - feedback
+      description: 反馈页签
+      summary: 反馈页签
+      operationId: queryPlanFeedBackBackByTaskId
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: taskId
+        in: path
+        description: taskId
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanFeedBackVo'
+
+  /plan/feedback/task/{taskId}/list:
+    get:
+      tags:
+        - feedback
+      description: 获取进展日志
+      summary: 获取进展日志
+      operationId: queryTaskProgressLogs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: taskId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanFeedBackVo'
+
+  /plan/feedback/task/{taskId}/release/list:
+    get:
+      tags:
+        - feedback
+      description: 获取已发布的进展日志
+      summary: 获取已发布的进展日志
+      operationId: queryReleasePlanFeedBack
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: taskId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanFeedBackVo'
+
+  /plan/feedback/add:
+    post:
+      tags:
+        - feedback
+      description: 增加进展日志
+      summary: 增加进展日志
+      operationId: addProgressLog
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ProgressLogAddVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/feedback/{id}/delete:
+    delete:
+      tags:
+        - feedback
+      description: 删除进展日志
+      summary: 删除进展日志
+      operationId: deleteProgressLog
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/assign/feedback/{feedbackId}/list:
+    get:
+      tags:
+        - delv
+      description: 获取进展反馈交付清单列表
+      summary: 获取进展反馈交付清单列表
+      operationId: queryFeedbackDelvs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: feedbackId
+          in: path
+          description: 进展反馈Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/FeedBackDelvo'
+
+  /plan/feedback/wf/{procInstId}/list:
+    get:
+      tags:
+      - feedback
+      description: 反馈流程表单
+      summary: 反馈流程表单
+      operationId: queryWfPlanFeedbackListVo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: procInstId
+        in: path
+        description: 流程实例id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskFeedbackListVo'
+
+  /plan/feedback/wf/{procInstId}/tree/list:
+    get:
+      tags:
+      - feedback
+      description: 反馈流程树形表单
+      summary: 反馈流程树形表单
+      operationId: queryWfPlanFeedbackTreeListVo
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: procInstId
+        in: path
+        description: 流程实例id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskFeedBackTreeVo'
+
+  /plan/delv/assign/task/{taskId}/list:
+    get:
+      tags:
+        - delv
+      description: 获取交付清单列表
+      summary: 获取交付清单列表
+      operationId: queryDelvs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: 业务对象Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DelvAssignPo'
+
+
+  /plan/delv/{projectId}/{taskId}/assign/list:
+    get:
+      tags:
+        - delv
+      description: 获取交付清单分配列表
+      summary: 获取交付清单分配列表
+      operationId: queryDelvList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: projectId
+          in: path
+          description: projectId
+          required: true
+          type: integer
+        - name: taskId
+          in: path
+          description: taskId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanDelvTreeVo'
+
+  /plan/delv/assign/{delvId}/file/list:
+    get:
+      tags:
+      - delv
+      description: 获取交付清单的文件信息
+      summary: 获取交付清单的文件信息
+      operationId: queryDelvsFilesList
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: delvId
+        in: path
+        description: 交付物Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DocFileVo'
+
+  /plan/delv/assign/add:
+    post:
+      tags:
+        - delv
+      description: 增加交付清单
+      summary: 增加交付清单
+      operationId: addDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DelvAddVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/task/{taskId}/assign:
+    post:
+      tags:
+        - delv
+      description: 分配交付清单
+      summary: 分配交付清单
+      operationId: assignDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: 业务对象Id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DelvIdsForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/assign/update:
+    put:
+      tags:
+        - delv
+      description: 修改交付清单
+      summary: 修改交付清单
+      operationId: updateDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DelvPo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/delv/assign/delete:
+    delete:
+      tags:
+      - delv
+      description: 删除交付清单
+      summary: 删除交付清单
+      operationId: deleteDelvAssign
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: body
+        in: body
+        description: 交付清单Id集合
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /plan/task/{taskId}/change/list:
+    post:
+      tags:
+        - taskchange
+      description: 计划编制-变更页签
+      summary: 计划编制-变更页签
+      operationId: queryPlanTaskChangeInfoByTaskId
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: taskId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskChangeRecordVo'
+
+  /plan/task/change/tree:
+    post:
+      tags:
+      - taskchange
+      description: 获取变更树
+      summary: 获取变更树
+      operationId: queryPlanTaskChangTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: body
+        in: body
+        description: 计划id数组
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeTreeVo'
+
+  /plan/wbs/change/{type}/{wbsId}/info:
+    get:
+      tags:
+        - taskchange
+      description: 获取WBS变更信息
+      summary: 获取WBS变更信息
+      operationId: queryWbsChangeInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: wbsId
+          in: path
+          description: wbsId
+          required: true
+          type: integer
+        - name: type
+          in: path
+          description: 变更或者任务
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeGeneralVo'
+
+  /plan/wbs/change/add:
+    post:
+      tags:
+        - taskchange
+      description: 增加WBS变更
+      summary: 增加WBS变更
+      operationId: addWbsPlanTaskChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanTaskChangeWbsAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeTreeVo'
+
+  /plan/wbs/change/update:
+    put:
+      tags:
+        - taskchange
+      description: wbs变更页签保存
+      summary: wbs变更页签保存
+      operationId: updatePlanWbsChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanWbsChangeInfoForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeGeneralVo'
+
+  /plan/wbs/change/{wbsId}/delete:
+    delete:
+      tags:
+        - taskchange
+      description: 删除WBS变更
+      summary: 删除WBS变更
+      operationId: deletePlanWbsChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: wbsId
+          in: path
+          description: wbs ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/change/{taskId}/{type}/cancel:
+    put:
+      tags:
+        - taskchange
+      description: 撤销变更
+      summary: 撤销变更
+      operationId: cancelChgWBS
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: 变更 Id
+          required: true
+          type: integer
+        - name: type
+          in: path
+          description: 类型（change还是task）
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeTreeVo'
+
+  /plan/task/change/release/tree:
+    post:
+      tags:
+      - taskchange
+      description: 获取变更审批树
+      summary: 获取变更审批树
+      operationId: queryPlanTaskChangeReleaseTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: body
+        in: body
+        description: 计划id数组
+        required: true
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeReleasaeTreeVo'
+
+  /plan/task/change/release:
+    put:
+      tags:
+      - taskchange
+      description: 批准变更
+      summary: 批准变更
+      operationId: releasePlanTaskChange
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanTaskChangeReleaseForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/change/{taskId}/record:
+    get:
+      tags:
+      - taskchange
+      description: 获取变更记事
+      summary: 获取变更记事
+      operationId: queryPlanTaskChangeRecord
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: taskId
+        in: path
+        description: 任务id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeRecordVo'
+
+  /plan/task/change/wf/{procInstId}/list:
+    get:
+      tags:
+      - taskchange
+      description: 流程处理（变更）
+      summary: 流程处理（变更）
+      operationId: queryTaskChangeWfTree
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: procInstId
+        in: path
+        description: 流程id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeTreeVo'
+
+  /plan/task/change/{type}/{taskId}/info:
+    get:
+      tags:
+        - taskchange
+      description: 获取task变更信息
+      summary: 获取task变更信息
+      operationId: queryTaskChangeInfo
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+        - name: type
+          in: path
+          description: 变更或者任务
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeGeneralVo'
+
+
+  /plan/task/change/pred/{bizId}/{bizType}/list:
+    get:
+      tags:
+        - taskchange
+      description: 获取变更的紧前任务列表
+      summary: 获取变更的紧前任务列表
+      operationId: queryPlanTaskPredChangeList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: bizId
+          in: path
+          description: bizId:变更ID/任务ID
+          required: true
+          type: integer
+        - name: bizType
+          in: path
+          description: 类型：change/task
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskPredChangeListVo'
+
+  /plan/task/change/fllow/{bizId}/{bizType}/list:
+    get:
+      tags:
+        - taskchange
+      description: 获取变更的后续任务列表
+      summary: 获取变更的后续任务列表
+      operationId: queryPlanTaskFllowChangeList
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: bizId
+          in: path
+          description: bizId
+          required: true
+          type: integer
+        - name: bizType
+          in: path
+          description: bizType
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PlanTaskPredChangeListVo'
+
+  /plan/task/change/add:
+    post:
+      tags:
+        - taskchange
+      description: 增加task变更
+      summary: 增加task变更
+      operationId: addTaskPlanTaskChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanTaskChangeTaskAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeTreeVo'
+
+  /plan/task/change/update:
+    put:
+      tags:
+        - taskchange
+      description: 修改task变更
+      summary: 修改task变更
+      operationId: updatePlanTaskChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanTaskChangeInfoForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeGeneralVo'
+
+  /plan/start/change/update:
+    put:
+      tags:
+      - taskchange
+      description: 开始里程碑页签保存
+      summary: 开始里程碑页签保存
+      operationId: updatePlanStartMileStoneChange
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanTaskChangeInfoForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeGeneralVo'
+
+  /plan/end/change/update:
+    put:
+      tags:
+      - taskchange
+      description: 完成里程碑页签保存
+      summary: 完成里程碑页签保存
+      operationId: UpdatePlanEndMileStoneChange
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanTaskChangeInfoForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskChangeGeneralVo'
+
+
+  /plan/task/change/{taskId}/delete:
+    delete:
+      tags:
+        - taskchange
+      description: 删除task变更
+      summary: 删除task变更
+      operationId: deletePlanTaskChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: taskId
+          in: path
+          description: task Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/chgtaskrsrc/add:
+    post:
+      tags:
+        - taskchange
+      description: 增加变更资源
+      summary: 增加变更资源
+      operationId: addChgTaskRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ChgTaskRsrcPo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/chgtaskrsrc/update:
+    put:
+      tags:
+        - taskchange
+      description: 修改变更的资源分配
+      summary: 修改变更的资源分配
+      operationId: updateChgTaskRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ChgTaskRsrcPo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/chgtaskrsrc/{chgtaskrsrcId}/delete:
+    delete:
+      tags:
+        - taskchange
+      description: 删除变更的资源
+      summary: 删除变更的资源
+      operationId: deleteChgTaskRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: chgtaskrsrcId
+          in: path
+          description: chgtaskrsrcId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/change/pred/add:
+    post:
+      tags:
+        - taskchange
+      description: 增加变更逻辑关系分配
+      summary: 增加变更逻辑关系分配
+      operationId: addPlanTaskPredChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/PlanTaskPredChangeAddForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/change/pred/update:
+    put:
+      tags:
+        - taskchange
+      description: 修改变更逻辑关系分配
+      summary: 修改变更逻辑关系分配
+      operationId: updatePlanTaskPredChange
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: 对象
+        required: true
+        schema:
+          $ref: '#/definitions/PlanTaskPredChangeUpdateForm'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /plan/task/change/{defineId}/{taskId}/{type}/assign/tree:
+    get:
+      tags:
+        - taskchange
+      description: 根据计划定义id获取逻辑变更分配树
+      summary: 根据计划定义id获取逻辑变更分配树
+      operationId: queryPlanTaskPredChangeAssignTree
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: defineId
+          in: path
+          description: 计划定义id
+          required: true
+          type: integer
+        - name: taskId
+          in: path
+          description: 主任务id
+          required: true
+          type: integer
+        - name: type
+          in: path
+          description: 分配逻辑类型
+          required: true
+          type: string
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/PlanTaskPredChangeAssignTreeVo'
+
+
+  /plan/task/change/pred/{logicId}/delete:
+    delete:
+      tags:
+        - taskchange
+      description: 删除变更逻辑关系分配
+      summary: 删除变更逻辑关系分配
+      operationId: deletePlanTaskPredChange
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: logicId
+          in: path
+          description: logicChgId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/task/change/pred/{logicChangeId}/cancle:
+    delete:
+      tags:
+      - taskchange
+      description: 撤销逻辑变更
+      summary: 撤销逻辑变更
+      operationId: canclePlanTaskPredChange
+      parameters:
+      - name: Authorization
+        in: header
+        description: token
+        type: string
+        required: true
+      - name: logicChangeId
+        in: path
+        description: logicChangeId
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /plan/chgdelv/{bizobj}/{bizId}/list/all:
+    get:
+      tags:
+        - taskchange
+      description: 获取交付清单变更列表
+      summary: 获取交付清单变更列表
+      operationId: queryChgDelvs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: bizobj
+          in: path
+          description: 业务对象 project wbs或者task
+          required: true
+          type: integer
+        - name: bizId
+          in: path
+          description: 业务对象Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChgDelvPo'
+
+  /plan/chgdelv/add:
+    post:
+      tags:
+        - taskchange
+      description: 增加交付清单变更
+      summary: 增加交付清单变更
+      operationId: addChgDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ChgDelvAddVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/chgdelv/update:
+    put:
+      tags:
+        - taskchange
+      description: 修改交付清单变更
+      summary: 修改交付清单变更
+      operationId: updateChgDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/ChgDelvPo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /plan/chgdelv/{chgdelvId}/delete:
+    delete:
+      tags:
+        - taskchange
+      description: 删除交付清单变更
+      summary: 删除交付清单变更
+      operationId: deleteChgDelv
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: chgdelvId
+          in: path
+          description: 变更交付物Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /rsrc/resource/list/all:
+    get:
+      tags:
+        - rsrc
+      description: 获取全部资源
+      summary: 获取全部资源
+      operationId: queryAllRsrcs
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+      responses:
+        200:
+          description: 操作
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RsrcPo'
+
+
+  /rsrc/resource/add:
+    post:
+      tags:
+        - rsrc
+      description: 增加资源
+      summary: 增加资源
+      operationId: addRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/RsrcAddPo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /rsrc/resource/update:
+    put:
+      tags:
+        - rsrc
+      description: 修改资源
+      summary: 修改资源
+      operationId: updatedRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/RsrcPo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+  /rsrc/resource/{rsrcId}/delete:
+    delete:
+      tags:
+        - rsrc
+      description: 删除资源
+      summary: 删除资源
+      operationId: deleteRsrc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: rsrcId
+          in: path
+          description: 资源Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /doc/{bizId}/list:
+    get:
+      tags:
+        - doc
+      description: 上传文件
+      summary: 上传文件
+      operationId: uploadFile
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: bizId
+          in: path
+          description: 业务对象Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DocumentPo'
+
+  /doc/upload:
+    post:
+      tags:
+        - doc
+      description: 上传文档
+      summary: 上传文档
+      operationId: uploadDoc
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: 对象
+          required: true
+          schema:
+            $ref: '#/definitions/DocumentAddVo'
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+  /doc/{docId}/info:
+    get:
+      tags:
+        - doc
+      description: 获取文档信息
+      summary: 获取文档信息
+      operationId: queryDocumentById
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: docId
+          in: path
+          description: 文档Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/DocumentPo'
+
+  /doc/{docId}/delete:
+    delete:
+      tags:
+        - doc
+      description: 删除文档
+      summary: 删除文档
+      operationId: deleteDocument
+      parameters:
+        - name: Authorization
+          in: header
+          description: token
+          type: string
+          required: true
+        - name: docId
+          in: path
+          description: 文档Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 操作
+          schema:
+            $ref: '#/definitions/ApiResult'
+
+
+definitions: #对象定义
+  ApiResult:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: integer32
+      message:
+        type: string
+      data:
+        type: string
+
+  UserLoginVo:
+    properties:
+      userId:
+        type: integer
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      remark:
+        type: string
+        description: 备注
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: integer
+        description: 用户生日
+      sex:
+        type: string
+        description: 用户性别
+      projects:
+        description: 项目
+        type: array
+        items:
+          $ref: '#/definitions/ProjectVo'
+      roles:
+        description: 角色
+        type: array
+        items:
+          $ref: '#/definitions/RolePo'
+      orgs:
+        type: array
+        description: org
+        items:
+          $ref: '#/definitions/OrgPo'
+      menus:
+        description: 菜单
+        type: array
+        items:
+          $ref: '#/definitions/MenuVo'
+      AuthOffices:
+        description: 职能部门权限
+        type: array
+        items:
+          type: string
+          description: funCode，即功能权限代码
+
+
+  MenuAddVo:
+    properties:
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      parentId:
+        type: integer
+        description: 菜单父id
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: string
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      prefixCode:
+        type: string
+        description: 菜单前置编码
+      url:
+        type: string
+        description: 菜单链接
+      active:
+        type: integer
+        description: 是否激活（1：激活 2：未激活
+
+
+  MenuUpdateVo:
+    properties:
+      id:
+        type: integer
+        description: 菜单Id
+      menuName:
+        type: string
+        description: 菜单名称
+      parentId:
+        type: integer
+        description: 菜单父id
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: string
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      prefixCode:
+        type: string
+        description: 菜单前置编码
+      url:
+        type: string
+        description: 菜单链接
+      active:
+        type: integer
+        description: 是否激活（1：激活 2：未激活）（1：激活 2：未激活）
+
+  RolePo:
+    properties:
+      roleId:
+        type: integer
+        description: 角色Id
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+      roleType:
+        type: string
+        description: 角色类型（平台 | 系统）
+      creatTime:
+        type: string
+        description: 角色创建时间
+
+  RoleAddVo:
+    properties:
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+      roleType:
+        type: string
+        description: 角色类型（平台 | 系统）
+
+  RoleUpdateVo:
+    properties:
+      id:
+        type: integer
+        description: 角色Id
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+      roleType:
+        type: string
+        description: 角色类型（平台 | 系统）
+
+  #  AuthOfficeVo:
+  #    properties:
+  #      userId:
+  #        type: integer
+  #        description: 用户id
+  #      roleId:
+  #        type: integer
+  #        description: 角色id
+  #      menuId:
+  #        type: integer
+  #        description: 菜单id
+  #      funcCode:
+  #        type: string
+  #        description: 功能项id
+
+
+  #  AuthProjectVo:
+  #    properties:
+  #      userId:
+  #        type: integer
+  #        description: 用户id
+  #      wbsId:
+  #        type: integer
+  #        description: WBS id
+  #      funcCode:
+  #        description: 功能权限
+  #        type: array
+  #        items:
+  #          type: string
+  #          description: funCode，即功能权限代码
+
+
+  UserNamePwdVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      password:
+        type: string
+        description: 密码
+
+  MenuVo:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: string
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      prefixCode:
+        type: string
+        description: 菜单前置编码
+      url:
+        type: string
+        description: 菜单链接
+      hidden:
+        type: string
+        description: 是否隐藏
+      active:
+        type: integer
+        description: 是否激活（1：激活 2：未激活）
+      menuChildrenList:
+        description: 二级菜单
+        type: array
+        items:
+          $ref: '#/definitions/MenuVo'
+
+  MenuPo:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单Id
+      menuName:
+        type: string
+        description: 菜单名称
+      menuCode:
+        type: string
+        description: 菜单编码
+      menuDesc:
+        type: string
+        description: 菜单描述
+      menuType:
+        type: string
+        description: 菜单类型
+      shortCode:
+        type: string
+        description: 菜单简码
+      prefixCode:
+        type: string
+        description: 菜单前置编码
+      url:
+        type: string
+        description: 菜单链接
+      hidden:
+        type: string
+        description: 是否隐藏
+      active:
+        type: integer
+        description: 是否激活（1：激活 2：未激活）
+
+  MenuFuncVo:
+    properties:
+      menuId:
+        type: integer
+        description: 菜单Id
+      menuName:
+        type: string
+        description: 菜单名称
+      funcId:
+        type: integer
+        description: 功能权限Id
+      funcName:
+        type: string
+        description: 功能权限名称
+
+  RoleMenuFuncVo:
+    properties:
+      roleId:
+        type: integer
+        description: 角色Id
+      menuId:
+        type: integer
+        description: 菜单Id
+      funcId:
+        type: integer
+        description: 功能权限Id
+
+  UpdateRoleFuncVo:
+    properties:
+      addList:
+        description: 新增的权限
+        type: array
+        items:
+          $ref: '#/definitions/RoleMenuFuncVo'
+      deles:
+        description: 删除的权限id
+        type: array
+        items:
+          type: integer
+
+  OrgPo:
+    properties:
+      orgId:
+        type: integer
+        description: 组织Id
+      orgName:
+        type: string
+        description: 组织名称
+      orgCode:
+        type: string
+        description: 组织编码
+      remark:
+        type: string
+        description: 备注
+      orgType:
+        type: string
+        description: 类型：组织|部门
+      parentId:
+        type: integer
+        description: 父Id
+
+  UserAddVo:
+    properties:
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      password:
+        type: string
+        description: 用户密码
+      remark:
+        type: string
+        description: 备注
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 2：女)
+      roleList:
+        type: array
+        description: 角色Id
+        items:
+          type: integer
+      orgList:
+        type: array
+        description: 组织Id
+        items:
+          type: integer
+
+  UserUpdateVo:
+    properties:
+      id:
+        type: integer
+        description: 用户id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      password:
+        type: string
+        description: 用户密码
+      remark:
+        type: string
+        description: 备注
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 2：女)
+      roleList:
+        type: array
+        description: 角色Id
+        items:
+          type: integer
+      orgList:
+        type: array
+        description: 组织Id
+        items:
+          type: integer
+
+  UserPo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      remark:
+        type: string
+        description: 备注
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 2：女)
+      orgId:
+        type: integer
+        description: 组织Id
+      roles:
+        description: 用户角色
+        type: array
+        items:
+          $ref: '#/definitions/RolePo'
+      orgs:
+        type: array
+        description: 用户所属组织
+        items:
+          $ref: '#/definitions/OrgPo'
+
+  OrgAddVo:
+    properties:
+      orgCode:
+        type: string
+        description: 机构代码
+      orgName:
+        type: string
+        description: 机构名称
+      orgType:
+        type: string
+        description: 类型：组织|部门
+      parentId:
+        type: integer
+        description: 父Id
+      remark:
+        type: string
+        description: 备注
+
+
+  SysIptPo:
+    properties:
+      iptId:
+        type: integer
+        description: IPT Id
+      projectId:
+        type: integer
+        description: 项目 Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      iptType:
+        type: string
+        description: IPT类型
+      remark:
+        type: string
+        description: IPT描述
+      parentId:
+        type: integer
+        description: 父Id
+
+  SysIptVo:
+    properties:
+      iptId:
+        type: integer
+        description: IPT Id
+      projectId:
+        type: integer
+        description: 项目 Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      iptType:
+        type: string
+        description: IPT类型
+      remark:
+        type: string
+        description: IPT描述
+      userChildrens:
+        type: array
+        description: user
+        items:
+          $ref: '#/definitions/SysUserPo'
+      sysIptPoChildrenList:
+        type: array
+        description: ipt
+        items:
+          $ref: '#/definitions/SysIptPo'
+
+  SysUserPo:
+    properties:
+      userId:
+        type: string
+        description: 用户Id
+      userName:
+        type: string
+        description: 用户名
+      actuName:
+        type: string
+        description: 用户真实名
+      email:
+        type: string
+        description: 用户邮箱
+      remark:
+        type: string
+        description: 备注
+      phone:
+        type: string
+        description: 用户电话
+      birth:
+        type: string
+        description: 用户生日
+      sex:
+        type: integer
+        description: 用户性别(1:男 2：女)
+      orgId:
+        type: integer
+        description: 组织Id
+      roles:
+        description: 用户角色
+        type: array
+        items:
+          $ref: '#/definitions/SysRolePo'
+      orgs:
+        type: array
+        description: 用户所属组织
+        items:
+          $ref: '#/definitions/SysOrgPo'
+
+  SysRolePo:
+    properties:
+      roleId:
+        type: integer
+        description: 角色Id
+      roleName:
+        type: string
+        description: 角色名称
+      roleCode:
+        type: string
+        description: 角色编码
+      roleDesc:
+        type: string
+        description: 角色描述
+      creatTime:
+        type: string
+        description: 角色创建时间
+
+  SysOrgPo:
+    properties:
+      orgId:
+        type: integer
+        description: 组织Id
+      orgName:
+        type: string
+        description: 组织名称
+      orgCode:
+        type: string
+        description: 组织编码
+      remark:
+        type: string
+        description: 备注
+      orgType:
+        type: string
+        description: 类型：组织|部门
+      parentId:
+        type: integer
+        description: 父Id
+
+  IptAddForm:
+    properties:
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      remark:
+        type: string
+        description: IPT描述
+      parentId:
+        type: integer
+        description: 父Id
+      projectId:
+        type: integer
+        description: 项目Id
+
+  IptUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: IPT Id
+      iptName:
+        type: string
+        description: IPT名称
+      iptCode:
+        type: string
+        description: IPT编码
+      remark:
+        type: string
+        description: IPT描述
+
+  PlanFeedBackVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      taskId:
+        type: integer
+        description: 任务id
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际结束时间
+      reportingTime:
+        type: string
+        description: 报告时间
+      deadline:
+        type: string
+        description: 截止时间
+      estimatedTime:
+        type: string
+        description: 估计完成
+      completePct:
+        type: number
+        description: 申请完成%
+      remark:
+        type: string
+        description: 进展说明
+      status:
+        type: string
+        description: 状态
+
+  PlanDefineVo:
+    properties:
+      id:
+        type: integer
+        description: 计划 Id
+      planName:
+        type: string
+        description: 计划名称
+      planCode:
+        type: string
+        description: 计划编码
+      projectId:
+        type: integer
+        description: 项目id
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      status:
+        description: 1:激活 | 2：未激活
+        $ref: '#/definitions/StatusVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictionaryVo'
+      estWt:
+        type: integer
+        description: 权重
+      isMainPlan:
+        type: integer
+        description: 主控计划
+      remark:
+        type: string
+        description: 备注
+      creatTime:
+        type: string
+        description: 创建日期
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+
+  PlanDefineAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      planName:
+        type: string
+        description: 计划名称
+      planCode:
+        type: string
+        description: 计划编码
+      remark:
+        type: string
+        description: 计划描述
+      userId:
+        type: integer
+        description: 责任人id
+      orgId:
+        type: integer
+        description: 责任部门id
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      planType:
+        type: string
+        description: 计划类型
+      planTempletType:
+        type: integer
+        description: 导入模板
+      estWt:
+        type: integer
+        description: 权重
+      isMainPlan:
+        type: integer
+        description: 主控计划
+
+  PlanDefineUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      planName:
+        type: string
+        description: 计划名称
+      planCode:
+        type: string
+        description: 计划编码
+      remark:
+        type: string
+        description: 计划描述
+      userId:
+        type: integer
+        description: 责任人id
+      orgId:
+        type: integer
+        description: 责任部门id
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      planType:
+        type: string
+        description: 计划类型
+      estWt:
+        type: integer
+        description: 权重
+      isMainPlan:
+        type: integer
+        description: 主控计划
+      status:
+        type: string
+        description: 是否激活
+
+  PlanDefineVariableVo:
+    properties:
+      id:
+        type: integer
+        description: 计划id
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      taskFinpctType:
+        type: string
+        description: 工程完成百分比类型
+      cpmType:
+        type: string
+        description: 关键路径
+      shareWbs:
+        type: integer
+        description: 内部共享
+      cpmFloat:
+        type: number
+        description: 总浮时
+
+  PlanDefineSearchVo:
+    properties:
+      id:
+        type: integer
+        description: 计划id
+      planName:
+        type: string
+        description: 计划定义名称
+
+
+
+  PlanDefineVariableUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 计划id
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      taskFinpctType:
+        type: string
+        description: 工程完成百分比类型
+      cpmType:
+        type: string
+        description: 关键路径
+      shareWbs:
+        type: integer
+        description: 内部共享
+      cpmFloat:
+        type: number
+        description: 总浮时
+
+  LoggerAuthPo:
+    properties:
+      id:
+        type: integer
+        description: id
+      loggerType:
+        type: string
+        description: 模块名
+      moduleName:
+        type: string
+        description: 模块名
+      operationName:
+        type: string
+        description: 操作说明
+      operationResult:
+        type: string
+        description: 操作结果
+      create_time:
+        type: string
+        description: 创建时间
+      creator:
+        type: string
+        description: 创建者
+      ip_address:
+        type: string
+        description: 访问IP
+
+
+  AuditLogSearchVo:
+    properties:
+      start_date:
+        type: string
+        description: 开始日期
+      end_date:
+        type: string
+        description: 结束日期
+      start_time:
+        type: integer
+        description: 操作说明
+
+  IPAccessPo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      startIP:
+        type: string
+        description: 起始IP
+      endIP:
+        type: string
+        description: 结束IP
+      accessRule:
+        type: integer
+        description: 1=允许访问; 2=禁止访问
+      remark:
+        type: string
+        description: 备注
+
+
+  IPAccessAddVo:
+    properties:
+      startIP:
+        type: string
+        description: 起始IP
+      endIP:
+        type: string
+        description: 结束IP
+      accessRule:
+        type: integer
+        description: 1=允许访问; 2=禁止访问
+      remark:
+        type: string
+        description: 备注
+
+  PawwordRuleAddVo:
+    properties:
+      cycle:
+        type: integer
+        description: 修改周期（天）
+      length:
+        type: integer
+        description: 密码长度（位）
+      errorNumber:
+        type: integer
+        description: 错误次数（次）
+      lockTime:
+        type: integer
+        description: 锁定时长（分钟）
+
+
+  PreProjectVo:
+    description: 项目
+    properties:
+      id:
+        type: integer
+        description: id主键
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      calendar:
+        description: 日历
+        $ref: '#/definitions/CalendarVo'
+      parent:
+        description: 父项目群
+        $ref: '#/definitions/GeneralVo'
+      remark:
+        type: string
+        description: 备注
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      scale:
+        type: string
+        description: 建设规模
+      totalDrtn:
+        type: number
+        description: 项目总工时
+      creatTime:
+        type: string
+        description: 创建日期
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      totalBudget:
+        type: number
+        description: 项目总预算
+      projectBudget:
+        type: number
+        description: 项目预算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      projectEstimate:
+        type: number
+        description: 项目概算
+      address:
+        type: string
+        description: 地址
+      secutyLevel:
+        description: 密级
+        $ref: '#/definitions/DictionaryVo'
+      status:
+        description: 状态
+        $ref: '#/definitions/StatusVo'
+
+  PreProjectTreeVo:
+    description: 项目
+    properties:
+      id:
+        type: integer
+        description: id主键
+      type:
+        type: string
+        description: 类型 eps/project
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      calendar:
+        description: 日历
+        $ref: '#/definitions/CalendarVo'
+      parent:
+        description: 父项目群
+        $ref: '#/definitions/GeneralVo'
+      remark:
+        type: string
+        description: 备注
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      totalDrtn:
+        type: number
+        description: 项目总工时
+      creatTime:
+        type: string
+        description: 创建日期
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      totalBudget:
+        type: number
+        description: 项目总预算
+      projectBudget:
+        type: number
+        description: 项目预算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      projectEstimate:
+        type: number
+        description: 项目概算
+      address:
+        type: string
+        description: 地址
+      secutyLevel:
+        description: 密级
+        $ref: '#/definitions/DictionaryVo'
+      children:
+        description: 子节点
+        items:
+          $ref: '#/definitions/PreProjectTreeVo'
+
+  PreProjectAddForm:
+    properties:
+      parentId:
+        type: integer
+        description: 父项目群id
+      orgId:
+        type: integer
+        description: IPT Id
+      userId:
+        type: integer
+        description: 用户名称
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      totalDrtn:
+        type: number
+        description: 项目总工时
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      scale:
+        type: string
+        description: 建设规模
+      totalBudget:
+        type: number
+        description: 项目投资额
+      projectBudget:
+        type: number
+        description: 项目预算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      projectEstimate:
+        type: number
+        description: 项目概算
+      address:
+        type: string
+        description: 地址
+      secutyLevel:
+        type: string
+        description: 密级
+      remark:
+        type: string
+        description: 备注
+
+  PreProjectUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      orgId:
+        type: integer
+        description: 责任主体 Id
+      parentId:
+        type: integer
+        description: 父项目群id
+      userId:
+        type: integer
+        description: 用户id
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      totalDrtn:
+        type: number
+        description: 项目总工时
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      scale:
+        type: string
+        description: 建设规模
+      totalBudget:
+        type: number
+        description: 项目投资额
+      projectBudget:
+        type: number
+        description: 项目预算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      projectEstimate:
+        type: number
+        description: 项目概算
+      address:
+        type: string
+        description: 地址
+      secutyLevel:
+        type: string
+        description: 密级
+      remark:
+        type: string
+        description: 备注
+
+  PreProjectSearchForm:
+    properties:
+      code:
+        type: string
+        description: 代码
+      name:
+        type: string
+        description: 名称
+
+  PreEpsVo:
+    properties:
+      id:
+        type: integer
+        description: 项目群id
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      parentId:
+        type: integer
+        description: 父Id
+      org:
+        description: org
+        $ref: '#/definitions/OrgVo'
+      user:
+        description: user
+        $ref: '#/definitions/UserVo'
+      remark:
+        type: string
+        description: 备注
+      children:
+        description: 子项目群
+        type: array
+        items:
+          $ref: '#/definitions/PreEpsVo'
+
+  PreEpsAddForm:
+    properties:
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      parentId:
+        type: integer
+        description: 父Id
+      orgId:
+        type: integer
+        description: org Id
+      userId:
+        type: integer
+        description: user Id
+      secutyLevel:
+        type: string
+        description: 密级
+      remark:
+        type: string
+        description: 备注
+
+  PreEpsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 项目群id
+      code:
+        type: string
+        description: 项目代码
+      name:
+        type: string
+        description: 项目名称
+      orgId:
+        type: integer
+        description: org Id
+      userId:
+        type: integer
+        description: user Id
+      secutyLevel:
+        type: string
+        description: 密级
+      remark:
+        type: string
+        description: 备注
+
+  PrePaSearchForm:
+    properties:
+      paCodeOrName:
+        type: string
+        description: 代码/名称
+
+  delvTaskSearchForm:
+    properties:
+      codeOrname:
+        type: string
+        description: 名称/代码
+
+  PreProjectReviewPo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      code:
+        type: integer
+        description: 立项代码
+      name:
+        type: integer
+        description: 立项名称
+      userId:
+        type: integer
+        description: 项目负责人Id
+      orgId:
+        type: integer
+        description: 项目责任部门Id
+      startTime:
+        type: integer
+        description: 项目周期-开始
+      endTime:
+        type: integer
+        description: 项目周期-结束
+      planTotalCost:
+        type: integer
+        description: 预计总经费
+      projectPurpose:
+        type: integer
+        description: 项目背景与目的
+      planPTime:
+        type: integer
+        description: 预计人工时（天）
+      projectTarget:
+        type: integer
+        description: 项目目标
+      projectRange:
+        type: integer
+        description: 项目范围
+      remark:
+        type: string
+        description: 备注
+      status:
+        type: integer
+        description: 1=新建,2=审批中,3=已审批
+
+  PrePaVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      eps:
+        description: 预研项目
+        $ref: '#/definitions/EpsVo'
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建时间
+      paCode:
+        type: string
+        description: 立项代码
+      paName:
+        type: string
+        description: 立项名称
+      planStartTime:
+        type: string
+        description: 项目周期-开始
+      planEndTime:
+        type: string
+        description: 项目周期-结束
+      totalBudget:
+        type: number
+        description: 预计总经费
+      budgetEstimate:
+        type: number
+        description: 项目概算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      remark:
+        type: string
+        description: 备注
+      status:
+        description: 1=新建,2=审批中,3=已审批
+        $ref: '#/definitions/StatusVo'
+      projectEstimate:
+        type: number
+        description: 项目预算
+      constructionScale:
+        type: string
+        description: 建设规模
+      projectLocation:
+        type: string
+        description: 项目地点
+      totalDrtn:
+        type: number
+        description: 预计工期
+
+  PrePaAddForm:
+    properties:
+      orgId:
+        type: integer
+        description: 责任部门id
+      userId:
+        type: integer
+        description: 责任人id
+      epsId:
+        type: integer
+        description: 预研项目epsId
+      paCode:
+        type: string
+        description: 立项代码
+      paName:
+        type: string
+        description: 立项名称
+      planStartTime:
+        type: string
+        description: 项目周期-开始
+      planEndTime:
+        type: string
+        description: 项目周期-结束
+      totalBudget:
+        type: number
+        description: 预计总经费
+      budgetEstimate:
+        type: number
+        description: 项目概算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      remark:
+        type: string
+        description: 备注
+      projectEstimate:
+        type: number
+        description: 项目预算
+      constructionScale:
+        type: string
+        description: 建设规模
+      projectLocation:
+        type: string
+        description: 项目地点
+      totalDrtn:
+        type: number
+        description: 预计工期
+
+  PrePaUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      orgId:
+        type: integer
+        description: 责任部门id
+      userId:
+        type: integer
+        description: 责任人id
+      epsId:
+        type: integer
+        description: 预研项目epsId
+      paCode:
+        type: string
+        description: 立项代码
+      paName:
+        type: string
+        description: 立项名称
+      planStartTime:
+        type: string
+        description: 项目周期-开始
+      planEndTime:
+        type: string
+        description: 项目周期-结束
+      totalBudget:
+        type: number
+        description: 预计总经费
+      budgetEstimate:
+        type: number
+        description: 项目概算
+      projectTarget:
+        type: string
+        description: 项目目标
+      projectOverview:
+        type: string
+        description: 项目概况
+      remark:
+        type: string
+        description: 备注
+      projectEstimate:
+        type: number
+        description: 项目预算
+      constructionScale:
+        type: string
+        description: 建设规模
+      projectLocation:
+        type: string
+        description: 项目地点
+      totalDrtn:
+        type: number
+        description: 预计工期
+
+
+  DocumentAddVo:
+    properties:
+      foldId:
+        type: integer
+        description: 文档目录Id
+      docTitle:
+        type: string
+        description: 文档标题
+      docNum:
+        type: integer
+        description: 文档数量
+      docType:
+        type: string
+        description: 文档类型
+      fileId:
+        type: integer
+        description: 文件Id
+      docVersion:
+        type: string
+        description: 文档版本
+      status:
+        type: string
+        description: 文档状态
+
+  DocumentPo:
+    properties:
+      id:
+        type: integer
+        description: 文档Id
+      foldId:
+        type: integer
+        description: 文档目录Id
+      docTitle:
+        type: string
+        description: 文档标题
+      docNum:
+        type: integer
+        description: 文档数量
+      docType:
+        type: string
+        description: 文档类型
+      fileId:
+        type: integer
+        description: 文件Id
+      docVersion:
+        type: string
+        description: 文档版本
+      status:
+        type: string
+        description: 文档状态
+  DictAddVo:
+    properties:
+      memnId:
+        type: string
+        description: 菜单Id
+      code:
+        type: string
+        description: 字典代码
+      name:
+        type: string
+        description: 字典名称
+      system:
+        type: string
+        description: base=内置
+
+  DictPo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      memnId:
+        type: string
+        description: 菜单Id
+      code:
+        type: string
+        description: 字典代码
+      name:
+        type: string
+        description: 字典名称
+      system:
+        type: string
+        description: base=内置
+
+  DictUpdateVo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      memnId:
+        type: string
+        description: 菜单Id
+      code:
+        type: string
+        description: 字典代码
+      name:
+        type: string
+        description: 字典名称
+      system:
+        type: string
+        description: base=内置
+
+  CprtmAddForm:
+    properties:
+      bizId:
+        type: integer
+        description: 业务对象Id
+      bizType:
+        type: string
+        description: 业务对象类型：eps|plan|project
+      cprtmId:
+        type: integer
+        description: 协作团队id
+      cprtmType:
+        type: string
+        description: 团队类型
+      projectId:
+        type: integer
+        description: 项目Id
+      defineId:
+        type: integer
+        description: defineId
+
+  PlanWbsVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      user:
+        description: 用户
+        $ref: '#/definitions/UserVo'
+      org:
+        description: IPT
+        $ref: '#/definitions/OrgVo'
+      taskCode:
+        type: string
+        description: WBS代码
+      taskName:
+        type: integer
+        description: WBS名称
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictVo'
+      planLevel:
+        description: 计划级别
+        $ref: '#/definitions/DictVo'
+      planDrtn:
+        type: number
+        description: 工期
+      planQty:
+        type: number
+        description: 工时
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      status:
+        description: 状态
+        $ref: '#/definitions/StatusVo'
+
+  PlanWbsAddForm:
+    properties:
+      userId:
+        type: integer
+        description: 用户Id
+      orgId:
+        type: integer
+        description: IPT Id
+      parentId:
+        type: integer
+        description: parentId
+      projectId:
+        type: integer
+        description: 项目Id
+      defineId:
+        type: integer
+        description: 计划定义id
+      taskCode:
+        type: string
+        description: WBS代码
+      taskName:
+        type: string
+        description: WBS名称
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: string
+        description: 计划级别
+      planDrtn:
+        type: number
+        description: 工期
+      planQty:
+        type: number
+        description: 工时
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      isFeedback:
+        type: integer
+        description: 反馈
+      controlAccount:
+        type: integer
+        description: 控制账户
+      remark:
+        type: string
+        description: 备注
+
+  PlanWbsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      userId:
+        type: integer
+        description: 用户Id
+      orgId:
+        type: integer
+        description: IPT Id
+      taskCode:
+        type: string
+        description: WBS代码
+      taskName:
+        type: string
+        description: WBS名称
+      planType:
+        type: string
+        description: 计划类型
+      planLevel:
+        type: string
+        description: 计划级别
+      planDrtn:
+        type: number
+        description: 工期
+      planQty:
+        type: number
+        description: 工时
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      isFeedback:
+        type: integer
+        description: 反馈
+      controlAccount:
+        type: integer
+        description: 控制账户
+      remark:
+        type: string
+        description: 备注
+
+
+
+  PlanTaskChangeWbsAddForm:
+    properties:
+      defineId:
+        type: integer
+        description: 计划ID
+      projectId:
+        type: integer
+        description: 项目Id
+      parentId:
+        type: integer
+        description: 父计划ID
+      parentType:
+        type: string
+        description: 父级类型
+      newName:
+        type: string
+        description: 变更后名称
+      newPlanStartTime:
+        type: string
+        description: 变更后计划开始时间
+      newPlanEndTime:
+        type: string
+        description: 变更后计划结束时间
+      newPlanDrtn:
+        type: number
+        description: 变更后计划工期
+      newPlanLevel:
+        type: string
+        description: 变更后计划级别
+      newOrgId:
+        type: integer
+        description: 变更后责任主体
+      newUserId:
+        type: integer
+        description: 变更后责任人
+      newPlanType:
+        type: string
+        description: 变更后计划类型
+      remark:
+        type: string
+        description: 变更后描述
+      newWbsFeedBack:
+        type: integer
+        description: 变更后wbs反馈
+      newControlAccount:
+        type: integer
+        description: 变更后控制账户
+      newPlanQty:
+        type: number
+        description: 变更后计划工时
+
+
+
+
+  PlanTaskChangeTaskAddForm:
+    properties:
+      defineId:
+        type: integer
+        description: 计划ID
+      projectId:
+        type: integer
+        description: 项目Id
+      parentId:
+        type: integer
+        description: 父计划ID
+      parentType:
+        type: string
+        description: 父级类型
+      taskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+      newName:
+        type: string
+        description: 变更后名称
+      newPlanStartTime:
+        type: string
+        description: 变更后计划开始时间
+      newPlanEndTime:
+        type: string
+        description: 变更后计划结束时间
+      newPlanDrtn:
+        type: string
+        description: 变更后计划工期
+      newPlanLevel:
+        type: string
+        description: 变更后计划级别
+      newOrgId:
+        type: integer
+        description: 变更后责任主体
+      newUserId:
+        type: integer
+        description: 变更后责任人
+      newPlanType:
+        type: string
+        description: 变更后计划类型
+      remark:
+        type: string
+        description: 变更后描述
+      newTaskDrtnType:
+        type: string
+        description: 变更后工期类型
+
+
+  PlanWbsChangeInfoForm:
+    properties:
+      id:
+        type: integer
+        description: 变更Id
+      taskId:
+        type: integer
+        description: 任务Id
+      oldName:
+        type: string
+        description: 变更前名称
+      newName:
+        type: string
+        description: 变更后名称
+      oldPlanStartTime:
+        type: string
+        description: 变更前计划开始时间
+      newPlanStartTime:
+        type: string
+        description: 变更后计划开始时间
+      oldPlanEndTime:
+        type: string
+        description: 变更前计划结束时间
+      newPlanEndTime:
+        type: string
+        description: 变更后计划结束时间
+      oldPlanDrtn:
+        type: number
+        description: 变更前计划工期
+      newPlanDrtn:
+        type: number
+        description: 变更后计划工期
+      oldPlanLevel:
+        type: string
+        description: 变更前计划级别
+      newPlanLevel:
+        type: string
+        description: 变更后计划级别
+      oldOrgId:
+        type: integer
+        description: 变更前责任主体
+      newOrgId:
+        type: integer
+        description: 变更后责任主体
+      oldUserId:
+        type: integer
+        description: 变更前责任人
+      newUserId:
+        type: integer
+        description: 变更后责任人
+      oldPlanType:
+        description: 变更前计划类型
+        type: string
+      newPlanType:
+        description: 变更后计划类型
+        type: string
+      oldDesc:
+        type: string
+        description: 变更前描述
+      newDesc:
+        type: string
+        description: 变更后描述
+      oldPlanQty:
+        type: number
+        description: 变更前计划工时
+      newPlanQty:
+        type: number
+        description: 变更后计划工时
+      oldWbsFeedBack:
+        type: integer
+        description: 变更前wbs反馈
+      newWbsFeedBack:
+        type: integer
+        description: 变更后wbs反馈
+      oldControlAccount:
+        type: integer
+        description: 变更前控制账户
+      newControlAccount:
+        type: integer
+        description: 变更后控制账户
+
+  PlanTaskChangeInfoForm:
+    properties:
+      id:
+        type: integer
+        description: 变更Id
+      taskId:
+        type: integer
+        description: 任务Id
+      oldTaskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+      newTaskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+      oldName:
+        type: string
+        description: 变更前名称
+      newName:
+        type: string
+        description: 变更后名称
+      oldPlanStartTime:
+        type: string
+        description: 变更前计划开始时间
+      newPlanStartTime:
+        type: string
+        description: 变更后计划开始时间
+      oldPlanEndTime:
+        type: string
+        description: 变更前计划结束时间
+      newPlanEndTime:
+        type: string
+        description: 变更后计划结束时间
+      oldPlanDrtn:
+        type: number
+        description: 变更前计划工期
+      newPlanDrtn:
+        type: number
+        description: 变更后计划工期
+      oldPlanLevel:
+        type: string
+        description: 变更前计划级别
+      newPlanLevel:
+        type: string
+        description: 变更后计划级别
+      oldOrgId:
+        type: integer
+        description: 变更前责任主体
+      newOrgId:
+        type: integer
+        description: 变更后责任主体
+      oldUserId:
+        type: integer
+        description: 变更前责任人
+      newUserId:
+        type: integer
+        description: 变更后责任人
+      oldPlanType:
+        description: 变更前计划类型
+        type: string
+      newPlanType:
+        description: 变更后计划类型
+        type: string
+      oldDesc:
+        type: string
+        description: 变更前描述
+      newDesc:
+        type: string
+        description: 变更后描述
+      oldPlanQty:
+        type: number
+        description: 变更前计划工时
+      newPlanQty:
+        type: number
+        description: 变更后计划工时
+      oldTaskDrtnType:
+        type: string
+        description: 变更前工期类型
+      newTaskDrtnType:
+        type: string
+        description: 变更后工期类型
+
+
+
+  PlanTaskPo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskCode:
+        type: string
+        description: task代码
+      taskName:
+        type: string
+        description: task名称
+      parentId:
+        type: integer
+        description: parentId
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划结束
+      actStartTime:
+        type: string
+        description: 实际开始
+      actEndTime:
+        type: string
+        description: 实际结束
+      startTime:
+        type: string
+        description: 开始
+      endTime:
+        type: string
+        description: 结束
+      estWt:
+        type: string
+        description: 权重
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      planDrtn:
+        type: string
+        description: 计划工期
+      remark:
+        type: string
+        description: 备注
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      createTime:
+        type: string
+        description: 创建日期
+      releaser:
+        description: 发布人
+        $ref: '#/definitions/UserVo'
+      releaseTime:
+        type: string
+        description: 发布日期
+      planLevel:
+        description: 计划级别
+        $ref: '#/definitions/DictionaryVo'
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictionaryVo'
+
+  PlanDelvTaskVo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      taskCode:
+        type: string
+        description: task代码
+      taskName:
+        type: integer
+        description: task名称
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划结束
+      actStartTime:
+        type: string
+        description: 实际开始
+      actEndTime:
+        type: string
+        description: 实际结束
+      completeTime:
+        type: string
+        description: 交付时间
+      delvStatus:
+        type: string
+        description: 交付状态
+
+  PlanTaskVo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskCode:
+        type: string
+        description: task代码
+      taskName:
+        type: integer
+        description: task名称
+      targtStart:
+        type: string
+        description: 期望开始
+      parentId:
+        type: integer
+        description: parentId
+      userId:
+        type: integer
+        description: 责任人id
+      status:
+        type: string
+        description: 任务状态
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划结束
+      actStartTime:
+        type: string
+        description: 实际开始
+      actEndTime:
+        type: string
+        description: 实际结束
+      startTime:
+        type: string
+        description: 开始
+      endTime:
+        type: string
+        description: 结束
+      estWt:
+        type: string
+        description: 权重
+      drtnType:
+        type: string
+        description: 工期类型
+      planDrtn:
+        type: string
+        description: 计划工期
+      remark:
+        type: string
+        description: 备注
+      releaser:
+        type: string
+        description: 发布人
+      releaseTime:
+        type: string
+        description: 发布日期
+      planLevel:
+        type: string
+        description: 计划级别
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictionaryVo'
+      targtEnd:
+        type: string
+        description: 期望结束
+
+  PlanTaskUpdateVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      taskCode:
+        type: string
+        description: task代码
+      taskName:
+        type: string
+        description: task名称
+      userId:
+        type: integer
+        description: 责任人id
+      orgId:
+        type: integer
+        description: 责任主体id
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划结束
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      remark:
+        type: string
+        description: 备注
+      planLevel:
+        type: string
+        description: 计划级别
+      planType:
+        type: string
+        description: 计划类型
+
+  TaskAddVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id
+      defineId:
+        type: integer
+        description: 计划Id
+      taskCode:
+        type: string
+        description: task代码
+      taskName:
+        type: string
+        description: task名称
+      parentId:
+        type: integer
+        description: parentId
+      orgId:
+        type: integer
+        description: 责任主体id
+      userId:
+        type: integer
+        description: 责任人id
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划结束
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      remark:
+        type: string
+        description: 备注
+      planLevel:
+        type: string
+        description: 计划级别
+      planType:
+        type: string
+        description: 计划类型
+      taskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+
+  PlanRelationVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      taskId:
+        type: integer
+        description: 主键Id
+      taskName:
+        type: string
+        description: 名称
+      taskCode:
+        type: string
+        description: 代码
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      planDrtn:
+        type: number
+        description: 计划工期
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      estWt:
+        type: integer
+        description: 权重
+      completePct:
+        type: number
+        description: 进度
+      status:
+        description: 计划状态
+        $ref: '#/definitions/StatusVo'
+      remark:
+        type: string
+        description: 备注
+      taskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+      nodeType:
+        type: integer
+        description: 图标（wbs/task）
+      planName:
+        type: string
+        description: 计划定义名称
+      projectName:
+        type: string
+        description: 项目名称
+
+
+  PlanRelationAddTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 代码
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任主体
+        $ref: '#/definitions/OrgVo'
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/PlanRelationAddTreeVo'
+
+  PlanRelationAddForm:
+    properties:
+      taskId:
+        type: integer
+        description: wbs或者task id
+
+  PlanTaskRelationUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      estWt:
+        type: number
+        description: 权重
+
+  FeedBackReleaseVo:
+    properties:
+      taskIds:
+        description: task id
+        type: array
+        items:
+          type: integer
+          description: task id
+      projectId:
+        type: integer
+        description: 项目Id
+
+  TaskCommonResultTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 代码
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      nodeType:
+        type: string
+        description: 节点类型(project,define,task)
+      taskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+      check:
+        type: integer
+        description: 勾选框（0:没有/1有但不勾选/2有且默认勾选）
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任主体
+        $ref: '#/definitions/OrgVo'
+
+  DelvPo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      delvTitle:
+        type: string
+        description: 交付物标题
+      delvCode:
+        type: string
+        description: 交付物代码
+      delvNum:
+        type: integer
+        description: 交付物数量
+      delvType:
+        type: string
+        description: 交付物类型
+      remark:
+        type: string
+        description: 备注
+
+  FeedBackDelvo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      delvTitle:
+        type: string
+        description: 交付物清单名称
+      delvCode:
+        type: integer
+        description: 交付物代码
+      delvType:
+        type: string
+        description: 交付物类别
+      delvResultCount:
+        type: integer
+        description: 交付物成果数量
+      delvCreator:
+        description: 交付物创建人
+        $ref: '#/definitions/UserVo'
+      delvCreaTime:
+        type: string
+        description: 交付物创建时间
+      delvFinishStatus:
+        type: string
+        description: 交付物完成状态
+      delvFinishTime:
+        type: string
+        description: 交付物完成日期
+      delvFinishResultDetail:
+        type: string
+        description: 交付物完成成果明细
+
+  DelvAddVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: task Id
+      delvTitle:
+        type: string
+        description: 交付物标题
+      delvCode:
+        type: string
+        description: 交付物代码
+      delvNum:
+        type: integer
+        description: 交付物数量
+      delvType:
+        type: string
+        description: 交付物类型
+      parentId:
+        type: integer
+        description: pbs
+      remark:
+        type: string
+        description: 备注
+
+  DocFileVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      fileName:
+        type: string
+        description: 文件名称
+      groupName:
+        type: string
+        description: 组名
+      remoteFileName:
+        type: string
+        description: fastdfs文件名
+      version:
+        type: string
+        description: 版本
+      fileUrl:
+        type: string
+        description: 地址
+
+
+  ChgDelvPo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      delvTitle_old:
+        type: string
+        description: 旧交付物标题
+      delvTitle_new:
+        type: string
+        description: 新交付物标题
+      delvCode_old:
+        type: integer
+        description: 旧交付物代码
+      delvCode_new:
+        type: integer
+        description: 新交付物代码
+      delvType_old:
+        type: string
+        description: 旧交付物类型
+      delvType_new:
+        type: string
+        description: 新交付物类型
+      delvVersion_old:
+        type: string
+        description: 旧交付物版本
+      delvVersion_new:
+        type: string
+        description: 新交付物版本
+
+  ChgDelvAddVo:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id
+      delvTitle_old:
+        type: string
+        description: 旧交付物标题
+      delvTitle_new:
+        type: string
+        description: 新交付物标题
+      delvCode_old:
+        type: integer
+        description: 旧交付物代码
+      delvCode_new:
+        type: integer
+        description: 新交付物代码
+      delvType_old:
+        type: string
+        description: 旧交付物类型
+      delvType_new:
+        type: string
+        description: 新交付物类型
+      delvVersion_old:
+        type: string
+        description: 旧交付物版本
+      delvVersion_new:
+        type: string
+        description: 新交付物版本
+
+  TaskPredUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      relationType:
+        type: string
+        description: 关系类型：SS SF FS FF
+      lagNum:
+        type: number
+        description: 延时
+  TaskPredVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: 任务Id
+      predTaskId:
+        type: integer
+        description: 前置任务Id
+      defineName:
+        type: string
+        description: 计划定义名称
+      taskCode:
+        type: string
+        description: 任务代码
+      taskName:
+        type: string
+        description: 任务名称
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      relationType:
+        type: string
+        description: 关系类型：SS SF FS FF
+      lagNum:
+        type: number
+        description: 延时
+
+  TaskPredAddTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 代码
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/TaskPredAddTreeVo'
+
+  PlanTaskChangeReleasaeTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      taskId:
+        type: integer
+        description: 任务id
+      changeId:
+        type: integer
+        description: 变更id
+      name:
+        type: string
+        description: 名称
+      nodeType:
+        type: string
+        description: 节点类型
+      oldData:
+        type: string
+        description: 变更前数据
+      newData:
+        type: string
+        description: 变更后数据
+      check:
+        type: integer
+        description: 勾选
+      children:
+        type: array
+        description: 子节点集合
+        items:
+          $ref: '#/definitions/PlanTaskChangeReleasaeTreeVo'
+
+
+  PlanTaskChangeReleaseForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id
+      tasks:
+        description: 变更id和类型集合
+        type: array
+        items:
+          $ref: '#/definitions/IdTypeForm'
+      changeReason:
+        type: string
+        description: 变更申请原因
+      changeEffect:
+        type: string
+        description: 变更影响分析
+      changeWayDesc:
+        type: string
+        description: 采取措施说明
+
+
+  PlanTaskChangeTreeVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      taskId:
+        type: integer
+        description: 任务Id
+      projectId:
+        type: integer
+        description: 项目Id
+      defineId:
+        type: integer
+        description: 计划Id
+      changeId:
+        type: integer
+        description: 变更id
+      parentId:
+        type: integer
+        description: 父级id
+      name:
+        type: string
+        description: 名称
+      taskType:
+        type: integer
+        description: 作业类型(0WBS，1任务作业,2开始里程碑,3完成里程碑，4资源作业)
+      code:
+        type: string
+        description: 代码
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划结束
+      taskDrtnType:
+        description: 工期类型
+        $ref: '#/definitions/DictionaryVo'
+      planDrtn:
+        type: number
+        description: 计划工期
+      planQty:
+        type: number
+        description: 计划工时
+      remark:
+        type: string
+        description: 备注
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      createTime:
+        type: string
+        description: 创建日期
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictionaryVo'
+      controlAccount:
+        type: integer
+        description: 控制账户
+      status:
+        description: 编制状态
+        $ref: '#/definitions/DictionaryVo'
+      changeType:
+        $ref: '#/definitions/StatusVo'
+        description: 变更类型
+      changeCount:
+        type: integer
+        description: 变更次数
+
+
+
+  PlanTaskPredChangeListVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: 任务Id
+      predTaskId:
+        type: integer
+        description: 前置任务Id
+      defineName:
+        type: string
+        description: 计划定义名称
+      taskCode:
+        type: string
+        description: 任务代码
+      taskName:
+        type: string
+        description: 任务名称
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      baseRelationType:
+        type: string
+        description: 关系类型：SS SF FS FF
+      newRelationType:
+        type: string
+        description: 新的关系类型：SS SF FS FF
+      baseLagNum:
+        type: number
+        description: 延时
+      newLagNum:
+        type: number
+        description: 新的延时
+
+  ChgTaskPredPo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: task id
+      predId:
+        description: 紧前task id
+        type: integer
+      relationType:
+        type: integer
+        description: 关系类型：SS SF FS FF
+
+  PlanTaskPredChangeAssignTreeVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 编码
+      planStartTime:
+        description: 计划开始时间
+        type: string
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+
+  PlanTaskPredChangeAddForm:
+    properties:
+      taskId:
+        type: integer
+        description: 任务或者变更id
+      type:
+        type: string
+        description: 主任务是任务还是变更
+      predType:
+        description: 被分配任务是任务还是变更
+        type: string
+      predTaskId:
+        type: integer
+        description: 被分配任务或者变更id
+
+  PlanTaskPredChangeUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键ID
+      logicId:
+        type: integer
+        description: 原始逻辑关系ID
+      newRelationType:
+        description: 新逻辑关系类型
+        type: string
+      newLagNum:
+        type: number
+        description: 新延时
+
+  TaskFollowPo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: 任务Id
+      predTaskId:
+        type: integer
+        description: 前置任务Id
+      defineName:
+        type: string
+        description: 计划定义名称
+      taskCode:
+        type: string
+        description: 任务代码
+      taskName:
+        type: string
+        description: 任务名称
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      planStartTime:
+        type: string
+        description: 计划开始
+      planEndTime:
+        type: string
+        description: 计划完成
+      relationType:
+        type: string
+        description: 关系类型：SS SF FS FF
+      lagNum:
+        type: number
+        description: 延时
+
+
+
+  ChgTaskFollowPo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: task id
+      predId:
+        description: 紧前task id
+        type: integer
+      relationType:
+        type: integer
+        description: 关系类型：SS SF FS FF
+
+  TaskPredAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目Id
+      predTaskId:
+        description: 紧前task id
+        type: integer
+
+  ChgTaskPredAddPo:
+    properties:
+      id_old:
+        type: string
+        description: 旧主键Id
+      projectId:
+        type: integer
+        description: 项目Id
+      taskId:
+        type: integer
+        description: task id
+      predId:
+        description: 紧前task id
+        type: integer
+      relationType:
+        type: integer
+        description: 关系类型：SS SF FS FF
+
+  RsrcPo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      userId:
+        type: integer
+        description: 用户Id
+      orgId:
+        type: integer
+        description: 组织Id
+      ResourceCode:
+        type: string
+        description: 资源代码
+      ResourceName:
+        type: integer
+        description: 资源名称
+
+  RsrcAddPo:
+    properties:
+      userId:
+        type: integer
+        description: 用户Id
+      orgId:
+        type: integer
+        description: 组织Id
+      ResourceCode:
+        type: string
+        description: 资源代码
+      ResourceName:
+        type: integer
+        description: 资源名称
+
+  TaskRsrcVo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      rsrcName:
+        type: string
+        description: 资源名称
+      rsrcCode:
+        type: string
+        description: 资源代码
+      resourceRole:
+        type: string
+        description: 资源角色
+      unit:
+        description: 计量单位
+        $ref: '#/definitions/DictionaryVo'
+      maxunit:
+        type: number
+        description: 单位最大用量
+      budgetQty:
+        type: number
+        description: 预算用量
+      budgetUnit:
+        type: number
+        description: 预算单价
+      budgetCost:
+        type: number
+        description: 预算成本
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      actQty:
+        type: number
+        description: 实际用量
+      actUnit:
+        type: number
+        description: 实际单价
+      actCost:
+        type: number
+        description: 实际成本
+
+  PlanResourceConsumpVo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      rsrcuserName:
+        type: string
+        description: 资源名称
+      rsrcuserCode:
+        type: string
+        description: 资源代码
+      resourceRole:
+        type: string
+        description: 资源角色
+      unit:
+        description: 计量单位
+        $ref: '#/definitions/DictionaryVo'
+      maxUnit:
+        type: number
+        description: 单位最大用量
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      actQty:
+        type: number
+        description: 实际用量
+      actUnit:
+        type: number
+        description: 实际单价
+      actCost:
+        type: number
+        description: 实际成本
+
+
+  TaskRsrcAddForm:
+    properties:
+      taskId:
+        type: integer
+        description: task Id
+      rsrcId:
+        type: integer
+        description: 资源Id
+      rsrcType:
+        type: string
+        description: 资源类别
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+
+  TaskRsrcUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      budgetQty:
+        type: number
+        description: 预算用量
+      budgetUnit:
+        type: number
+        description: 预算单价
+      budgetCost:
+        type: number
+        description: 预算成本
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+
+  PlanResourceUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      actQty:
+        type: number
+        description: 实际用量
+      actUnit:
+        type: number
+        description: 实际单价
+      actCost:
+        type: number
+        description: 实际成本
+
+  ChgTaskRsrcPo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      id_old:
+        type: string
+        description: 旧主键Id
+      wbsId:
+        type: integer
+        description: wbs Id
+      taskId:
+        type: integer
+        description: task Id
+      rsrcId:
+        type: integer
+        description: 资源Id
+      totalQty:
+        type: string
+        description: 需求数量
+
+
+  PlanBaselinePo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      defineId:
+        type: integer
+        description: 计划定义Id
+      projectId:
+        type: integer
+        description: 项目Id
+      blName:
+        type: string
+        description: 基线名称
+      blType:
+        type: string
+        description: 基线类型
+      creator:
+        type: string
+        description: 创建人
+      creaTime:
+        type: string
+        description: 创建日期
+      lastUpdTime:
+        type: string
+        description: 更新日期
+      isExecute:
+        type: integer
+        description: 是否执行基线
+      remark:
+        type: string
+        description: 备注
+
+  PlanBaseLineUpdateVo:
+    properties:
+      id:
+        type: integer
+        description: 基线id
+      baselineName:
+        type: string
+        description: 基线名称
+      baselineType:
+        type: string
+        description: 基线类型
+      remark:
+        type: string
+        description: 备注
+
+  PlanBaseLineInfoVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      taskName:
+        type: string
+        description: 基准任务名称
+      taskCode:
+        type: string
+        description: 基准任务代码
+      org:
+        description: 基准任务责任主体
+        $ref: '#/definitions/OrgVo'
+      user:
+        description: 基准任务责任人
+        $ref: '#/definitions/UserVo'
+      planStartTime:
+        type: string
+        description: 基准任务开始
+      planEndTime:
+        type: string
+        description: 基准任务完成
+
+  PlanBaseLineListVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      baselineName:
+        type: string
+        description: 基线名称
+      baselineType:
+        type: string
+        description: 基线类型
+      creatTime:
+        type: string
+        description: 创建时间
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      creaTime:
+        type: string
+        description: 创建日期
+      lastUpdTime:
+        type: string
+        description: 更新日期
+      isExecute:
+        type: integer
+        description: 是否执行基线
+      remark:
+        type: string
+        description: 备注
+
+  PlanTaskFeedBackTreeVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      feedbackId:
+        type: integer
+        description: 反馈id
+      projectId:
+        type: integer
+        description: 项目id        
+      name:
+        type: string
+        description: 名称
+      applyCompletePct:
+        type: number
+        description: 申请完成百分比
+      completePct:
+        type: number
+        description: 批准完成百分比
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictionaryVo'
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      progressStatus:
+        type: string
+        description: 进度状态
+      type:
+        type: string
+        description: 对象类型
+
+
+
+  PlanTaskFeedbackListVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      name:
+        type: string
+        description: 名称
+      applyCompletePct:
+        type: number
+        description: 申请完成百分比
+      completePct:
+        type: number
+        description: 批准完成百分比
+      planType:
+        description: 计划类型
+        $ref: '#/definitions/DictionaryVo'
+      user:
+        description: 责任人
+        $ref: '#/definitions/UserVo'
+      org:
+        description: 责任部门
+        $ref: '#/definitions/OrgVo'
+      wbsRoot:
+        type: string
+        description: wbs路径
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      progressStatus:
+        description: 进度状态
+        $ref: '#/definitions/StatusVo'
+      type:
+        type: string
+        description: 对象类型
+
+
+  PlanTaskFeedbackReleaseTreeVo:
+    properties:
+      id:
+        type: integer
+        description: 主键Id
+      feedbackId:
+        type: integer
+        description: 本次进展ID
+      name:
+        type: string
+        description: 名称
+      code:
+        type: string
+        description: 代码
+      type:
+        type: string
+        description: 节点类型
+      applyPct:
+        type: number
+        description: 申请完成百分比
+      check:
+        type: integer
+        description: 是否可批准/审批
+
+
+  ProgressLogPo:
+    properties:
+      id:
+        type: string
+        description: 主键Id
+      wbsId:
+        type: integer
+        description: wbs Id
+      taskId:
+        type: integer
+        description: task Id
+      CompletePct:
+        type: string
+        description: 完成百分比
+      RemainDrtn:
+        type: string
+        description: 尚需工期
+
+  ProgressLogAddVo:
+    properties:
+      taskId:
+        type: integer
+        description: task Id
+      completePct:
+        type: number
+        description: 完成百分比
+      actStartTime:
+        type: string
+        description: 实际开始时间
+      actEndTime:
+        type: string
+        description: 实际完成时间
+      reportingTime:
+        type: string
+        description: 报告时间
+      deadline:
+        type: string
+        description: 截止时间
+      estimatedTime:
+        type: string
+        description: 估计完成时间
+      remark:
+        type: string
+        description: 进展说明
+
+  IptUserVo:
+    properties:
+      iptId:
+        type: integer
+        description: wbs Id
+      iptName:
+        type: integer
+        description: task Id
+      ipts:
+        description: 子IPT列表
+        type: array
+        items:
+          $ref: '#/definitions/IptUserVo'
+      users:
+        description: IPT下的用户列表
+        type: array
+        items:
+          $ref: '#/definitions/UserPo'
+
+  PlanTaskChangeGeneralVo:
+    properties:
+      id:
+        type: integer
+        description: Id主键
+      taskId:
+        type: integer
+        description: 任务id
+      oldName:
+        type: string
+        description: 变更前名
+      newName:
+        type: string
+        description: 变更后名称
+      oldOrg:
+        description: 变更前责任主体
+        $ref: '#/definitions/OrgVo'
+      newOrg:
+        description: 变更后责任主体
+        $ref: '#/definitions/OrgVo'
+      oldUser:
+        description: 变更前责任人
+        $ref: '#/definitions/UserVo'
+      newUser:
+        description: 变更后责任人
+        $ref: '#/definitions/UserVo'
+      oldPlanStartTime:
+        type: string
+        description: 变更前计划开始时间
+      newPlanStartTime:
+        type: string
+        description: 变更后计划开始时间
+      oldPlanEndTime:
+        type: string
+        description: 变更前计划完成时间
+      newPlanEndTime:
+        type: string
+        description: 变更后计划完成时间
+      oldPlanQty:
+        type: number
+        description: 变更前计划工时
+      newPlanQty:
+        type: number
+        description: 变更后计划工时
+      oldPlanDrtn:
+        type: number
+        description: 变更前工期
+      newPlanDrtn:
+        type: number
+        description: 变更后工期
+      oldPlanLevel:
+        description: 变更前计划级别
+        $ref: '#/definitions/DictionaryVo'
+      newPlanLevel:
+        description: 变更后计划级别
+        $ref: '#/definitions/DictionaryVo'
+      oldPlanType:
+        description: 变更前计划类型
+        $ref: '#/definitions/DictionaryVo'
+      newPlanType:
+        description: 变更后计划类型
+        $ref: '#/definitions/DictionaryVo'
+      oldTaskDrtnType:
+        $ref: '#/definitions/DictionaryVo'
+        description: 变更前工期类型
+      newTaskDrtnType:
+        $ref: '#/definitions/DictionaryVo'
+        description: 变更后工期类型
+      oldTaskType:
+        type: integer
+        description: 变更前作业类型
+      newTaskType:
+        type: integer
+        description: 变更后作业类型
+      oldDesc:
+        type: string
+        description: 变更前描述
+      newDesc:
+        type: string
+        description: 变更后描述
+      changeType:
+        $ref: '#/definitions/StatusVo'
+        description: 变更类型
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建时间
+      aprvUser:
+        description: 批准人
+        $ref: '#/definitions/UserVo'
+      aprvTime:
+        type: string
+        description: 批准日期
+      oldControlAccount:
+        type: integer
+        description: 变更前控制账户
+      newControlAccount:
+        type: integer
+        description: 变更后控制账户
+      oldWbsFeedBack:
+        type: integer
+        description: 变更前wbs反馈
+      newWbsFeedBack:
+        type: integer
+        description: newWbsFeedBack
+
+
+
+
+  PlanTaskChangeRecordVo:
+    properties:
+      id:
+        type: integer
+        description: Id主键
+      changeType:
+        description: 变更类型
+        $ref: '#/definitions/StatusVo'
+      oldData:
+        type: string
+        description: 变更前数据
+      newData:
+        type: string
+        description: 变更后数据
+      changeWay:
+        type: string
+        description: 变更方式
+      status:
+        description: 变更状态
+        $ref: '#/definitions/StatusVo'
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 创建时间
+      changeReason:
+        type: string
+        description: 变更申请原因
+      changeEffect:
+        type: string
+        description: 变更影响分析
+      changeWayDesc:
+        type: string
+        description: 采取措施说明
+
+
+  OrgVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  GeneralVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+      code:
+        type: string
+        description: code
+
+  DictionaryVo:
+    properties:
+      id:
+        type: string
+        description: id
+      name:
+        type: string
+        description: name
+
+  UserVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  DelvListVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  StatusVo:
+    properties:
+      id:
+        type: string
+        description: id
+      name:
+        type: string
+        description: name
+
+  DictVo:
+    properties:
+      id:
+        type: string
+        description: id
+      name:
+        type: string
+        description: name
+
+  CalendarVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  EpsVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  ProjectVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      name:
+        type: string
+        description: name
+
+  CprtmVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      type:
+        type: string
+        description: 协作团队类型 user/org
+      code:
+        type: string
+        description: IPT/user代码
+      name:
+        type: string
+        description: IPT/user名称
+
+  UserOpenVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      code:
+        type: string
+        description: 代码
+      name:
+        type: string
+        description: 名称
+      type:
+        type: string
+        description: 类型
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/UserOpenVo'
+
+
+  PlanBaseLineAddForm:
+    properties:
+      projectId:
+        type: integer
+        description: 项目id
+      defineId:
+        type: integer
+        description: 计划定义id
+      baselineName:
+        type: string
+        description: 计划定义名称
+      baselineType:
+        type: string
+        description: 计划定义类型
+      remark:
+        type: string
+        description: 备注
+
+
+  PlanBaseLineUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 基线id
+      projectId:
+        type: integer
+        description: 项目id
+      defineId:
+        type: integer
+        description: 计划定义id
+      baselineName:
+        type: string
+        description: 计划定义名称
+      baselineType:
+        type: string
+        description: 计划定义类型
+      remark:
+        type: string
+        description: 备注
+
+  TaskRsrcAssignVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      rsrcCode:
+        type: string
+        description: 代码
+      rsrcName:
+        type: string
+        description: 名称
+      rsrcStatus:
+        type: string
+        description: 状态
+      applyStartTime:
+        type: string
+        description: 申请开始时间
+      applyEndTime:
+        type: string
+        description: 申请完成时间
+
+  ContactsSearchForm:
+    properties:
+      contactName:
+        type: string
+        description: 联系人
+      contactPhone:
+        type: string
+        description: 联系电话
+
+  ContactsAddForm:
+    properties:
+      bizId:
+        type: integer
+        description: 业务对象ID
+      bizType:
+        type: string
+        description: 业务对象类型
+      contactName:
+        type: string
+        description: 联系人
+      contactPhone:
+        type: string
+        description: 联系电话
+      contactUnit:
+        type: string
+        description: 联系单位
+      remark:
+        type: string
+        description: 备注
+
+  ContactsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      contactName:
+        type: string
+        description: 联系人
+      contactPhone:
+        type: string
+        description: 联系电话
+      contactUnit:
+        type: string
+        description: 联系单位
+      remark:
+        type: string
+        description: 备注
+
+  ContactsVo:
+    properties:
+      id:
+        type: integer
+        description: id主键
+      contactName:
+        type: string
+        description: 联系人
+      contactPhone:
+        type: string
+        description: 联系电话
+      contactUnit:
+        type: string
+        description: 联系单位
+      remark:
+        type: string
+        description: 备注
+      bizId:
+        type: integer
+        description: 业务对象ID
+      bizType:
+        type: string
+        description: 业务对象类型
+
+  PlanProjectVariableVo:
+    properties:
+      id:
+        type: integer
+        description: 项目id
+      calendar:
+        description: 日历
+        $ref: '#/definitions/GeneralVo'
+      dateFormat:
+        description: 时间格式
+        $ref: '#/definitions/DictionaryVo'
+      taskDrtnType:
+        description: 工期类型
+        $ref: '#/definitions/DictionaryVo'
+      timeUnit:
+        description: 工时单位
+        $ref: '#/definitions/DictionaryVo'
+      cpmType:
+        description: 关键路径
+        $ref: '#/definitions/DictionaryVo'
+      currency:
+        description: 币种
+        $ref: '#/definitions/GeneralVo'
+      cpmFloat:
+        type: number
+        description: 总浮时
+      enableProjectTeam:
+        type: integer
+        description: 开启项目团队
+
+
+  ProjectVariableUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: 项目id
+      calendarId:
+        type: integer
+        description: 日历id
+      dateFormat:
+        type: string
+        description: 日期格式
+      taskDrtnType:
+        type: string
+        description: 工期类型
+      timeUnit:
+        type: string
+        description: 工时单位
+      cpmType:
+        type: string
+        description: 关键路径类型
+      cpmFloat:
+        type: number
+        description: 总浮时
+      currencyId:
+        type: integer
+        description: 币种
+      enableProjectTeam:
+        type: integer
+        description: 开启项目团队
+
+  PlanPbsAddForm:
+    properties:
+      parentId:
+        type: integer
+        description: 父节点id
+      projectId:
+        type: integer
+        description: 项目id
+      delvCode:
+        type: string
+        description: 代码
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      remark:
+        type: string
+        description: 备注
+
+
+  PlanPbsUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      delvCode:
+        type: string
+        description: 代码
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      remark:
+        type: string
+        description: 备注
+
+  PlanPbsTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      type:
+        type: string
+        description: 类别(PBS/交付物)
+      parentId:
+        type: integer
+        description: 父节点id
+      projectId:
+        type: integer
+        description: 项目id
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        description: 类别
+        $ref: '#/definitions/DictionaryVo'
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      fileLocation:
+        type: string
+        description: 存放位置
+      remark:
+        type: string
+        description: 备注
+      statusVo:
+        description: 状态
+        $ref: '#/definitions/StatusVo'
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/PlanPbsTreeVo'
+        description: 子节点
+
+  PlanPbsVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父节点id
+      projectId:
+        type: integer
+        description: 项目id
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        description: 类别
+        $ref: '#/definitions/DictionaryVo'
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      fileLocation:
+        type: string
+        description: 存放位置
+      remark:
+        type: string
+        description: 备注
+  PlanDelvAddForm:
+    properties:
+      parentId:
+        type: integer
+        description: 父节点id
+      projectId:
+        type: integer
+        description: 项目id
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        type: string
+        description: 类别
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      delvNum:
+        type: integer
+        description: 计划交付数量
+      remark:
+        type: string
+        description: 备注
+
+  PlanDelvTreeVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      type:
+        type: string
+        description: 类别(PBS/交付物)
+      parentId:
+        type: integer
+        description: 父节点id
+      projectId:
+        type: integer
+        description: 项目id
+      projectName:
+        type: integer
+        description: 所属项目
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        description: 类别
+        $ref: '#/definitions/DictionaryVo'
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      fileLocation:
+        type: string
+        description: 存放位置
+      remark:
+        type: string
+        description: 备注
+      wbs:
+        type: string
+        description: 交付物
+      statusVo:
+        description: 状态
+        $ref: '#/definitions/StatusVo'
+      delvStatusVo:
+        description: 编制状态
+        $ref: '#/definitions/StatusVo'
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/PlanDelvTreeVo'
+        description: 子节点
+
+
+  PlanDelvUpdateForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        type: string
+        description: 类别
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      delvNum:
+        type: integer
+        description: 计划交付数量
+      remark:
+        type: string
+        description: 备注
+
+  PlanDelvVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      parentId:
+        type: integer
+        description: 父节点id
+      projectId:
+        type: integer
+        description: 项目id
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        description: 类别
+        $ref: '#/definitions/DictionaryVo'
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      remark:
+        type: string
+        description: 备注
+
+
+  DelvAssignPo:
+    properties:
+      id:
+        type: integer
+        description: id
+      taskId:
+        type: integer
+        description: 任务id
+      projectId:
+        type: integer
+        description: 项目id
+      delvCode:
+        type: string
+        description: 代码
+      delvType:
+        description: 类别
+        $ref: '#/definitions/DictionaryVo'
+      delvTitle:
+        type: string
+        description: 交付清单名称
+      delvNum:
+        type: integer
+        description: 计划交付数量
+      creator:
+        description: 创建人
+        $ref: '#/definitions/UserVo'
+      creatTime:
+        type: string
+        description: 角色创建时间
+      delvStatus:
+        type: string
+        description: 完成状态
+      completeTime:
+        type: string
+        description: 完成日期
+      remark:
+        type: string
+        description: 备注
+
+  DelvIdsForm:
+    type: array
+    items:
+      type: integer
+      description: 要分配的交付物集合
+
+  MyTaskVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      taskName:
+        type: string
+        description: 任务名称
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      planName:
+        type: string
+        description: 计划名称
+      name:
+        type: string
+        description: 项目名称
+      completePct:
+        type: number
+        description: 进度完成
+      deviation:
+        type: string
+        description: 偏差
+      deviationDays:
+        type: integer
+        description: 偏差天数
+      feedbackStatus:
+        description: 反馈状态
+        $ref: '#/definitions/StatusVo'
+
+  IdTypeForm:
+    properties:
+      id:
+        type: integer
+        description: id
+      type:
+        type: string
+        description: 类型
+
+
+  MyTaskSearchForm:
+    properties:
+      name:
+        type: string
+        description: 项目名称
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+
+  MyWarningVo:
+    properties:
+      id:
+        type: integer
+        description: id
+      taskName:
+        type: string
+        description: 任务名称
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      planName:
+        type: string
+        description: 计划名称
+      name:
+        type: string
+        description: 项目名称
+
+  MyWarningSearchForm:
+    properties:
+      name:
+        type: string
+        description: 项目名称
+      planStartTime:
+        type: string
+        description: 计划开始时间
+      planEndTime:
+        type: string
+        description: 计划完成时间
+      warningDays:
+        type: integer
+        description: 预警天数
+
+  SelectVo:
+    properties:
+      value:
+        type: string
+        description: 值
+      title:
+        type: string
+        description: 显示内容
+      type:
+        type: string
+        description: 类型

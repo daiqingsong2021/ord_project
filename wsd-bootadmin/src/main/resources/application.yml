@@ -1,0 +1,33 @@
+logging:
+  config: classpath:logback-spring.xml
+
+spring:
+  application:
+    name: wsd-bootadmin
+  profiles:
+    active: localhost
+  main:
+    allow-bean-definition-overriding: true
+  boot:
+    admin:
+      monitor:
+        period: 180000
+        status-lifetime: 180000
+        read-timeout: 120000
+
+server:
+  port: 8764 #启动端口
+  maxHttpHeaderSize: 10240000
+  tomcat:
+    maxHttpHeaderSize: 10240000
+    maxHttpPostSize: 10240000
+management:
+  health:
+    db:
+      enabled: false
+    mail:
+      enabled: false
+    redis:
+      enabled: false
+    mongo:
+      enabled: false

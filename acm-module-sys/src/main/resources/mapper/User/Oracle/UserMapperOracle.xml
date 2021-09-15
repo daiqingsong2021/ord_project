@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wisdom.acm.sys.mapper.UserMapper">
+    <select id="selectUserMainOrg" resultMap="com.wisdom.acm.sys.mapper.UserMapper.resultUserMainOrgVoMap">
+        select r.id, r.org_name
+        from wsd_sys_userorg o
+            left join wsd_sys_org r on o.org_id = r.id
+        where rownum = 1 and o.user_id = #{userId} and o.main_org = 1
+    </select>
+</mapper>

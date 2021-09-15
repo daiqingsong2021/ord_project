@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.wf.mapper.WfFormDataMapper">
+
+    <resultMap id="WfProcessBizVoMap" type="com.wisdom.base.common.vo.wf.WfProcessBizVo">
+        <result column="biz_id" property="bizId" />
+        <result column="biz_type" property="bizType" />
+    </resultMap>
+    <select id="selectWfDataBizIds" resultMap="WfProcessBizVoMap">
+        select d.biz_id,d.biz_type
+        from wsd_wf_form w inner join wsd_wf_formdata d on w.id = d.form_id
+        where w.proc_inst_id = #{procInstId}
+    </select>
+
+    <resultMap id="WfFormProcVoMap" type="com.wisdom.base.common.vo.wf.WfFormProcVo">
+        <result column="proc_inst_id" property="procInstId" />
+        <result column="title" property="title" />
+    </resultMap>
+
+    <select id="selectProcInstIdByBizs" resultMap="WfFormProcVoMap">
+        select f.proc_inst_id,f.title,f.creator from wsd_wf_formdata fd left join wsd_wf_form f on f.id = fd.form_id
+         where fd.biz_id in
+        <foreach collection="bizIds" item="bizId" open="(" close=")" separator=",">
+            #{bizId}
+        </foreach>
+         and fd.biz_Type = #{bizType}
+    </select>
+
+    <select id="selectProcInstIdByBiz" resultMap="WfFormProcVoMap">
+        select f.proc_inst_id, f.title, f.creator from wsd_wf_form f where f.id = (select fd.form_id from wsd_wf_formdata fd
+        where fd.biz_id = #{bizId} and fd.biz_Type = #{bizType})
+    </select>
+
+    <resultMap id="WfFormDataVo" type="com.wisdom.base.common.vo.wf.WfFormDataVo">
+        <result column="form_id" property="formId" />
+        <result column="biz_id" property="bizId" />
+        <result column="biz_type" property="bizType" />
+        <result column="passed" property="passed" />
+    </resultMap>
+
+    <select id="selectFormDataVosByProcInst" resultMap="WfFormDataVo">
+        select f.proc_inst_id,fd.biz_id,fd.biz_type,fd.passed,fd.form_id
+        from wsd_wf_formdata fd left join wsd_wf_form f on f.id = fd.form_id
+        where f.proc_inst_id = #{procInstId }
+    </select>
+
+    <select id="selectFormDataVosByFormId" resultMap="WfFormDataVo">
+        select fd.biz_id,fd.biz_type,fd.passed,fd.form_id
+        from wsd_wf_formdata fd
+        where fd.form_id = #{formId }
+    </select>
+
+</mapper>

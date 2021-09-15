@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wisdom.acm.sys.mapper.SysI18nMapper">
+
+    <resultMap id="resultSysI18nVoMap" type="com.wisdom.acm.sys.vo.SysI18nVo">
+        <id property="id" column="id"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="code" property="code"/>
+        <result column="short_code" property="shortCode"/>
+    </resultMap>
+
+    <resultMap id="resultSysI18nRelationVoMap" type="com.wisdom.acm.sys.vo.SysI18nRelationVo">
+        <result column="i18n_id" property="i18nId"/>
+        <result column="i18n_value" property="i18nValue"/>
+        <association property="i18nCodeVo" javaType="com.wisdom.base.common.vo.DictionaryVo">
+             <result property="id" column="i18n_code"/>
+             <result property="name" column="i18nName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectSysI18nRelationVoByIds" resultMap="resultSysI18nRelationVoMap">
+        select r.i18n_id,r.i18n_code,r.i18n_value,
+        wbd.dict_name as i18nName
+        from wsd_sys_i18n_relation r
+        left join wsd_base_dict wbd on wbd.dict_code = r.i18n_code and wbd.type_code='comm.i18n'
+        where r.i18n_id in
+        <foreach collection="ids" separator="," open="(" close=")" index="index" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectSysI18nRelationVoById" resultMap="resultSysI18nRelationVoMap">
+        select r.i18n_id,r.i18n_code,r.i18n_value,
+        wbd.dict_name as i18nName
+        from wsd_sys_i18n_relation r
+        left join wsd_base_dict wbd on wbd.dict_code = r.i18n_code and wbd.type_code='comm.i18n'
+        where r.i18n_id = #{id}
+    </select>
+
+    <sql id="SysI18nVoBaseSql">
+        select i.id,i.menu_id,i.code,i.short_code
+        from wsd_sys_i18n i
+    </sql>
+
+    <select id="selectSysI18nVoByMenuId" resultMap="resultSysI18nVoMap">
+        <include refid="SysI18nVoBaseSql"></include>
+        where i.menu_id = #{menuId}
+        order by i.sort_num asc
+    </select>
+
+    <select id="selectSysI18nVoOneById" resultMap="resultSysI18nVoMap">
+        <include refid="SysI18nVoBaseSql"></include>
+        where i.id = #{id}
+    </select>
+
+
+
+</mapper>

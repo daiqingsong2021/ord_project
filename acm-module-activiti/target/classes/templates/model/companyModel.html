@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head th:include="include :: header"></head>
+<body>
+<!--导航-->
+<div th:include="include :: navbar"></div>
+<!--导航结束-->
+
+<!--编程基础-->
+<section id="course">
+    <div class="container">
+        <div class="row wow fadeIn" data-wow-delay="0.6s">
+            <div class="panel-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="addWorkflow()">增加</button>
+                <a id="modelAdd" href="" target="_blank" style="display: none;"></a>
+            </div>
+            <div  class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>名字</th>
+                        <th>描述</th>
+                        <th>更新日期</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(modelList)}" >
+                    <tr  th:each="modelAct : ${modelList}">
+                        <td><span th:text="${modelAct.name}"></span></td>
+                        <td><span th:text="${modelAct.metaInfo}"></span></td>
+                        <td><span th:if="${modelAct.lastUpdateTime}" th:text="${#dates.format(modelAct.lastUpdateTime, 'yyyy-MM-dd HH:mm:ss')}"></span></td>
+                        <td>
+                              <a th:href="@{'modeler.html?modelId=' + ${modelAct.id}}"  target="_blank" title="查看编辑公司模板">编辑</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:copyCompanyModel(\'' + ${modelAct.id} + '\')'}" title="复制公司模板">复制</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:deleteModel(\'' + ${modelAct.id} + '\')'}" title="删除公司模板">删除</a>
+                            | <a href="javascript:void(0);" th:onclick="@{'javascript:deployModel(\'' + ${modelAct.id} + '\')'}" title="发布公司模板">发布</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!--编程基础end-->
+
+<div th:include="include :: footer"></div>
+
+<script>
+    $(function(){
+        try{
+            /*导航跳转效果插件*/
+            /*$('.nav').singlePageNav({
+                offset:70
+            });
+            if (!(/msie [6|7|8|9]/i.test(navigator.userAgent))) {
+                new WOW().init();
+            }*/
+            var  lis = $(".navbar-nav li");
+            lis.removeClass("active");
+            lis.eq(1).addClass("active"); // 追加样式
+        }catch (e) {
+            console.log(e);
+        }
+    })
+
+    /**
+     * 增加流程
+     */
+    function addWorkflow() {
+        var user = window.localStorage.getItem("user");
+        var url = ctx + 'models/company/newModel';
+        $.get(url, {userId: user}, function (result) {
+            if (result.code == -1) {
+                alert(result.message);
+            }else{
+                var modelAdd = $("#modelAdd");
+                modelAdd.attr("href", "modeler.html?modelId=" + result.data);
+                modelAdd[0].click();
+                window.location.reload();
+            }
+        });
+    }
+
+    /**
+     * 复制成公司流程
+     * @param id
+     */
+    function copyCompanyModel(id) {
+        if(confirm("确定生成公司流程？")) {
+            var user = window.localStorage.getItem("user");
+            $.get("/models/company/copyModel", {userId: user, modelId: id}, function (result) {
+                alert(result.message);
+                window.location.reload();
+            });
+        }
+    }
+
+    /**
+     * 删除流程
+     * @param id
+     */
+    function deleteModel(id) {
+        if(confirm("确定删除流程？")){
+            $.ajax({
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-HTTP-Method-Override": "DELETE"
+                }, //PUT,DELETE
+                url: "/models/" + id,
+                type: "DELETE",
+                //data: {id : id},
+                //dataType : "json",
+                success:function(result){
+                    alert(result.message);
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
+    /**
+     * 发布流程定义
+     * @param id
+     */
+    function deployModel(id) {
+        if(confirm("确定发布流程？")) {
+            $.post("models/deployment", {modelId: id}, function (result) {
+                alert(result.message);
+            });
+        }
+    }
+
+</script>
+</body>
+</html>
