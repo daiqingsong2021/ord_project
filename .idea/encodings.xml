@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-auth-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-cache" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-eureka" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-gateway" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-leaf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-activiti" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-base" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-dc1" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-dc2" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-dc3" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-dc4" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-dc5" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-hbase" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-hrb-sys" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-processing" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-sys" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-szxm" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/acm-module-wf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wsd-bootadmin" charset="UTF-8" />
+    <file url="file://D:/workspace/ord_project/acm-module-dc4" charset="UTF-8" />
+  </component>
+</project>

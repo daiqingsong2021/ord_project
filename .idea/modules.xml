@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/acm-auth-server/acm-auth-server.iml" filepath="$PROJECT_DIR$/acm-auth-server/acm-auth-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-cache/acm-cache.iml" filepath="$PROJECT_DIR$/acm-cache/acm-cache.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-common/acm-common.iml" filepath="$PROJECT_DIR$/acm-common/acm-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-eureka/acm-eureka.iml" filepath="$PROJECT_DIR$/acm-eureka/acm-eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-gateway/acm-gateway.iml" filepath="$PROJECT_DIR$/acm-gateway/acm-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-leaf/acm-leaf.iml" filepath="$PROJECT_DIR$/acm-leaf/acm-leaf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-activiti/acm-module-activiti.iml" filepath="$PROJECT_DIR$/acm-module-activiti/acm-module-activiti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-base/acm-module-base.iml" filepath="$PROJECT_DIR$/acm-module-base/acm-module-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-dc1/acm-module-dc1.iml" filepath="$PROJECT_DIR$/acm-module-dc1/acm-module-dc1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-dc2/acm-module-dc2.iml" filepath="$PROJECT_DIR$/acm-module-dc2/acm-module-dc2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-dc3/acm-module-dc3.iml" filepath="$PROJECT_DIR$/acm-module-dc3/acm-module-dc3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-dc4/acm-module-dc4.iml" filepath="$PROJECT_DIR$/acm-module-dc4/acm-module-dc4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-dc5/acm-module-dc5.iml" filepath="$PROJECT_DIR$/acm-module-dc5/acm-module-dc5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-hbase/acm-module-hbase.iml" filepath="$PROJECT_DIR$/acm-module-hbase/acm-module-hbase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-hrb-sys/acm-module-hrb-sys.iml" filepath="$PROJECT_DIR$/acm-module-hrb-sys/acm-module-hrb-sys.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-processing/acm-module-processing.iml" filepath="$PROJECT_DIR$/acm-module-processing/acm-module-processing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-sys/acm-module-sys.iml" filepath="$PROJECT_DIR$/acm-module-sys/acm-module-sys.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-szxm/acm-module-szxm.iml" filepath="$PROJECT_DIR$/acm-module-szxm/acm-module-szxm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acm-module-wf/acm-module-wf.iml" filepath="$PROJECT_DIR$/acm-module-wf/acm-module-wf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ord_project.iml" filepath="$PROJECT_DIR$/.idea/ord_project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wsd-bootadmin/wsd-bootadmin.iml" filepath="$PROJECT_DIR$/wsd-bootadmin/wsd-bootadmin.iml" />
+    </modules>
+  </component>
+</project>

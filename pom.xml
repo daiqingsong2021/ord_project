@@ -127,6 +127,9 @@
     	<module>acm-module-base</module>
     	<module>acm-module-dc1</module>
     	<module>acm-module-dc2</module>
+        <module>acm-module-dc3</module>
+        <module>acm-module-dc4</module>
+        <module>acm-module-dc5</module>
     	<module>acm-module-hbase</module>
     	<module>acm-module-hrb-sys</module>
     	<module>acm-module-processing</module>

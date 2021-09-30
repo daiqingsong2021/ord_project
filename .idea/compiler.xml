@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="acm-module-dc4" />
+        <module name="acm-module-dc3" />
+        <module name="acm-module-dc2" />
+        <module name="acm-module-dc1" />
+        <module name="acm-eureka" />
+        <module name="acm-module-wf" />
+        <module name="acm-module-sys" />
+        <module name="acm-common" />
+        <module name="acm-module-hrb-sys" />
+        <module name="acm-module-szxm" />
+        <module name="acm-module-processing" />
+        <module name="acm-gateway" />
+        <module name="acm-leaf" />
+        <module name="acm-module-activiti" />
+        <module name="acm-cache" />
+        <module name="acm-auth-server" />
+        <module name="wsd-bootadmin" />
+        <module name="acm-module-hbase" />
+        <module name="acm-module-base" />
+        <module name="acm-module-dc5" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="acm-auth-server" target="1.8" />
+      <module name="acm-cache" target="1.8" />
+      <module name="acm-common" target="1.8" />
+      <module name="acm-eureka" target="1.8" />
+      <module name="acm-gateway" target="1.8" />
+      <module name="acm-leaf" target="1.8" />
+      <module name="acm-module-activiti" target="1.8" />
+      <module name="acm-module-base" target="1.8" />
+      <module name="acm-module-dc1" target="1.8" />
+      <module name="acm-module-dc2" target="1.8" />
+      <module name="acm-module-dc3" target="1.8" />
+      <module name="acm-module-dc4" target="1.8" />
+      <module name="acm-module-dc5" target="1.8" />
+      <module name="acm-module-hbase" target="1.8" />
+      <module name="acm-module-hrb-sys" target="1.8" />
+      <module name="acm-module-processing" target="1.8" />
+      <module name="acm-module-sys" target="1.8" />
+      <module name="acm-module-szxm" target="1.8" />
+      <module name="acm-module-wf" target="1.8" />
+      <module name="ord_project" target="1.8" />
+      <module name="wsd-bootadmin" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="acm-auth-server" options="-parameters" />
+      <module name="acm-cache" options="-parameters" />
+      <module name="acm-common" options="-parameters" />
+      <module name="acm-eureka" options="-parameters" />
+      <module name="acm-gateway" options="-parameters" />
+      <module name="acm-leaf" options="-parameters" />
+      <module name="acm-module-activiti" options="-parameters" />
+      <module name="acm-module-base" options="-parameters" />
+      <module name="acm-module-dc1" options="-parameters" />
+      <module name="acm-module-dc2" options="-parameters" />
+      <module name="acm-module-dc3" options="-parameters" />
+      <module name="acm-module-dc4" options="-parameters" />
+      <module name="acm-module-dc5" options="-parameters" />
+      <module name="acm-module-hbase" options="-parameters" />
+      <module name="acm-module-hrb-sys" options="-parameters" />
+      <module name="acm-module-processing" options="-parameters" />
+      <module name="acm-module-sys" options="-parameters" />
+      <module name="acm-module-szxm" options="-parameters" />
+      <module name="acm-module-wf" options="-parameters" />
+      <module name="wsd-bootadmin" options="-parameters" />
+    </option>
+  </component>
+</project>
