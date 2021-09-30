@@ -1,0 +1,65 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "name": "spring.encrypt",
+      "type": "com.wisdom.encrypt.core.EncryptionConfig"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "defaultValue": false,
+      "name": "spring.encrypt.debug",
+      "description": "开启调试模式，调试模式下不进行加解密操作，用于像Swagger这种在线API测试场景",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "defaultValue": false,
+      "name": "spring.encrypt.enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "defaultValue": "d7b85f6e214abcda",
+      "name": "spring.encrypt.key",
+      "description": "AES加密Key",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "defaultValue": 1,
+      "name": "spring.encrypt.order",
+      "description": "过滤器执行顺序",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "name": "spring.encrypt.request-decypt-uri-list",
+      "type": "java.util.List<java.lang.String>"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "defaultValue": "UTF-8",
+      "name": "spring.encrypt.response-charset",
+      "description": "响应数据编码",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "name": "spring.encrypt.response-encrypt-uri-list",
+      "type": "java.util.List<java.lang.String>"
+    },
+    {
+      "sourceType": "com.wisdom.encrypt.core.EncryptionConfig",
+      "defaultValue": [
+        "\/*"
+      ],
+      "name": "spring.encrypt.url-patterns",
+      "description": "过滤器拦截模式",
+      "type": "java.lang.String[]"
+    }
+  ]
+}

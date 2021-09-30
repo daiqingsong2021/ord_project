@@ -2,7 +2,22 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/auth/client/runner/AuthClientRunner.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/auth/client/configuration/AutoConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/fescar/config/CustomMybatisConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/base/common/config/DozerBeanMapperConfigure.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/encrypt/springboot/autoconfigure/EncryptAutoConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/fescar/config/FeignConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/base/common/config/FeignConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/auth/client/config/FeignOkHttpConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/fescar/FescarInfrustructorApplication.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/fescar/config/MvcIntercepterConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/auth/client/jwt/ServiceAuthUtil.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/wisdom/auth/client/jwt/UserAuthUtil.java</file>
+        </fileset>
+      </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
