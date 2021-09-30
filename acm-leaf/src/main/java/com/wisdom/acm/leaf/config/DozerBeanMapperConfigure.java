@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class DozerBeanMapperConfigure {
     @Bean
     public DozerBeanMapper mapper() {
+        String a = "sfwef";
         DozerBeanMapper mapper = new DozerBeanMapper();
         return mapper;
     }
