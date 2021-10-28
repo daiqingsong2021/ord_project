@@ -251,7 +251,40 @@ public class SysUserController extends BaseController {
         UserInfo userInfo = userServce.validate(body.get("userName"), body.get("password"), userHost);
         return ApiResult.success(userInfo);
     }
-
+    /**
+     * 统一用户登录验证
+     *
+     * @param body
+     * @return
+     */
+    @RequestMapping(value = "/validate/sso", method = RequestMethod.POST)
+    public @ResponseBody
+    ApiResult<UserInfo> ssoValidate(@RequestBody Map<String, String> body) {
+        //获取用户登录ip地址
+        String userHost = body.get("userHost");
+        UserInfo userInfo = userServce.getUserInfoByCode(body.get("uid"));
+        if(userInfo == null) {
+            SysUserAddFrom form = new SysUserAddFrom();
+            form.setUserName(body.get("userName"));
+            form.setPassword("123456");
+            form.setActuName(body.get("name"));
+            form.setSex(1);
+            form.setPassword(body.get("phone_number"));
+            form.setStaffStatus(1);
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(1080483);
+            list.add(1080479);
+            list.add(1080488);
+            form.setRoles(list);
+            form.setOrgId(1664414);
+            form.setUserCode(body.get("uid"));
+            SysUserPo sysUserPo = userServce.addUser(form);
+            UserInfo userInfos = userServce.getUserInfoByCode(body.get("uid"));
+            return ApiResult.success(userInfos);
+        }else {
+            return ApiResult.success(userInfo);
+        }
+    }
     /**
      * 用户单点登录验证
      *
