@@ -9,7 +9,35 @@ public class JwtAuthenticationRequest implements Serializable {
     private String userName;
     private String password;
     private String userHost;
+    private String uid;
+    private String phone_number;
+    private String name;
 
+
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getPhone_number() {
+        return phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public JwtAuthenticationRequest(String userName, String password) {
         this.userName = userName;
