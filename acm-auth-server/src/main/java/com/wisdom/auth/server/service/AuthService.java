@@ -7,6 +7,7 @@ public interface AuthService {
 	String login(JwtAuthenticationRequest authenticationRequest) throws Exception;
 
 	String snLogin(JwtAuthenticationRequest authenticationRequest) throws Exception;
+	String ssoLogin(JwtAuthenticationRequest authenticationRequest) throws Exception;
 
 	String refresh(String oldToken) throws Exception;
 

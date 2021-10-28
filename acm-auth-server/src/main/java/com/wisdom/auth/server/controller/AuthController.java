@@ -35,7 +35,14 @@ public class AuthController {
         final String token = authService.login(authenticationRequest);
         return ApiResult.success(token);
     }
-
+    @RequestMapping(value = "ssoToken", method = RequestMethod.POST)
+    public ApiResult<String> createAuthenticationssoToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws Exception {
+        log.info(authenticationRequest.getUserName()+" require logging...");
+        String clientIp = ClientUtil.getClientIp(request);
+        authenticationRequest.setUserHost(clientIp);
+        final String token = authService.ssoLogin(authenticationRequest);
+        return ApiResult.success(token);
+    }
     @RequestMapping(value = "token/sn", method = RequestMethod.POST)
     public ApiResult<String> createAuthenticationTokenSn(@RequestBody JwtAuthenticationRequest authenticationRequest) throws Exception {
         log.info(authenticationRequest.getUserName()+" require logging...");

@@ -20,4 +20,7 @@ public interface IUserService {
 
     @RequestMapping(value = "/user/validate/sn", method = RequestMethod.POST)
     public ApiResult<UserInfo> snValidate(@RequestBody JwtAuthenticationRequest authenticationRequest);
+
+    @RequestMapping(value = "/user/validate/sso", method = RequestMethod.POST)
+    public ApiResult<UserInfo> ssoValidate(@RequestBody JwtAuthenticationRequest authenticationRequest);
 }

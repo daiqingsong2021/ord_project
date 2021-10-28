@@ -14,7 +14,7 @@ spring:
       legacy:
         enabled: true
   profiles:
-    active: localhost,alimysql
+    active: localhost,localmysql
   main:
     allow-bean-definition-overriding: true
 

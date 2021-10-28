@@ -36,7 +36,16 @@ public class AuthServiceImpl implements AuthService {
             throw new UserInvalidException("账户名或密码错误!");
         }
     }
-
+    @Override
+    public String ssoLogin(JwtAuthenticationRequest authenticationRequest) throws Exception {
+        ApiResult<UserInfo> apiResult = userService.ssoValidate(authenticationRequest);
+        if (apiResult.getStatus() == 200) {
+            UserInfo info = apiResult.getData();
+            return jwtTokenUtil.generateToken(new JWTInfo(info.getUserName(), info.getId() + "", info.getLastUpdIp(),info.getActuName(),info.getUserType()));
+        } else {
+            throw new UserInvalidException("账户名或密码错误!");
+        }
+    }
     @Override
     public String snLogin(JwtAuthenticationRequest authenticationRequest) throws Exception {
         ApiResult<UserInfo> apiResult = userService.snValidate(authenticationRequest);
