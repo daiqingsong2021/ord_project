@@ -1,0 +1,30 @@
+server:
+  port: 12000 #启动端口
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+  tomcat:
+    uri-encoding: UTF-8
+
+
+oauth2:
+  server: http://58.221.101.74:8093/sso/                                  # 鍝侀珮sso璁块棶鍦板潃
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          bingoiam:                                                       # 瀹氫箟鏈嶅姟绔痠d
+            authorization-uri: ${oauth2.server}/oauth2/authorize          # 鎺堟潈url鍥哄畾鍊�
+            token-uri: ${oauth2.server}/oauth2/token                      # 鑾峰彇浠ょ墝url锛屽浐瀹氬��
+            user-info-uri: ${oauth2.server}/oauth2/userinfo               # 鑾峰彇鐢ㄦ埛淇℃伅url锛屽浐瀹氬��
+            userNameAttribute: username                                   # 鐢ㄦ埛淇℃伅涓幏鍙栫敤鎴峰悕鐨勫睘鎬э紝鍥哄畾鍊�
+            jwk-set-uri: ${oauth2.server}/oauth2/token_keys               # 鑾峰彇鍔犲瘑鍏挜url锛屽浐瀹氬��
+        registration:
+          bingoiam:                                                       # 鏈嶅姟绔痠d
+            client-id: clientId                                           # 瀹㈡埛绔处鍙凤紝榛樿鍊糲lientId锛屽畾鍒跺�奸渶鍦╯so涓敵璇�
+            client-secret: clientSecret                                   # 瀹㈡埛绔瘑閽ワ紝榛樿鍊糲lientSecret锛屽畾鍒跺�奸渶鍦╯so涓敵璇�
+            authorization-grant-type: authorization_code                  # 鍥哄畾鍊�
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'  # spring瀹樼綉鏂囨。鎻愪緵鐨勯厤缃ず渚嬶紝鐢ㄤ簬鐧诲綍鍚庤繑鍥炵殑鍦板潃

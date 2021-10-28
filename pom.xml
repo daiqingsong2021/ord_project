@@ -134,5 +134,6 @@
     	<module>acm-module-szxm</module>
     	<module>acm-module-wf</module>
     	<module>wsd-bootadmin</module>
+        <module>acm-module-sso</module>
     </modules>
 </project>
